@@ -7,9 +7,9 @@ import lombok.*;
 @Entity
 @Table(name = "favorites")
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Favorites {
 
     @Id
