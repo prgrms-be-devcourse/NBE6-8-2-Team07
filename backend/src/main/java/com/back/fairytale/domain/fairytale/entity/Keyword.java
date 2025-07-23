@@ -8,7 +8,7 @@ import lombok.*;
 @Entity
 @Table(name = "keyword")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Keyword {
@@ -22,7 +22,7 @@ public class Keyword {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String keyword;
 
     @Enumerated(EnumType.STRING)
