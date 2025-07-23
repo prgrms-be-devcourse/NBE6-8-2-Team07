@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping
 public class FavoriteController {
 
     // 더미 데이터 (데이터가 없는 관계로....)
