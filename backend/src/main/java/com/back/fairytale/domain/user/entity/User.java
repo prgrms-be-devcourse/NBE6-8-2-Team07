@@ -1,5 +1,6 @@
 package com.back.fairytale.domain.user.entity;
 
+import com.back.fairytale.bookmark.entity.BookMark;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
 import com.back.fairytale.domain.keyword.entity.Keyword;
 import com.back.fairytale.domain.user.enums.IsDeleted;
@@ -45,5 +46,5 @@ public class User {
     private List<Fairytale> fairytales = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Favorites> favorites = new ArrayList<>();
+    private List<BookMark> favorites = new ArrayList<>();
 }
