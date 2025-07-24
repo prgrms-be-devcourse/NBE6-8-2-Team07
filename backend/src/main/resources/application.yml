@@ -4,8 +4,6 @@ gemini:
     url: ${GEMINI_API_URL}
 
 spring:
-  config:
-    import: optional:file:.env[.properties]
   application:
     name: backend
   config:
