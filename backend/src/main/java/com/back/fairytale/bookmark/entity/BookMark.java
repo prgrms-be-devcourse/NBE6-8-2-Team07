@@ -1,6 +1,7 @@
-package com.back.fairytale.domain.user.entity;
+package com.back.fairytale.bookmark.entity;
 
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
+import com.back.fairytale.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Favorites {
+public class BookMark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

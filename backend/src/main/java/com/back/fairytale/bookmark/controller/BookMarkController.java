@@ -1,4 +1,4 @@
-package com.back.fairytale.domain.user.controller;
+package com.back.fairytale.bookmark.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-public class FavoriteController {
+public class BookMarkController {
 
     // 더미 데이터 (데이터가 없는 관계로....)
     private final List<Long> favorites = new ArrayList<>(List.of(1L, 2L, 3L));
