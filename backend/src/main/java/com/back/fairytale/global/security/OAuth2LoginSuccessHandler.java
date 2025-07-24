@@ -1,6 +1,7 @@
 package com.back.fairytale.global.security;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,16 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("OAuth2 Role {}", role);
 
         String token = jwtUtil.createJwt(userId, role, 10 * 60 * 1000L); // 유효기간 10분
+        response.addCookie(createCookie(token));
         response.sendRedirect("http://localhost:3000/");
+    }
+
+    private Cookie createCookie(String token) {
+        Cookie cookie = new Cookie("Authorization", token);
+        cookie.setMaxAge(10 * 60);
+//        cookie.setSecure(true); // HTTPS 환경에서만 쿠키 전송
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 }
