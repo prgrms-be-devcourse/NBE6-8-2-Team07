@@ -39,6 +39,9 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(unique = true, nullable = false)
+    private String socialId;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Keyword> keywords = new ArrayList<>();
 
@@ -47,4 +50,11 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookMark> favorites = new ArrayList<>();
+
+    public User update(String name, String nickname, String email) {
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        return this;
+    }
 }
