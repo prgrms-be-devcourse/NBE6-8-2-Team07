@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +25,43 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <header className="border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto flex justify-between items-center p-4">
+          <Link href="/" className="font-bold text-xl">
+            로고이미지
+          </Link>
+          <nav className="flex items-center space-x-8">
+            <div className="relative group">
+              <button className="cursor-pointer py-2">나의 동화책</button>
+              <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-neutral-800 shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
+                <Link href="/fairytale/create" className="block px-4 py-2 text-sm text-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                  동화책만들기
+                </Link>
+                <Link href="/fairytale/get" className="block px-4 py-2 text-sm text-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                  동화책펼치기
+                </Link>
+              </div>
+            </div>
+            <Link href="/fairytaleGallery" className="py-2">
+              동화갤러리
+            </Link>
+            <div className="relative group">
+              <button className="cursor-pointer py-2">소개</button>
+              <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-neutral-800 shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
+                <Link href="/introduction/service" className="block px-4 py-2 text-sm text-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                  서비스소개
+                </Link>
+                <Link href="/introduction/project" className="block px-4 py-2 text-sm text-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                  프로젝트소개
+                </Link>
+              </div>
+            </div>
+            <button className="py-2 cursor-pointer">
+              로그인
+            </button>
+          </nav>
+        </div>
+      </header>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
