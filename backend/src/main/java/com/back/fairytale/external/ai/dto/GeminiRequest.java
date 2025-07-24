@@ -8,7 +8,7 @@ import java.util.List;
 // Gemini에게 보낼 메시지를 JSON 형식으로 만들기 위한 틀로 볼 수 있음
 @Getter
 @Builder
-public class AIRequest {
+public class GeminiRequest {
     private List<Content> contents;
 
     @Getter
@@ -23,8 +23,8 @@ public class AIRequest {
         private String text;
     }
 
-    public static AIRequest of(String prompt) {
-        return AIRequest.builder()
+    public static GeminiRequest of(String prompt) {
+        return GeminiRequest.builder()
                 .contents(List.of(
                         Content.builder()
                             .parts(List.of(
