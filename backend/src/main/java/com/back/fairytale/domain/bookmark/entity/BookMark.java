@@ -1,4 +1,4 @@
-package com.back.fairytale.bookmark.entity;
+package com.back.fairytale.domain.bookmark.entity;
 
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
 import com.back.fairytale.domain.user.entity.User;

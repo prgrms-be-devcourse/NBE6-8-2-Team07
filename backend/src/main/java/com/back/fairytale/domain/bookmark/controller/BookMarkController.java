@@ -1,4 +1,4 @@
-package com.back.fairytale.bookmark.controller;
+package com.back.fairytale.domain.bookmark.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
