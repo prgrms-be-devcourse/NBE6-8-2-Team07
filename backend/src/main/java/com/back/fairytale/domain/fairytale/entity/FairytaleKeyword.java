@@ -1,5 +1,6 @@
 package com.back.fairytale.domain.fairytale.entity;
 
+import com.back.fairytale.domain.keyword.entity.Keyword;
 import jakarta.persistence.*;
 import lombok.*;
 

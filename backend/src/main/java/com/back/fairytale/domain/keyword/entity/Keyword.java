@@ -1,4 +1,4 @@
-package com.back.fairytale.domain.fairytale.entity;
+package com.back.fairytale.domain.keyword.entity;
 
 import com.back.fairytale.domain.fairytale.enums.KeywordType;
 import com.back.fairytale.domain.user.entity.User;
