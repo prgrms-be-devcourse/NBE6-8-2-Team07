@@ -8,6 +8,8 @@ spring:
     import: optional:file:.env[.properties]
   application:
     name: backend
+  config:
+    import: optional:file:.env[.properties]
   profiles:
     active: dev
   jpa:
