@@ -32,14 +32,17 @@ public class Fairytale {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false, length = 200)
-    private String character;
+    @Column(name = "child_name", nullable = false, length = 100)
+    private String childName;
+
+    @Column(name = "child_role", nullable = false, length = 200)
+    private String childRole;
+
+    @Column(length = 200)
+    private String characters;
 
     @Column(length = 200)
     private String place;
-
-    @Column(length = 200)
-    private String animal;
 
     @Column(length = 200)
     private String lesson;
