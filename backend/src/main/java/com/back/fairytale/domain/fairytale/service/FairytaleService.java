@@ -131,7 +131,7 @@ public class FairytaleService {
         }
 
         prompt.append("\n").append(request.childName()).append("이(가) ").append(request.childRole()).append(" 역할로 나오는 ");
-        prompt.append("800-1200자 정도의 완성된 동화를 만들어주세요.");
+        prompt.append("900-1300자 정도의 완성된 동화를 만들어주세요.");
 
         return prompt.toString();
     }
