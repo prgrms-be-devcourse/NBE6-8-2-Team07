@@ -42,7 +42,7 @@ public class FairytaleService {
 
         // 원래코드
         //User user = userRepository.findById(userId)
-        //        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        //        .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다. ID: " + userId));
 
         // test 용도 데이터
         User user = userRepository.findById(userId)
