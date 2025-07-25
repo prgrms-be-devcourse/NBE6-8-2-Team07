@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <header className="border-b border-gray-200 dark:border-gray-700">
+      <header className="">
         <div className="container mx-auto flex justify-between items-center p-4">
           <Link href="/" className="font-bold text-xl">
             로고이미지
