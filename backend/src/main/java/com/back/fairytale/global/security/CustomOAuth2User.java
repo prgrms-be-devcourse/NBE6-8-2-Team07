@@ -35,8 +35,4 @@ public class CustomOAuth2User implements OAuth2User {
         collection.add((GrantedAuthority) () -> role);
         return collection;
     }
-
-    public Long getId() {
-        return id;
-    }
 }
