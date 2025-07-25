@@ -33,11 +33,11 @@ export default function RootLayout({
           <nav className="flex items-center space-x-8">
             <div className="relative group">
               <button className="cursor-pointer py-2">나의 동화책</button>
-              <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-neutral-800 shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
-                <Link href="/fairytale/create" className="block px-4 py-2 text-sm text-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700">
+              <div className="absolute z-10 hidden group-hover:block bg-[#FAF9F6] shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
+                <Link href="/fairytale/create" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
                   동화책만들기
                 </Link>
-                <Link href="/fairytale/get" className="block px-4 py-2 text-sm text-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                <Link href="/fairytale/get" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
                   동화책펼치기
                 </Link>
               </div>
@@ -47,11 +47,11 @@ export default function RootLayout({
             </Link>
             <div className="relative group">
               <button className="cursor-pointer py-2">소개</button>
-              <div className="absolute z-10 hidden group-hover:block bg-white dark:bg-neutral-800 shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
-                <Link href="/introduction/service" className="block px-4 py-2 text-sm text-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700">
+              <div className="absolute z-10 hidden group-hover:block bg-[#FAF9F6] shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
+                <Link href="/introduction/service" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
                   서비스소개
                 </Link>
-                <Link href="/introduction/project" className="block px-4 py-2 text-sm text-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700">
+                <Link href="/introduction/project" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
                   프로젝트소개
                 </Link>
               </div>
@@ -67,6 +67,15 @@ export default function RootLayout({
       >
         {children}
       </body>
+      <footer className="bg-[#FFD6A5]">
+        <div>
+          푸터 <br/>
+           <br/>
+           <br/>
+           <br/>
+           <br/>
+        </div>
+      </footer>
     </html>
   );
 }
