@@ -6,10 +6,7 @@ import com.back.fairytale.global.security.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,13 +23,9 @@ public class LikeController {
     }
 
     @PostMapping("/{fairytaleId}/like")
-    public ResponseEntity<String> addLike(@AuthenticationPrincipal CustomOAuth2User user, Long fairytaleId) {
-        LikeDto likeDto = LikeDto.builder()
-                .userId(user.getId())
-                .fairytaleId(fairytaleId)
-                .build();
+    public ResponseEntity<String> addLike(@AuthenticationPrincipal CustomOAuth2User user, @PathVariable Long fairytaleId) {
         try {
-            likeService.addLike(likeDto);
+            likeService.addLike(user.getId(), fairytaleId);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -41,13 +34,9 @@ public class LikeController {
     }
 
     @DeleteMapping("/{fairytaleId}/like")
-    public ResponseEntity<String> removeLike(@AuthenticationPrincipal CustomOAuth2User user, Long fairytaleId) {
-        LikeDto likeDto = LikeDto.builder()
-                .userId(user.getId())
-                .fairytaleId(fairytaleId)
-                .build();
+    public ResponseEntity<String> removeLike(@AuthenticationPrincipal CustomOAuth2User user, @PathVariable Long fairytaleId) {
         try {
-            likeService.removeLike(likeDto);
+            likeService.removeLike(user.getId(), fairytaleId);
             return ResponseEntity.ok("게시물 " + fairytaleId + " 좋아요가 해제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
