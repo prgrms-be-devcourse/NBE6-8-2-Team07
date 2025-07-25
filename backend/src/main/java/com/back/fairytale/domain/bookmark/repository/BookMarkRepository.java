@@ -8,10 +8,6 @@ import java.util.Optional;
 
 public interface BookMarkRepository extends JpaRepository<BookMark, Long> {
 
-    BookMark save(BookMark bookMark);
-
-    void deleteById(Long id);
-
     List<BookMark> findByUserId(Long userId);
 
     Optional<BookMark> findByUserIdAndFairytaleId(Long userId, Long fairytaleId);

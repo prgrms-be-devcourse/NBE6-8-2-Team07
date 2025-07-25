@@ -37,9 +37,7 @@ public class BookMarkController {
         try {
             bookMarkService.addBookMark(bookMarkDto);
             return ResponseEntity.status(HttpStatus.CREATED).body("게시물 " + fairytaleId + " 즐겨찾기에 추가되었습니다.");
-        } catch (BookMarkAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (BookMarkNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -53,8 +51,8 @@ public class BookMarkController {
         try {
             bookMarkService.removeBookMark(bookMarkDto);
             return ResponseEntity.ok("게시물 " + fairytaleId + " 즐겨찾기에서 해제되었습니다.");
-        } catch (BookMarkNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
