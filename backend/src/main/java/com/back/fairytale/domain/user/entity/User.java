@@ -2,7 +2,6 @@ package com.back.fairytale.domain.user.entity;
 
 import com.back.fairytale.domain.bookmark.entity.BookMark;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
-import com.back.fairytale.domain.keyword.entity.Keyword;
 import com.back.fairytale.domain.user.enums.IsDeleted;
 import com.back.fairytale.domain.user.enums.Role;
 import jakarta.persistence.*;
@@ -41,9 +40,6 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String socialId;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Keyword> keywords = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Fairytale> fairytales = new ArrayList<>();

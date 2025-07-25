@@ -9,9 +9,11 @@ import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.domain.bookmark.exception.BookMarkAlreadyExistsException;
 import com.back.fairytale.domain.bookmark.exception.BookMarkNotFoundException;
+import com.back.fairytale.global.security.CustomOAuth2User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,11 +29,9 @@ public class BookMarkService {
     private final FairytaleRepository fairytaleRepository;
 
     // 나중에 스트림으로 리펙토링
-    public List<BookMarkDto> getBookMark(@AuthenticationPrincipal User user) {
-        User foundUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new BookMarkNotFoundException("해당 유저를 찾을 수 없습니다."));
+    public List<BookMarkDto> getBookMark(CustomOAuth2User oAuth2User) {
 
-        List<BookMark> bookMarks = bookMarkRepository.findByUserId(foundUser.getId());
+        List<BookMark> bookMarks = bookMarkRepository.findByUserId(oAuth2User.getId());
         List<BookMarkDto> bookMarkDtos = new ArrayList<>();
 
         for (BookMark bookMark : bookMarks) {
@@ -43,12 +43,13 @@ public class BookMarkService {
         return bookMarkDtos;
     }
 
+    // User 만 전달 했다면 코드가 save(user) 더 간결해질 수 있지만 Oauth2User로 사용하기 떄문에 findById를 사용해서 User를 가져와야 한다. 방법이 없을까?
     @Transactional
     public BookMark addBookMark(BookMarkDto bookMarkDto) {
         User user = userRepository.findById(bookMarkDto.getUserId())
-                .orElseThrow(() -> new BookMarkNotFoundException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
         Fairytale fairytale = fairytaleRepository.findById(bookMarkDto.getFairytaleId())
-                .orElseThrow(() -> new BookMarkNotFoundException("해당 동화를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 동화를 찾을 수 없습니다."));
 
         Optional<BookMark> existBookMark = bookMarkRepository.findByUserIdAndFairytaleId(user.getId(), fairytale.getId());
         if (existBookMark.isPresent()) {
@@ -65,9 +66,9 @@ public class BookMarkService {
     @Transactional
     public void removeBookMark(BookMarkDto bookMarkDto) {
         User user = userRepository.findById(bookMarkDto.getUserId())
-                .orElseThrow(() -> new BookMarkNotFoundException("해당 유저를 찾을수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을수 없습니다."));
         Fairytale fairytale = fairytaleRepository.findById(bookMarkDto.getFairytaleId())
-                .orElseThrow(() -> new BookMarkNotFoundException("해당 동화를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 동화를 찾을 수 없습니다."));
 
         BookMark bookMark = bookMarkRepository.findByUserIdAndFairytaleId(user.getId(), fairytale.getId())
                 .orElseThrow(() -> new BookMarkNotFoundException("즐겨찾기에 없는 동화입니다."));
