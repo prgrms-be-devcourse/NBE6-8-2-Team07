@@ -1,7 +1,6 @@
 package com.back.fairytale.domain.keyword.entity;
 
 import com.back.fairytale.domain.keyword.enums.KeywordType;
-import com.back.fairytale.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,10 +17,6 @@ public class Keyword {
     @Column(name = "keyword_id")
     private Long keywordId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @Column(nullable = false, length = 50, unique = true)
     private String keyword;
 
@@ -30,4 +25,13 @@ public class Keyword {
     private KeywordType keywordType;
 
     private int count;
+
+
+
+    public static Keyword of(String keyword, KeywordType keywordType) {
+        return Keyword.builder()
+                .keyword(keyword.trim())
+                .keywordType(keywordType)
+                .build();
+    }
 }
