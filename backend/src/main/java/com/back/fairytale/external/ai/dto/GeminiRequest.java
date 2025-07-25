@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-// Gemini에게 보낼 메시지를 JSON 형식으로 만들기 위한 틀로 볼 수 있음
+// Gemini에게 보낼 메시지를 JSON 형식으로 만들기 위한 구조
 @Getter
 @Builder
 public class GeminiRequest {
