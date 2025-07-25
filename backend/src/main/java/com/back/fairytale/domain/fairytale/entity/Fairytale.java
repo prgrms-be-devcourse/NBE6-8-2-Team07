@@ -51,47 +51,44 @@ public class Fairytale {
     }
 
     public String getChildName() {
-        return getKeywordsByType(KeywordType.아이이름)
-                .stream()
-                .findFirst()
-                .map(fk -> fk.getKeyword().getKeyword())
-                .orElse(null);
+        return getFirstKeywordByType(KeywordType.아이이름);
     }
 
     public String getChildRole() {
-        return getKeywordsByType(KeywordType.아이역할)
+        return getFirstKeywordByType(KeywordType.아이역할);
+    }
+
+    public String getCharacters() {
+        return getJoinedKeywordsByType(KeywordType.캐릭터들);
+    }
+
+    public String getPlace() {
+        return getJoinedKeywordsByType(KeywordType.장소);
+    }
+
+    public String getLesson() {
+        return getJoinedKeywordsByType(KeywordType.교훈);
+    }
+
+    public String getMood() {
+        return getJoinedKeywordsByType(KeywordType.분위기);
+    }
+
+    private String getFirstKeywordByType(KeywordType type) {
+        return getKeywordsByType(type)
                 .stream()
                 .findFirst()
                 .map(fk -> fk.getKeyword().getKeyword())
                 .orElse(null);
     }
 
-    public String getCharacters() {
-        return getKeywordsByType(KeywordType.캐릭터들)
+    private String getJoinedKeywordsByType(KeywordType type) {
+        List<String> keywords = getKeywordsByType(type)
                 .stream()
                 .map(fk -> fk.getKeyword().getKeyword())
-                .collect(Collectors.joining(", "));
-    }
+                .collect(Collectors.toList());
 
-    public String getPlace() {
-        return getKeywordsByType(KeywordType.장소)
-                .stream()
-                .map(fk -> fk.getKeyword().getKeyword())
-                .collect(Collectors.joining(", "));
-    }
-
-    public String getLesson() {
-        return getKeywordsByType(KeywordType.교훈)
-                .stream()
-                .map(fk -> fk.getKeyword().getKeyword())
-                .collect(Collectors.joining(", "));
-    }
-
-    public String getMood() {
-        return getKeywordsByType(KeywordType.분위기)
-                .stream()
-                .map(fk -> fk.getKeyword().getKeyword())
-                .collect(Collectors.joining(", "));
+        return keywords.isEmpty() ? null : String.join(", ", keywords);
     }
 
     private List<FairytaleKeyword> getKeywordsByType(KeywordType type) {

@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-// Google Gemini API로부터 받은 응답 JSON을 Java 객체로 파싱하기 위한 구조
+// Gemini API로부터 받은 응답 JSON을 Java 객체로 파싱하기 위한 구조
 @Getter
 @NoArgsConstructor
 public class GeminiResponse {

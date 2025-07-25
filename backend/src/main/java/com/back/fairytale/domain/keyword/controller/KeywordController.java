@@ -5,10 +5,7 @@ import com.back.fairytale.domain.keyword.enums.KeywordType;
 import com.back.fairytale.domain.keyword.service.KeywordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,4 +24,11 @@ public class KeywordController {
         }
         return ResponseEntity.ok(keywordService.getAllKeywords());
     }
+
+    // 단건(특정 키워드) 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<KeywordResponseDto> getKeyword(@PathVariable Long id) {
+        return ResponseEntity.ok(keywordService.getKeywordById(id));
+    }
+
 }

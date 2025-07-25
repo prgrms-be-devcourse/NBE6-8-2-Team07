@@ -2,6 +2,7 @@ package com.back.fairytale.external.ai.client;
 
 import com.back.fairytale.external.ai.dto.GeminiRequest;
 import com.back.fairytale.external.ai.dto.GeminiResponse;
+import com.back.fairytale.external.exception.GeminiApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,16 +46,17 @@ public class GeminiClient {
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 String generatedText = response.getBody().getGeneratedText();
-                log.info("Gemini API 응답 성공");
+                if (generatedText == null || generatedText.trim().isEmpty()) {
+                    throw new GeminiApiException("Gemini API에서 빈 응답을 받았습니다.");
+                }
                 return generatedText;
             } else {
-                log.error("Gemini API 응답 실패: {}", response.getStatusCode());
-                throw new RuntimeException("Gemini API 호출 실패");
+                throw new GeminiApiException("Gemini API 호출 실패: " + response.getStatusCode());
             }
 
         } catch (Exception e) {
             log.error("Gemini API 호출 중 오류 발생", e);
-            throw new RuntimeException("Gemini API 연결 실패: " + e.getMessage());
+            throw new GeminiApiException("Gemini API 연결 실패: " + e.getMessage());
         }
     }
 }

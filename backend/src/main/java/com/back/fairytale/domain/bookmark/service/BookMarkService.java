@@ -29,9 +29,9 @@ public class BookMarkService {
     private final FairytaleRepository fairytaleRepository;
 
     // 나중에 스트림으로 리펙토링
-    public List<BookMarkDto> getBookMark(CustomOAuth2User oAuth2User) {
+    public List<BookMarkDto> getBookMark(Long userId) {
 
-        List<BookMark> bookMarks = bookMarkRepository.findByUserId(oAuth2User.getId());
+        List<BookMark> bookMarks = bookMarkRepository.findByUserId(userId);
         List<BookMarkDto> bookMarkDtos = new ArrayList<>();
 
         for (BookMark bookMark : bookMarks) {
@@ -45,10 +45,10 @@ public class BookMarkService {
 
     // User 만 전달 했다면 코드가 save(user) 더 간결해질 수 있지만 Oauth2User로 사용하기 떄문에 findById를 사용해서 User를 가져와야 한다. 방법이 없을까?
     @Transactional
-    public BookMark addBookMark(BookMarkDto bookMarkDto) {
-        User user = userRepository.findById(bookMarkDto.getUserId())
+    public BookMark addBookMark(Long fairytaleId, Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
-        Fairytale fairytale = fairytaleRepository.findById(bookMarkDto.getFairytaleId())
+        Fairytale fairytale = fairytaleRepository.findById(fairytaleId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 동화를 찾을 수 없습니다."));
 
         Optional<BookMark> existBookMark = bookMarkRepository.findByUserIdAndFairytaleId(user.getId(), fairytale.getId());
@@ -64,12 +64,11 @@ public class BookMarkService {
     }
 
     @Transactional
-    public void removeBookMark(BookMarkDto bookMarkDto) {
-        User user = userRepository.findById(bookMarkDto.getUserId())
+    public void removeBookMark(Long userId, Long fairytaleId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을수 없습니다."));
-        Fairytale fairytale = fairytaleRepository.findById(bookMarkDto.getFairytaleId())
+        Fairytale fairytale = fairytaleRepository.findById(fairytaleId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 동화를 찾을 수 없습니다."));
-
         BookMark bookMark = bookMarkRepository.findByUserIdAndFairytaleId(user.getId(), fairytale.getId())
                 .orElseThrow(() -> new BookMarkNotFoundException("즐겨찾기에 없는 동화입니다."));
 

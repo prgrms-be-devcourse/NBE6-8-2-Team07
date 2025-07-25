@@ -42,4 +42,25 @@ public class FairytaleControllerTest {
 
         System.out.println("동화 생성 성공");
     }
+
+    @Test
+    @DisplayName("Validation 오류 테스트")
+    void t2() throws Exception {
+        // childName이 빈 값 (validation 실패)
+        String invalidRequest = """
+        {
+            "childName": "",
+            "childRole": "기사",
+            "characters": "공주",
+            "place": "성",
+            "lesson": "용기",
+            "mood": "모험"
+        }
+        """;
+
+        mockMvc.perform(post("/fairytales")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
+                .andExpect(status().isBadRequest());
+    }
 }

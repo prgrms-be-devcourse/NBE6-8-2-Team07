@@ -33,13 +33,4 @@ public class Keyword {
                 .keywordType(keywordType)
                 .build();
     }
-
-    // --- 수정용 Setter 메서드 ---
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public void setKeywordType(KeywordType keywordType) {
-        this.keywordType = keywordType;
-    }
 }
