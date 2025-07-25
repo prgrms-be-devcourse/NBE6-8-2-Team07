@@ -6,7 +6,6 @@ import com.back.fairytale.domain.user.enums.Role;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -14,7 +13,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.Map;
 
 @Service
@@ -28,15 +26,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         log.info("oAuth2User = {}", oAuth2User);
+
         Map<String, Object> attributes = oAuth2User.getAttributes();
         Map<String, Object> response = (Map<String, Object>)  attributes.get("response");
         log.info("oAuth2User.getAttributes() = {}", response);
 
         User user = saveOrUpdate(response);
-        return new CustomOAuth2User(user.getId(),
-                Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())),
-                response,
-                "id");
+        return new CustomOAuth2User(user.getId(), user.getSocialId(), user.getRole().getKey());
     }
 
     private User saveOrUpdate(Map<String, Object> response) {
