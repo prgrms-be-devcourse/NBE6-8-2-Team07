@@ -63,33 +63,44 @@ export default function FairytaleCreatePage() {
         <div className="flex-grow p-4">
           {currentSlide === slides.length - 1 ? (
             // Review Slide
-            <div>
-              <h2 className="text-3xl font-bold mb-2">{slides[currentSlide].title}</h2>
-              <p className="text-gray-500 mb-4 text-lg">{slides[currentSlide].content}</p>
-              <div className="mb-2">
-                {slides.slice(1, -1).map((slide, index) => (
-                  <div key={index} className="p-4">
-                    <h3 className="text-xl font-semibold mb-4 text-orange-500">{slide.title}</h3>
-                    {index === 0 && slide.name && (
-                      <>
-                        <span className="text-lg">이름 : </span>
-                        <div className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2">
-                          <span className="whitespace-nowrap">{slide.name}</span>
-                        </div>
-                      </>
-                    )}
-                    {slide.addedItems.length > 0 && (
-                      <div className="mt-2 flex items-center flex-wrap">
-                        {index === 0 && <span className="text-lg mr-2">역할 :</span>}
-                        {slide.addedItems.map((item, itemIndex) => (
-                          <div key={itemIndex} className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2">
-                            <span className="whitespace-nowrap">{item}</span>
+            <div className="flex flex-row space-x-4 h-full">
+              <div className="flex-1 flex flex-col items-center">
+                <div className="mb-4 w-150 h-150 flex items-center justify-center bg-orange-100 text-gray-500 relative">
+                  {slides[currentSlide].image ? (
+                    <img src={slides[currentSlide].image} alt="Slide Image" className="max-h-full max-w-full object-contain" />
+                  ) : (
+                    "이미지 삽입 공간"
+                  )}
+                </div>
+              </div>
+              <div className="flex-1 flex flex-col">
+                <h2 className="text-3xl font-bold mb-2">{slides[currentSlide].title}</h2>
+                <p className="text-gray-500 mb-4 text-lg">{slides[currentSlide].content}</p>
+                <div className="mb-2">
+                  {slides.slice(1, -1).map((slide, index) => (
+                    <div key={index} className="p-4">
+                      <h3 className="text-xl font-semibold mb-4 text-orange-500">{slide.title}</h3>
+                      {index === 0 && slide.name && (
+                        <>
+                          <span className="text-lg">이름 : </span>
+                          <div className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2">
+                            <span className="whitespace-nowrap">{slide.name}</span>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                        </>
+                      )}
+                      {slide.addedItems.length > 0 && (
+                        <div className="mt-2 flex items-center flex-wrap">
+                          {index === 0 && <span className="text-lg mr-2">역할 :</span>}
+                          {slide.addedItems.map((item, itemIndex) => (
+                            <div key={itemIndex} className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2">
+                              <span className="whitespace-nowrap">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           ) : (
