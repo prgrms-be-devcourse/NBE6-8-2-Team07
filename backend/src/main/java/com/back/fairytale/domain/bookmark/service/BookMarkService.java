@@ -9,9 +9,11 @@ import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.domain.bookmark.exception.BookMarkAlreadyExistsException;
 import com.back.fairytale.domain.bookmark.exception.BookMarkNotFoundException;
+import com.back.fairytale.global.security.CustomOAuth2User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,8 +29,8 @@ public class BookMarkService {
     private final FairytaleRepository fairytaleRepository;
 
     // 나중에 스트림으로 리펙토링
-    public List<BookMarkDto> getBookMark(@AuthenticationPrincipal User user) {
-        User foundUser = userRepository.findById(user.getId())
+    public List<BookMarkDto> getBookMark(CustomOAuth2User oAuth2User) {
+        User foundUser = userRepository.findById(oAuth2User.getId())
                 .orElseThrow(() -> new BookMarkNotFoundException("해당 유저를 찾을 수 없습니다."));
 
         List<BookMark> bookMarks = bookMarkRepository.findByUserId(foundUser.getId());
