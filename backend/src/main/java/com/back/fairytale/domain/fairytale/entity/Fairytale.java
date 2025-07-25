@@ -39,6 +39,7 @@ public class Fairytale {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "fairytale", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<FairytaleKeyword> fairytaleKeywords = new ArrayList<>();
 
     public void addKeyword(Keyword keyword) {

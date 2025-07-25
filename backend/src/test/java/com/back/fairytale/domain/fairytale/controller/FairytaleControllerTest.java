@@ -1,8 +1,5 @@
 package com.back.fairytale.domain.fairytale.controller;
 
-import com.back.fairytale.domain.fairytale.repository.FairytaleRepository;
-import com.back.fairytale.domain.user.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FairytaleControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private FairytaleRepository fairytaleRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("Gemini API를 통한 동화 생성 - 실제 API 호출")
