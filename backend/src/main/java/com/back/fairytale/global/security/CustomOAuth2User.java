@@ -13,4 +13,9 @@ public class CustomOAuth2User extends DefaultOAuth2User {
         super(authorities, attributes, nameAttributeKey);
         this.id = id;
     }
+
+    public Long getId() {
+        return id;
+    }
+
 }
