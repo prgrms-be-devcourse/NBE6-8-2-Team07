@@ -43,12 +43,12 @@ public class LikeService {
     }
 
     @Transactional
-    public Like addLike(LikeDto likeDto) {
+    public Like addLike(Long userId, Long fairytaleId) {
 
-        User user = userRepository.findById(likeDto.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
 
-        Fairytale fairytale = fairytaleRepository.findById(likeDto.getFairytaleId())
+        Fairytale fairytale = fairytaleRepository.findById(fairytaleId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 동화를 찾을 수 없습니다."));
 
         Optional<Like> existLike = likeRepository.findByUserIdAndFairytaleId(user.getId(), fairytale.getId());
@@ -65,10 +65,10 @@ public class LikeService {
     }
 
     @Transactional
-    public void removeLike(LikeDto likeDto) {
-        User user = userRepository.findById(likeDto.getUserId())
+    public void removeLike(Long userId, Long fairytaleId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
-        Fairytale fairytale = fairytaleRepository.findById(likeDto.getFairytaleId())
+        Fairytale fairytale = fairytaleRepository.findById(fairytaleId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 동화를 찾을 수 없습니다."));
 
         Like like = likeRepository.findByUserIdAndFairytaleId(user.getId(), fairytale.getId())
