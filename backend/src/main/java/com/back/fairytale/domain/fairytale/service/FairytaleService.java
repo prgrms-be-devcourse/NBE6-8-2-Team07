@@ -4,7 +4,13 @@ import com.back.fairytale.domain.fairytale.dto.FairytaleCreateRequest;
 import com.back.fairytale.domain.fairytale.dto.FairytaleResponse;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
 import com.back.fairytale.domain.fairytale.repository.FairytaleRepository;
+import com.back.fairytale.domain.keyword.entity.Keyword;
+import com.back.fairytale.domain.keyword.enums.KeywordType;
+import com.back.fairytale.domain.keyword.repository.KeywordRepository;
 import com.back.fairytale.domain.user.entity.User;
+import com.back.fairytale.domain.user.enums.IsDeleted;
+import com.back.fairytale.domain.user.enums.Role;
+import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.external.ai.client.GeminiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class FairytaleService {
 
     private final FairytaleRepository fairytaleRepository;
+    private final KeywordRepository keywordRepository;
+    private final UserRepository userRepository;
     private final GeminiClient geminiClient;
 
-    public FairytaleResponse createFairytale(FairytaleCreateRequest request) {
+    public FairytaleResponse createFairytale(FairytaleCreateRequest request, Long userId) {
         // 프롬프트 생성
         String prompt = buildPrompt(request);
 
@@ -32,31 +40,73 @@ public class FairytaleService {
         String title = titleAndContent[0];
         String content = titleAndContent[1];
 
-        // User 엔티티 조회 (또는 임시로 User 객체 생성)
-        // 실제로는 UserRepository에서 조회
-        // Authentication authentication User user = (User) authentication.getPrincipal(); String userId = user.getUserId(); 이렇게 할 계획
-        User user = User.builder()
-                .id(request.userId())
-                .build(); // 임시 User 객체 생성
+        // 원래코드
+        //User user = userRepository.findById(userId)
+        //        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // test 용도 코드
+        User user = userRepository.findById(userId)
+                .orElseGet(() -> {
+                    // 없으면 테스트용 User 생성
+                    User newUser = User.builder()
+                            .socialId("test_" + userId)
+                            .name("테스트사용자")
+                            .nickname("테스트")
+                            .email("test@test.com")
+                            .role(Role.USER)
+                            .isDeleted(IsDeleted.NOT_DELETED)
+                            .build();
+                    return userRepository.save(newUser);
+                });
 
         // 동화 저장
         Fairytale fairytale = Fairytale.builder()
-                .user(user) // userId 대신 User 객체 전달
+                .user(user)
                 .title(title)
                 .content(content)
-                .childName(request.childName())
-                .childRole(request.childRole())
-                .characters(request.characters())
-                .place(request.place())
-                .lesson(request.lesson())
-                .mood(request.mood())
                 .build();
 
         Fairytale savedFairytale = fairytaleRepository.save(fairytale);
 
-        log.info("동화 생성 완료 - ID: {}, 제목: {}", savedFairytale.getId(), title);
+        // 키워드 저장
+        saveKeyword(savedFairytale, request.childName(), KeywordType.아이이름);
+        saveKeyword(savedFairytale, request.childRole(), KeywordType.아이역할);
+        saveKeywords(savedFairytale, request.characters(), KeywordType.캐릭터들);
+        saveKeywords(savedFairytale, request.place(), KeywordType.장소);
+        saveKeywords(savedFairytale, request.lesson(), KeywordType.교훈);
+        saveKeywords(savedFairytale, request.mood(), KeywordType.분위기);
+
+        log.info("동화 생성 완료 - ID: {}, 제목: {}, 사용자: {}", savedFairytale.getId(), title, user.getName());
 
         return FairytaleResponse.from(savedFairytale);
+    }
+
+    // 단일 키워드 저장
+    private void saveKeyword(Fairytale fairytale, String keywordValue, KeywordType type) {
+        if (keywordValue != null && !keywordValue.trim().isEmpty()) {
+            Keyword keyword = keywordRepository.findByKeywordAndKeywordType(keywordValue.trim(), type)
+                    .orElseGet(() -> keywordRepository.save(
+                            Keyword.of(keywordValue.trim(), type)));
+
+            fairytale.addKeyword(keyword);
+        }
+    }
+
+    // 다중 키워드 저장
+    private void saveKeywords(Fairytale fairytale, String input, KeywordType type) {
+        if (input != null && !input.trim().isEmpty()) {
+            String[] keywords = input.split(",");
+            for (String keywordValue : keywords) {
+                String trimmedKeyword = keywordValue.trim();
+                if (!trimmedKeyword.isEmpty()) {
+                    Keyword keyword = keywordRepository.findByKeywordAndKeywordType(trimmedKeyword, type)
+                            .orElseGet(() -> keywordRepository.save(
+                                    Keyword.of(trimmedKeyword, type)));
+
+                    fairytale.addKeyword(keyword);
+                }
+            }
+        }
     }
 
     private String buildPrompt(FairytaleCreateRequest request) {

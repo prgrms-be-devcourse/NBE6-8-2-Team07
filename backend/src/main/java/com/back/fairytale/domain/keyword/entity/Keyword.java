@@ -30,4 +30,13 @@ public class Keyword {
     private KeywordType keywordType;
 
     private int count;
+
+
+
+    public static Keyword of(String keyword, KeywordType keywordType) {
+        return Keyword.builder()
+                .keyword(keyword.trim())
+                .keywordType(keywordType)
+                .build();
+    }
 }
