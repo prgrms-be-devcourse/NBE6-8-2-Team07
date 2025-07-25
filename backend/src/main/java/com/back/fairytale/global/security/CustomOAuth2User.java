@@ -17,5 +17,4 @@ public class CustomOAuth2User extends DefaultOAuth2User {
     public Long getId() {
         return id;
     }
-
 }
