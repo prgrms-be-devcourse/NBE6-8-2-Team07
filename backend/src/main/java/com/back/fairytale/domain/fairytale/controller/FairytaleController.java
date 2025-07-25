@@ -25,11 +25,10 @@ public class FairytaleController {
             @Valid @RequestBody FairytaleCreateRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
-        // 원래 코드
-        // CustomOAuth2User에서 기본키 id 추출
+        // 원래 코드 -> CustomOAuth2User에서 기본키 id 추출
         //Long userId = customOAuth2User.getId();
 
-        //test 용도 코드
+        //test 용도 데이터
         Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
 
         FairytaleResponse response = fairytaleService.createFairytale(request, userId);

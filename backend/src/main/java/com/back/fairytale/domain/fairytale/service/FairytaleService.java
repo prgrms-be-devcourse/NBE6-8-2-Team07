@@ -44,7 +44,7 @@ public class FairytaleService {
         //User user = userRepository.findById(userId)
         //        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        // test 용도 코드
+        // test 용도 데이터
         User user = userRepository.findById(userId)
                 .orElseGet(() -> {
                     // 없으면 테스트용 User 생성

@@ -23,8 +23,7 @@ public class FairytaleControllerTest {
 
     @Test
     @DisplayName("Gemini API를 통한 동화 생성 - 실제 API 호출")
-    void createFairytale_WithRealGeminiAPI() throws Exception {
-        // given
+    void t1() throws Exception {
         String requestJson = """
             {
                 "childName": "지민",
@@ -36,13 +35,11 @@ public class FairytaleControllerTest {
             }
             """;
 
-        // when
         mockMvc.perform(post("/fairytales")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk());
 
-        // then
-        System.out.println("✅ 테스트 통과!");
+        System.out.println("동화 생성 성공");
     }
 }
