@@ -69,7 +69,7 @@ export default function RootLayout({
       </body>
       <footer className="bg-[#FFD6A5]">
         <div>
-          푸터 <br/>
+           <br/>
            <br/>
            <br/>
            <br/>
