@@ -1,6 +1,7 @@
 package com.back.fairytale.domain.keyword.service;
 
 import com.back.fairytale.domain.keyword.dto.KeywordResponseDto;
+import com.back.fairytale.domain.keyword.entity.Keyword;
 import com.back.fairytale.domain.keyword.enums.KeywordType;
 import com.back.fairytale.domain.keyword.repository.KeywordRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,12 @@ public class KeywordService {
         return keywordRepository.findByKeywordType(keywordType).stream()
                 .map(KeywordResponseDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+    // 단건(특정 키워드) 조회
+    @Transactional(readOnly = true)
+    public KeywordResponseDto getKeywordById(Long id) {
+        Keyword keyword = keywordRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("키워드가 존재하지 않습니다."));
+        return KeywordResponseDto.fromEntity(keyword);
     }
 }

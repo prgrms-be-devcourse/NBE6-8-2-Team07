@@ -34,4 +34,27 @@ public class KeywordControllerTest {
 
         System.out.println("키워드 전체 조회 성공");
     }
+    @Autowired
+    private com.back.fairytale.domain.keyword.repository.KeywordRepository keywordRepository;
+
+    @Test
+    @DisplayName("키워드 단건(특정) 조회 API - 성공")
+    void getKeywordById() throws Exception {
+        //테스트용 키워드 저장
+        com.back.fairytale.domain.keyword.entity.Keyword keyword = keywordRepository.save(
+                com.back.fairytale.domain.keyword.entity.Keyword.builder()
+                        .keyword("공주")
+                        .keywordType(com.back.fairytale.domain.keyword.enums.KeywordType.캐릭터들)
+                        .usageCount(5)
+                        .build()
+        );
+
+        //저장한 키워드의 id로 조회
+        mockMvc.perform(get("/api/keywords/" + keyword.getKeywordId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        System.out.println("키워드 단건 조회 성공");
+    }
 }
