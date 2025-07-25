@@ -17,21 +17,29 @@ public class Keyword {
     @Column(name = "keyword_id")
     private Long keywordId;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(nullable = false, length = 50)
     private String keyword;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private KeywordType keywordType;
 
-    private int count;
-
-
+    @Column(name = "usage_count", nullable = false)
+    private int usageCount;
 
     public static Keyword of(String keyword, KeywordType keywordType) {
         return Keyword.builder()
                 .keyword(keyword.trim())
                 .keywordType(keywordType)
                 .build();
+    }
+
+    // --- 수정용 Setter 메서드 ---
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public void setKeywordType(KeywordType keywordType) {
+        this.keywordType = keywordType;
     }
 }
