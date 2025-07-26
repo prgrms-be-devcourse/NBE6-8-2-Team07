@@ -28,21 +28,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = getTokenFromCookies(request);
+        String accessToken = getAccessTokenFromCookies(request);
 
-        if (token == null) {
+        if (accessToken == null) {
             log.info("요청에 JWT 토큰이 없습니다.");
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (!jwtUtil.validateToken(token)) {
+        if (!jwtUtil.validateToken(accessToken)) {
             log.info("JWT 토큰이 유효하지 않습니다.");
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        Long id = jwtUtil.getUserId(token);
+        Long id = jwtUtil.getUserId(accessToken);
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             log.warn("사용자를 찾을 수 없습니다. ID: {}", id);
@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private static String getTokenFromCookies(HttpServletRequest request) {
+    private static String getAccessTokenFromCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         String token = null;
         if (cookies != null) {
