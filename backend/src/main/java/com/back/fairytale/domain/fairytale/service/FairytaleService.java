@@ -1,8 +1,10 @@
 package com.back.fairytale.domain.fairytale.service;
 
 import com.back.fairytale.domain.fairytale.dto.FairytaleCreateRequest;
+import com.back.fairytale.domain.fairytale.dto.FairytaleListResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleResponse;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
+import com.back.fairytale.domain.fairytale.exception.FairytaleNotFoundException;
 import com.back.fairytale.domain.fairytale.repository.FairytaleRepository;
 import com.back.fairytale.domain.keyword.entity.Keyword;
 import com.back.fairytale.domain.keyword.enums.KeywordType;
@@ -17,6 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -28,6 +33,23 @@ public class FairytaleService {
     private final UserRepository userRepository;
     private final GeminiClient geminiClient;
 
+    // 동화 전체 조회
+    @Transactional(readOnly = true)
+    public List<FairytaleListResponse> getAllFairytales() {
+        List<Fairytale> fairytales = fairytaleRepository.findAllByOrderByCreatedAtDesc();
+
+        if (fairytales.isEmpty()) {
+            throw new FairytaleNotFoundException("등록된 동화가 없습니다.");
+        }
+
+        log.info("동화 전체 조회 - 총 {}개의 동화를 조회했습니다.", fairytales.size());
+
+        return fairytales.stream()
+                .map(FairytaleListResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    // 동화 생성
     public FairytaleResponse createFairytale(FairytaleCreateRequest request, Long userId) {
         // 프롬프트 생성
         String prompt = buildPrompt(request);
