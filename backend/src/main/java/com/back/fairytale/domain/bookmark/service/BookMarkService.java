@@ -36,7 +36,6 @@ public class BookMarkService {
 
         for (BookMark bookMark : bookMarks) {
             bookMarkDtos.add(BookMarkDto.builder()
-                    .userId(bookMark.getUser().getId())
                     .fairytaleId(bookMark.getFairytale().getId())
                     .build());
         }
@@ -73,5 +72,10 @@ public class BookMarkService {
                 .orElseThrow(() -> new BookMarkNotFoundException("즐겨찾기에 없는 동화입니다."));
 
         bookMarkRepository.deleteById(bookMark.getId());
+    }
+
+    // 해당 사용자가 즐겨찾기한 동화인지 확인하는 메서드
+    public boolean isBookmarked(Long userId, Long fairytableId) {
+        return bookMarkRepository.findByUserIdAndFairytaleId(userId, fairytableId).isPresent();
     }
 }
