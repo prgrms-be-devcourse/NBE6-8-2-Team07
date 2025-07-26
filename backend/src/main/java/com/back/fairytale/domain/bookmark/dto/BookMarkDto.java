@@ -10,8 +10,6 @@ import lombok.*;
 public class BookMarkDto {
 
     @NotNull
-    private Long userId;
-
-    @NotNull
     private Long fairytaleId;
+
 }
