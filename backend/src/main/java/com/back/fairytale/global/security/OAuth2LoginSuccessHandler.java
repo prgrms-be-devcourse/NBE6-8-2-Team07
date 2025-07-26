@@ -33,14 +33,16 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String role = authentication.getAuthorities().iterator().next().getAuthority();
         log.info("OAuth2 Role {}", role);
 
-        String token = jwtUtil.createJwt(userId, role, 10 * 60 * 1000L); // 유효기간 10분
-        response.addCookie(createCookie(token));
+        String accessToken = jwtUtil.createJwt(userId, role, 10 * 60 * 1000L, "access"); // 유효기간 10분
+        String refreshToken = jwtUtil.createJwt(userId, role, 24 * 60 * 60 * 1000L, "refresh"); // 유효기간 24시간
+        response.addCookie(createCookie(accessToken, "Authorization", 10 * 60));
+        response.addCookie(createCookie(refreshToken, "refresh", 24 * 60 * 60));
         response.sendRedirect("http://localhost:3000/");
     }
 
-    private Cookie createCookie(String token) {
-        Cookie cookie = new Cookie("Authorization", token);
-        cookie.setMaxAge(10 * 60);
+    private Cookie createCookie(String token, String key, int expiry) {
+        Cookie cookie = new Cookie(key, token);
+        cookie.setMaxAge(expiry);
 //        cookie.setSecure(true); // HTTPS 환경에서만 쿠키 전송
         cookie.setPath("/");
         cookie.setHttpOnly(true);
