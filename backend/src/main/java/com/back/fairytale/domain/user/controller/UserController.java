@@ -1,9 +1,6 @@
 package com.back.fairytale.domain.user.controller;
 
 import com.back.fairytale.domain.user.service.AuthService;
-import com.back.fairytale.global.security.JWTUtil;
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
