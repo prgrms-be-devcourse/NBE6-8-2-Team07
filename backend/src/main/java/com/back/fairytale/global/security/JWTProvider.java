@@ -39,20 +39,6 @@ public class JWTProvider {
         return createCookie(token, REFRESH_TOKEN_NAME, REFRESH_TOKEN_COOKIE_MAX_AGE);
     }
 
-    public String reissueAccessToken(String refreshToken) {
-        validateRefreshToken(refreshToken);
-        Long userId = jwtUtil.getUserId(refreshToken);
-        String role = jwtUtil.getRole(refreshToken);
-        return jwtUtil.createJwt(userId, role, ACCESS_TOKEN_EXPIRATION_MS, ACCESS_TOKEN_NAME);
-    }
-
-    public String reissueRefreshToken(String refreshToken) {
-        validateRefreshToken(refreshToken);
-        Long userId = jwtUtil.getUserId(refreshToken);
-        String role = jwtUtil.getRole(refreshToken);
-        return jwtUtil.createJwt(userId, role, REFRESH_TOKEN_EXPIRATION_MS, REFRESH_TOKEN_NAME);
-    }
-
     public String extractRefreshToken(Cookie[] cookies) {
         return Arrays.stream(cookies)
                 .filter(cookie -> REFRESH_TOKEN_NAME.equals(cookie.getName()))
@@ -61,13 +47,24 @@ public class JWTProvider {
                 .orElse(null);
     }
 
-    private void validateRefreshToken(String refreshToken) {
+    public String createAccessToken(Long userId, String role) {
+        return jwtUtil.createJwt(userId, role, ACCESS_TOKEN_EXPIRATION_MS, ACCESS_TOKEN_NAME);
+    }
+
+    public String createRefreshToken(Long userId, String role) {
+        return jwtUtil.createJwt(userId, role, REFRESH_TOKEN_EXPIRATION_MS, REFRESH_TOKEN_NAME);
+    }
+
+    public Long getUserIdFromRefreshToken(String refreshToken) {
+        validateRefreshToken(refreshToken);
+        return jwtUtil.getUserId(refreshToken);
+    }
+
+    public boolean validateRefreshToken(String refreshToken) {
         if (refreshToken == null) {
-            throw new IllegalArgumentException("refresh token이 존재하지 않습니다.");
+            return false;
         }
-        if (!jwtUtil.validateToken(refreshToken) || !"refresh".equals(jwtUtil.getCategory(refreshToken))) {
-            throw new IllegalArgumentException("refresh token이 유효하지 않습니다.");
-        }
+        return jwtUtil.validateToken(refreshToken) && "refresh".equals(jwtUtil.getCategory(refreshToken));
     }
 
     private Cookie createCookie(String token, String name, int maxAge) {
