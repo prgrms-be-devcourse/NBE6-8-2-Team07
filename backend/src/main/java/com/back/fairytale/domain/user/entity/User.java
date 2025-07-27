@@ -41,7 +41,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String socialId;
 
-    @Column(unique = true)
+    @Column(unique = true, columnDefinition = "TEXT")
     @Setter
     private String refreshToken;
 
