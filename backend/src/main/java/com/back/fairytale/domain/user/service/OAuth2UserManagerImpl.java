@@ -4,6 +4,7 @@ import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.enums.IsDeleted;
 import com.back.fairytale.domain.user.enums.Role;
 import com.back.fairytale.domain.user.repository.UserRepository;
+import com.back.fairytale.global.security.JWTProvider;
 import com.back.fairytale.global.security.OAuth2UserInfo;
 import com.back.fairytale.global.security.OAuth2UserManager;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,10 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class OAuth2UserManagerImpl implements OAuth2UserManager {
     private final UserRepository userRepository;
+    private final JWTProvider jwtProvider;
 
     @Override
     public OAuth2UserInfo saveOrUpdateUser(Map<String, Object> response) {
@@ -28,6 +30,9 @@ public class OAuth2UserManagerImpl implements OAuth2UserManager {
                 .orElse(createUser(response));
 
         User savedUser = userRepository.save(user);
+
+        String newRefreshToken = jwtProvider.createRefreshToken(savedUser.getId(), savedUser.getRole().getKey());
+        savedUser.setRefreshToken(newRefreshToken);
 
         return OAuth2UserInfo.builder()
                 .id(savedUser.getId())
