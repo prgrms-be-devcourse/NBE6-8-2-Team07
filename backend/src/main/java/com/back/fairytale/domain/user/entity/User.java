@@ -41,6 +41,10 @@ public class User {
     @Column(unique = true, nullable = false)
     private String socialId;
 
+    @Column(unique = true)
+    @Setter
+    private String refreshToken;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Fairytale> fairytales = new ArrayList<>();
 
