@@ -14,15 +14,23 @@ public class AuthService {
 
     private final JWTProvider jwtProvider;
 
+    public String getRefreshTokenFromCookies(Cookie[] cookies) {
+        return jwtProvider.extractRefreshToken(cookies);
+    }
+
     public String reissueAccessToken(String refreshToken) {
         return jwtProvider.reissueAccessToken(refreshToken);
+    }
+
+    public String reissueRefreshToken(String refreshToken) {
+        return jwtProvider.reissueRefreshToken(refreshToken);
     }
 
     public Cookie createAccessTokenCookie(String token) {
         return jwtProvider.wrapAccessTokenToCookie(token);
     }
 
-    public String getRefreshTokenFromCookies(Cookie[] cookies) {
-        return jwtProvider.extractRefreshToken(cookies);
+    public Cookie createRefreshTokenCookie(String refreshToken) {
+        return jwtProvider.wrapRefreshTokenToCookie(refreshToken);
     }
 }

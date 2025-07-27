@@ -24,9 +24,12 @@ public class UserController {
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         try {
             String refreshToken = authService.getRefreshTokenFromCookies(request.getCookies());
+
             String newAccessToken = authService.reissueAccessToken(refreshToken);
+            String newRefreshToken = authService.reissueRefreshToken(refreshToken);
 
             response.addCookie(authService.createAccessTokenCookie(newAccessToken));
+            response.addCookie(authService.createRefreshTokenCookie(newRefreshToken));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.warn("Refresh token invalid: {}", e.getMessage());

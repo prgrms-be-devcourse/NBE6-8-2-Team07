@@ -35,11 +35,22 @@ public class JWTProvider {
         return createCookie(token, ACCESS_TOKEN_NAME, ACCESS_TOKEN_COOKIE_MAX_AGE);
     }
 
+    public Cookie wrapRefreshTokenToCookie(String token) {
+        return createCookie(token, REFRESH_TOKEN_NAME, REFRESH_TOKEN_COOKIE_MAX_AGE);
+    }
+
     public String reissueAccessToken(String refreshToken) {
         validateRefreshToken(refreshToken);
         Long userId = jwtUtil.getUserId(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
         return jwtUtil.createJwt(userId, role, ACCESS_TOKEN_EXPIRATION_MS, ACCESS_TOKEN_NAME);
+    }
+
+    public String reissueRefreshToken(String refreshToken) {
+        validateRefreshToken(refreshToken);
+        Long userId = jwtUtil.getUserId(refreshToken);
+        String role = jwtUtil.getRole(refreshToken);
+        return jwtUtil.createJwt(userId, role, REFRESH_TOKEN_EXPIRATION_MS, REFRESH_TOKEN_NAME);
     }
 
     public String extractRefreshToken(Cookie[] cookies) {
@@ -63,6 +74,7 @@ public class JWTProvider {
         Cookie cookie = new Cookie(name, token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
+//        cookie.setSecure(true);
         cookie.setMaxAge(maxAge);
         return cookie;
     }
