@@ -29,10 +29,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/**").permitAll() //todo 토큰 검증 구현 이후 변경
+                        .requestMatchers("/**", "/reissue").permitAll() //todo 토큰 검증 구현 이후 변경
                         .anyRequest().authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable) //fixme jwt를 쿠키로 사용할 예정이라 확인이 필요할 듯함
+                .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement((session) -> session
