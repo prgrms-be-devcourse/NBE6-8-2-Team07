@@ -30,5 +30,4 @@ public class KeywordController {
     public ResponseEntity<KeywordResponseDto> getKeyword(@PathVariable Long id) {
         return ResponseEntity.ok(keywordService.getKeywordById(id));
     }
-
 }
