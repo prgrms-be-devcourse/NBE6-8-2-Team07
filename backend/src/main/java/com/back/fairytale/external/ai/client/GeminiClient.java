@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class GeminiClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            String urlWithKey = apiUrl + "?key=" + apiKey; // 수정
+            String urlWithKey = buildApiUrl();
 
             HttpEntity<GeminiRequest> entity = new HttpEntity<>(request, headers); // 요청 데이터 + 헤더
 
@@ -58,5 +59,12 @@ public class GeminiClient {
             log.error("Gemini API 호출 중 오류 발생", e);
             throw new GeminiApiException("Gemini API 연결 실패: " + e.getMessage());
         }
+    }
+
+    // UriComponentsBuilder로 URL 생성
+    private String buildApiUrl() {
+        return UriComponentsBuilder.fromHttpUrl(apiUrl)
+                .queryParam("key", apiKey)
+                .toUriString();
     }
 }

@@ -53,12 +53,22 @@ public class FairytaleService {
     // 동화 상세 조회
     @Transactional(readOnly = true)
     public FairytaleDetailResponse getFairytaleByIdAndUserId(Long fairytaleId, Long userId) {
-        Fairytale fairytale = fairytaleRepository.findByIdAndUserId(fairytaleId, userId)
+        Fairytale fairytale = fairytaleRepository.findByIdAndUserIdWithKeywordsFetch(fairytaleId, userId)
                 .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 접근 권한이 없습니다. ID: " + fairytaleId));
 
         log.info("동화 상세 조회 - ID: {}, 제목: {}", fairytale.getId(), fairytale.getTitle());
 
         return FairytaleDetailResponse.from(fairytale);
+    }
+
+    // 동화 삭제
+    public void deleteFairytaleByIdAndUserId(Long fairytaleId, Long userId) {
+        Fairytale fairytale = fairytaleRepository.findByIdAndUserIdWithKeywordsFetch(fairytaleId, userId)
+                .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 삭제 권한이 없습니다. ID: " + fairytaleId));
+
+        fairytaleRepository.delete(fairytale);
+
+        log.info("동화 삭제 완료 - ID: {}", fairytaleId);
     }
 
     // 동화 생성
@@ -175,15 +185,5 @@ public class FairytaleService {
         }
 
         return new String[]{title, content};
-    }
-
-    // 동화 삭제
-    public void deleteFairytaleByIdAndUserId(Long fairytaleId, Long userId) {
-        Fairytale fairytale = fairytaleRepository.findByIdAndUserId(fairytaleId, userId)
-                .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 삭제 권한이 없습니다. ID: " + fairytaleId));
-
-        fairytaleRepository.delete(fairytale);
-
-        log.info("동화 삭제 완료 - ID: {}", fairytaleId);
     }
 }
