@@ -1,5 +1,6 @@
 package com.back.fairytale.domain.fairytale.controller;
 
+import com.back.fairytale.domain.fairytale.dto.FairytaleDetailResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleListResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleResponse;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
@@ -144,7 +145,7 @@ public class FairytaleControllerTest {
         assertThat(responseList.get(0).title()).isNotNull();
         assertThat(responseList.get(0).createdAt()).isNotNull();
 
-        System.out.println("동화 전체 리스트 조회 성공");
+        System.out.println("사용자별 동화 전체 리스트 조회 성공");
     }
 
     @Test
@@ -287,5 +288,54 @@ public class FairytaleControllerTest {
                 .filter(k -> k.getKeyword().equals("공주") && k.getKeywordType() == KeywordType.캐릭터들)
                 .count();
         assertThat(countKeyword2).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("사용자별 동화 상세 조회 - 성공")
+    void t7() throws Exception {
+        String requestJson = """
+        {
+            "childName": "하늘",
+            "childRole": "마법사",
+            "characters": "용, 요정",
+            "place": "마법의 숲",
+            "lesson": "용기",
+            "mood": "환상적인"
+        }
+        """;
+
+        MvcResult createResult = mockMvc.perform(post("/fairytales")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andReturn();
+
+        assertThat(createResult.getResponse().getStatus()).isEqualTo(200);
+
+        String createResponseBody = createResult.getResponse().getContentAsString();
+        FairytaleResponse createResponse = objectMapper.readValue(createResponseBody, FairytaleResponse.class);
+        Long fairytaleId = createResponse.id();
+
+        MvcResult detailResult = mockMvc.perform(get("/fairytales/" + fairytaleId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andReturn();
+
+        assertThat(detailResult.getResponse().getStatus()).isEqualTo(200);
+
+        String detailResponseBody = detailResult.getResponse().getContentAsString();
+        FairytaleDetailResponse detailResponse = objectMapper.readValue(detailResponseBody, FairytaleDetailResponse.class);
+
+        assertThat(detailResponse.id()).isEqualTo(fairytaleId);
+        assertThat(detailResponse.title()).isNotNull();
+        assertThat(detailResponse.content()).isNotNull();
+        assertThat(detailResponse.childName()).isEqualTo("하늘");
+        assertThat(detailResponse.childRole()).isEqualTo("마법사");
+        assertThat(detailResponse.characters()).contains("용", "요정");
+        assertThat(detailResponse.place()).isEqualTo("마법의 숲");
+        assertThat(detailResponse.lesson()).isEqualTo("용기");
+        assertThat(detailResponse.mood()).isEqualTo("환상적인");
+        assertThat(detailResponse.createdAt()).isNotNull();
+
+        System.out.println("사용자별 동화 상세 조회 성공");
     }
 }
