@@ -6,85 +6,118 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+
 @Component
 @RequiredArgsConstructor
 public class JWTProvider {
 
     private final JWTUtil jwtUtil;
 
-    private static final Long ACCESS_TOKEN_EXPIRATION_MS = 10 * 60 * 1000L;
-    private static final Long REFRESH_TOKEN_EXPIRATION_MS = 24 * 60 * 60 * 1000L;
+    public enum TokenType {
+        ACCESS("Authorization", 10 * 60 * 1000L, 600),
+        REFRESH("refresh", 24 * 60 * 60 * 1000L, 86400);
 
-    private static final int ACCESS_TOKEN_COOKIE_MAX_AGE = 600;
-    private static final int REFRESH_TOKEN_COOKIE_MAX_AGE = 86400;
+        private final String name;
+        private final Long expirationMs;
+        private final int cookieMaxAge;
 
-    private static final String ACCESS_TOKEN_NAME = "Authorization";
-    private static final String REFRESH_TOKEN_NAME = "refresh";
+        TokenType(String name, Long expirationMs, int cookieMaxAge) {
+            this.name = name;
+            this.expirationMs = expirationMs;
+            this.cookieMaxAge = cookieMaxAge;
+        }
+
+        public String getName() { return name; }
+        public Long getExpirationMs() { return expirationMs; }
+        public int getCookieMaxAge() { return cookieMaxAge; }
+    }
 
     public Cookie createAccessTokenCookie(Long userId, String role) {
-        String token = jwtUtil.createJwt(userId, role, ACCESS_TOKEN_EXPIRATION_MS, ACCESS_TOKEN_NAME);
-        return createCookie(token, ACCESS_TOKEN_NAME, ACCESS_TOKEN_COOKIE_MAX_AGE);
+        return createTokenCookie(userId, role, TokenType.ACCESS);
     }
 
     public Cookie createRefreshTokenCookie(Long userId, String role) {
-        String token = jwtUtil.createJwt(userId, role, REFRESH_TOKEN_EXPIRATION_MS, REFRESH_TOKEN_NAME);
-        return createCookie(token, REFRESH_TOKEN_NAME, REFRESH_TOKEN_COOKIE_MAX_AGE);
+        return createTokenCookie(userId, role, TokenType.REFRESH);
+    }
+
+    public String createAccessToken(Long userId, String role) {
+        return createToken(userId, role, TokenType.ACCESS);
+    }
+
+    public String createRefreshToken(Long userId, String role) {
+        return createToken(userId, role, TokenType.REFRESH);
+    }
+
+    public Cookie wrapTokenToCookie(String token, TokenType tokenType) {
+        return createCookie(token, tokenType.getName(), tokenType.getCookieMaxAge());
     }
 
     public Cookie wrapAccessTokenToCookie(String token) {
-        return createCookie(token, ACCESS_TOKEN_NAME, ACCESS_TOKEN_COOKIE_MAX_AGE);
+        return wrapTokenToCookie(token, TokenType.ACCESS);
     }
 
     public Cookie wrapRefreshTokenToCookie(String token) {
-        return createCookie(token, REFRESH_TOKEN_NAME, REFRESH_TOKEN_COOKIE_MAX_AGE);
+        return wrapTokenToCookie(token, TokenType.REFRESH);
     }
 
-    public String extractRefreshToken(Cookie[] cookies) {
+    public String extractTokenFromCookies(Cookie[] cookies, TokenType tokenType) {
+        if (cookies == null) return null;
         return Arrays.stream(cookies)
-                .filter(cookie -> REFRESH_TOKEN_NAME.equals(cookie.getName()))
+                .filter(cookie -> tokenType.getName().equals(cookie.getName()))
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElse(null);
     }
 
-    public String createAccessToken(Long userId, String role) {
-        return jwtUtil.createJwt(userId, role, ACCESS_TOKEN_EXPIRATION_MS, ACCESS_TOKEN_NAME);
-    }
-
-    public String createRefreshToken(Long userId, String role) {
-        return jwtUtil.createJwt(userId, role, REFRESH_TOKEN_EXPIRATION_MS, REFRESH_TOKEN_NAME);
-    }
-
-    public Long getUserIdFromRefreshToken(String refreshToken) {
-        validateRefreshToken(refreshToken);
-        return jwtUtil.getUserId(refreshToken);
-    }
-
-    public Long getUserIdFromAccessToken(String accessToken) {
-        validateAccessToken(accessToken);
-        return jwtUtil.getUserId(accessToken);
+    public String extractRefreshToken(Cookie[] cookies) {
+        return extractTokenFromCookies(cookies, TokenType.REFRESH);
     }
 
     public boolean validateAccessToken(String accessToken) {
-        if (accessToken == null) {
-            return false;
-        }
-        return jwtUtil.validateToken(accessToken) && "Authorization".equals(jwtUtil.getCategory(accessToken));
+        return validateToken(accessToken, TokenType.ACCESS);
     }
 
     public boolean validateRefreshToken(String refreshToken) {
-        if (refreshToken == null) {
-            return false;
-        }
-        return jwtUtil.validateToken(refreshToken) && "refresh".equals(jwtUtil.getCategory(refreshToken));
+        return validateToken(refreshToken, TokenType.REFRESH);
+    }
+
+    public Long getUserIdFromAccessToken(String accessToken) {
+        return getUserIdFromToken(accessToken, TokenType.ACCESS);
+    }
+
+    public Long getUserIdFromRefreshToken(String refreshToken) {
+        return getUserIdFromToken(refreshToken, TokenType.REFRESH);
     }
 
     public Cookie createCookie(String token, String name, int maxAge) {
         Cookie cookie = new Cookie(name, token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-//        cookie.setSecure(true);
+        // cookie.setSecure(true);
         cookie.setMaxAge(maxAge);
         return cookie;
+    }
+
+    private boolean validateToken(String token, TokenType tokenType) {
+        if (token == null) {
+            return false;
+        }
+        return jwtUtil.validateToken(token) && tokenType.getName().equals(jwtUtil.getCategory(token));
+    }
+
+    private Long getUserIdFromToken(String token, TokenType tokenType) {
+        if (!validateToken(token, tokenType)) {
+            throw new IllegalArgumentException("Invalid " + tokenType.getName() + " token");
+        }
+        return jwtUtil.getUserId(token);
+    }
+
+    private Cookie createTokenCookie(Long userId, String role, TokenType tokenType) {
+        String token = createToken(userId, role, tokenType);
+        return createCookie(token, tokenType.getName(), tokenType.getCookieMaxAge());
+    }
+
+    private String createToken(Long userId, String role, TokenType tokenType) {
+        return jwtUtil.createJwt(userId, role, tokenType.getExpirationMs(), tokenType.getName());
     }
 }
