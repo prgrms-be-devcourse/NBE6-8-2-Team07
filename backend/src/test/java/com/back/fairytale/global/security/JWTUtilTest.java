@@ -23,7 +23,7 @@ class JWTUtilTest {
         String role = "ROLE_USER";
         Long expiredMs = 60000L;
 
-        String token = jwtUtil.createJwt(userId, role, expiredMs);
+        String token = jwtUtil.createJwt(userId, role, expiredMs, "access");
 
         assertThat(token).isNotNull();
         assertThat(token.split("\\.")).hasSize(3); // JWT header.payload.signature 형태
@@ -36,7 +36,7 @@ class JWTUtilTest {
         Long userId = 1L;
         String role = "ROLE_USER";
         Long expiredMs = 60000L;
-        String token = jwtUtil.createJwt(userId, role, expiredMs);
+        String token = jwtUtil.createJwt(userId, role, expiredMs, "access");
 
         // When
         boolean isValid = jwtUtil.validateToken(token);
@@ -59,7 +59,7 @@ class JWTUtilTest {
         Long userId = 1L;
         String role = "ROLE_USER";
         Long expiredMs = 0L;
-        String token = jwtUtil.createJwt(userId, role, expiredMs);
+        String token = jwtUtil.createJwt(userId, role, expiredMs, "access");
 
         boolean isValid = jwtUtil.validateToken(token);
 
