@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class AuthService implements LogoutService {
 
     private final JWTProvider jwtProvider;
@@ -27,7 +27,6 @@ public class AuthService implements LogoutService {
         return jwtProvider.createAccessToken(user.getId(), user.getRole().getKey());
     }
 
-    @Transactional
     public String reissueRefreshToken(String refreshToken) {
         User user = validateRefreshTokenAndGetUser(refreshToken);
 
