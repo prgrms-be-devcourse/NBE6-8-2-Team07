@@ -103,12 +103,12 @@ public class FairytaleService {
         Fairytale savedFairytale = fairytaleRepository.save(fairytale);
 
         // 키워드 저장
-        saveKeyword(savedFairytale, request.childName(), KeywordType.아이이름);
-        saveKeyword(savedFairytale, request.childRole(), KeywordType.아이역할);
-        saveKeywords(savedFairytale, request.characters(), KeywordType.캐릭터들);
-        saveKeywords(savedFairytale, request.place(), KeywordType.장소);
-        saveKeywords(savedFairytale, request.lesson(), KeywordType.교훈);
-        saveKeywords(savedFairytale, request.mood(), KeywordType.분위기);
+        saveKeyword(savedFairytale, request.childName(), KeywordType.CHILD_NAME);
+        saveKeyword(savedFairytale, request.childRole(), KeywordType.CHILD_ROLE);
+        saveKeywords(savedFairytale, request.characters(), KeywordType.CHARACTERS);
+        saveKeywords(savedFairytale, request.place(), KeywordType.PLACE);
+        saveKeywords(savedFairytale, request.lesson(), KeywordType.LESSON);
+        saveKeywords(savedFairytale, request.mood(), KeywordType.MOOD);
 
         log.info("동화 생성 완료 - ID: {}, 제목: {}, 사용자: {}", savedFairytale.getId(), title, user.getName());
 

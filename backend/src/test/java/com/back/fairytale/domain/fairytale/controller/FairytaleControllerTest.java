@@ -198,24 +198,24 @@ public class FairytaleControllerTest {
         assertThat(fairytaleKeywords)
                 .extracting(fk -> fk.getKeyword().getKeywordType())
                 .contains(
-                        KeywordType.아이이름,
-                        KeywordType.아이역할,
-                        KeywordType.캐릭터들,
-                        KeywordType.장소,
-                        KeywordType.교훈,
-                        KeywordType.분위기
+                        KeywordType.CHILD_NAME,
+                        KeywordType.CHILD_ROLE,
+                        KeywordType.CHARACTERS,
+                        KeywordType.PLACE,
+                        KeywordType.LESSON,
+                        KeywordType.MOOD
                 );
 
         // 아이이름 키워드 검증
         Optional<FairytaleKeyword> childNameKeyword = fairytaleKeywords.stream()
-                .filter(fk -> fk.getKeyword().getKeywordType() == KeywordType.아이이름)
+                .filter(fk -> fk.getKeyword().getKeywordType() == KeywordType.CHILD_NAME)
                 .findFirst();
         assertThat(childNameKeyword).isPresent();
         assertThat(childNameKeyword.get().getKeyword().getKeyword()).isEqualTo("민수");
 
         // 등장인물 키워드 검증
         List<FairytaleKeyword> characterKeywords = fairytaleKeywords.stream()
-                .filter(fk -> fk.getKeyword().getKeywordType() == KeywordType.캐릭터들)
+                .filter(fk -> fk.getKeyword().getKeywordType() == KeywordType.CHARACTERS)
                 .toList();
         assertThat(characterKeywords).hasSize(3);
         assertThat(characterKeywords)
@@ -224,7 +224,7 @@ public class FairytaleControllerTest {
 
         // 교훈 키워드 검증
         List<FairytaleKeyword> lessonKeywords = fairytaleKeywords.stream()
-                .filter(fk -> fk.getKeyword().getKeywordType() == KeywordType.교훈)
+                .filter(fk -> fk.getKeyword().getKeywordType() == KeywordType.LESSON)
                 .toList();
         assertThat(lessonKeywords).hasSize(1);
         assertThat(lessonKeywords.get(0).getKeyword().getKeyword()).isEqualTo("용기와 지혜");
@@ -280,12 +280,12 @@ public class FairytaleControllerTest {
         // 전체에서 해당 키워드 개수 세기 -> 중복 저장인지 확인
         List<Keyword> allKeywords = keywordRepository.findAll();
         long countKeyword1 = allKeywords.stream()
-                .filter(k -> k.getKeyword().equals("기사") && k.getKeywordType() == KeywordType.아이역할)
+                .filter(k -> k.getKeyword().equals("기사") && k.getKeywordType() == KeywordType.CHILD_ROLE)
                 .count();
         assertThat(countKeyword1).isEqualTo(1); // 하나만 존재 (중복 저장 안되니까)
 
         long countKeyword2 = allKeywords.stream()
-                .filter(k -> k.getKeyword().equals("공주") && k.getKeywordType() == KeywordType.캐릭터들)
+                .filter(k -> k.getKeyword().equals("공주") && k.getKeywordType() == KeywordType.CHARACTERS)
                 .count();
         assertThat(countKeyword2).isEqualTo(1);
     }
