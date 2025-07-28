@@ -38,4 +38,12 @@ public class KeywordService {
                 .orElseThrow(() -> new IllegalArgumentException("키워드가 존재하지 않습니다."));
         return KeywordResponseDto.fromEntity(keyword);
     }
+    // 키워드 삭제
+    @Transactional
+    public void deleteKeyword(Long id) {
+        if (!keywordRepository.existsById(id)) {
+            throw new IllegalArgumentException("키워드가 존재하지 않습니다.");
+        }
+        keywordRepository.deleteById(id);
+    }
 }
