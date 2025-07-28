@@ -49,7 +49,7 @@ public class FairytaleControllerTest {
     @Autowired
     private KeywordRepository keywordRepository;
 
-    // 동화 생성 헬퍼 메서드
+    // 동화 생성 메서드
     private FairytaleResponse createFairytale(String requestJson) throws Exception {
         MvcResult result = mockMvc.perform(post("/fairytales")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -62,7 +62,7 @@ public class FairytaleControllerTest {
         return objectMapper.readValue(responseBody, FairytaleResponse.class);
     }
 
-    // 동화 생성만 하고 응답이 필요 없는 경우용 메서드
+    // 동화 생성만 하고 응답이 필요 없는 경우 메서드
     private void createFairytaleOnly(String requestJson) throws Exception {
         MvcResult result = mockMvc.perform(post("/fairytales")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +134,6 @@ public class FairytaleControllerTest {
             }
             """;
 
-        // 동화 생성
         createFairytaleOnly(requestJson);
 
         MvcResult listResult = mockMvc.perform(get("/fairytales")
@@ -338,14 +337,8 @@ public class FairytaleControllerTest {
         }
         """;
 
-        MvcResult createResult = mockMvc.perform(post("/fairytales")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andReturn();
-
-        String createResponseBody = createResult.getResponse().getContentAsString();
-        FairytaleResponse createResponse = objectMapper.readValue(createResponseBody, FairytaleResponse.class);
-        Long fairytaleId = createResponse.id();
+        FairytaleResponse response = createFairytale(requestJson);
+        Long fairytaleId = response.id();
 
         MvcResult deleteResult = mockMvc.perform(delete("/fairytales/" + fairytaleId)
                         .contentType(MediaType.APPLICATION_JSON))
