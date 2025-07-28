@@ -1,6 +1,8 @@
 "use client";
 
-/* ERD 변수명
-keyword
-keyword_type
-usage_count */
+export interface Keyword {
+  id: number;
+  keyword: string;
+  keywordType: string;
+  usageCount: number;
+}
