@@ -60,6 +60,18 @@ public class JWTProvider {
         return jwtUtil.getUserId(refreshToken);
     }
 
+    public Long getUserIdFromAccessToken(String accessToken) {
+        validateAccessToken(accessToken);
+        return jwtUtil.getUserId(accessToken);
+    }
+
+    public boolean validateAccessToken(String accessToken) {
+        if (accessToken == null) {
+            return false;
+        }
+        return jwtUtil.validateToken(accessToken) && "Authorization".equals(jwtUtil.getCategory(accessToken));
+    }
+
     public boolean validateRefreshToken(String refreshToken) {
         if (refreshToken == null) {
             return false;
@@ -67,7 +79,7 @@ public class JWTProvider {
         return jwtUtil.validateToken(refreshToken) && "refresh".equals(jwtUtil.getCategory(refreshToken));
     }
 
-    private Cookie createCookie(String token, String name, int maxAge) {
+    public Cookie createCookie(String token, String name, int maxAge) {
         Cookie cookie = new Cookie(name, token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
