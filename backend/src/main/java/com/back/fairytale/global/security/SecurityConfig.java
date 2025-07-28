@@ -30,7 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/**", "/reissue", "/logout").permitAll() //todo 토큰 검증 구현 이후 변경
+                        .requestMatchers("/reissue", "/logout", "/h2-console/**", "/**").permitAll() //todo 토큰 검증 구현 이후 변경
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
