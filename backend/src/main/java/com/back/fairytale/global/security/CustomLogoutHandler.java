@@ -40,7 +40,7 @@ public class CustomLogoutHandler implements LogoutHandler {
             log.warn("Logout failed: {}", e.getMessage());
         } finally {
             response.addCookie(jwtProvider.createCookie(null, "Authorization", 0));
-            response.addCookie(jwtProvider.createCookie("null", "refresh", 0));
+            response.addCookie(jwtProvider.createCookie(null, "refresh", 0));
         }
     }
 }
