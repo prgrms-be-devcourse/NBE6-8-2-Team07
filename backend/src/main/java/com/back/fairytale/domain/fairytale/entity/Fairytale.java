@@ -53,27 +53,27 @@ public class Fairytale {
     }
 
     public String getChildName() {
-        return getFirstKeywordByType(KeywordType.아이이름);
+        return getFirstKeywordByType(KeywordType.CHILD_NAME);
     }
 
     public String getChildRole() {
-        return getFirstKeywordByType(KeywordType.아이역할);
+        return getFirstKeywordByType(KeywordType.CHILD_ROLE);
     }
 
     public String getCharacters() {
-        return getJoinedKeywordsByType(KeywordType.캐릭터들);
+        return getJoinedKeywordsByType(KeywordType.CHARACTERS);
     }
 
     public String getPlace() {
-        return getJoinedKeywordsByType(KeywordType.장소);
+        return getJoinedKeywordsByType(KeywordType.PLACE);
     }
 
     public String getLesson() {
-        return getJoinedKeywordsByType(KeywordType.교훈);
+        return getJoinedKeywordsByType(KeywordType.LESSON);
     }
 
     public String getMood() {
-        return getJoinedKeywordsByType(KeywordType.분위기);
+        return getJoinedKeywordsByType(KeywordType.MOOD);
     }
 
     private String getFirstKeywordByType(KeywordType type) {

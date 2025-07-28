@@ -31,7 +31,7 @@ public class GeminiClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            String urlWithKey = apiUrl + "?key=" + apiKey;
+            String urlWithKey = apiUrl + "?key=" + apiKey; // 수정
 
             HttpEntity<GeminiRequest> entity = new HttpEntity<>(request, headers); // 요청 데이터 + 헤더
 

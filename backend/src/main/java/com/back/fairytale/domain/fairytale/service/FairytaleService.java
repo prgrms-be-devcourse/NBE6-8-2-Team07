@@ -1,6 +1,7 @@
 package com.back.fairytale.domain.fairytale.service;
 
 import com.back.fairytale.domain.fairytale.dto.FairytaleCreateRequest;
+import com.back.fairytale.domain.fairytale.dto.FairytaleDetailResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleListResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleResponse;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
@@ -35,8 +36,8 @@ public class FairytaleService {
 
     // 동화 전체 조회
     @Transactional(readOnly = true)
-    public List<FairytaleListResponse> getAllFairytales() {
-        List<Fairytale> fairytales = fairytaleRepository.findAllByOrderByCreatedAtDesc();
+    public List<FairytaleListResponse>getAllFairytalesByUserId(Long userId) {
+        List<Fairytale> fairytales = fairytaleRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
 
         if (fairytales.isEmpty()) {
             throw new FairytaleNotFoundException("등록된 동화가 없습니다.");
@@ -47,6 +48,17 @@ public class FairytaleService {
         return fairytales.stream()
                 .map(FairytaleListResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    // 동화 상세 조회
+    @Transactional(readOnly = true)
+    public FairytaleDetailResponse getFairytaleByIdAndUserId(Long fairytaleId, Long userId) {
+        Fairytale fairytale = fairytaleRepository.findByIdAndUserId(fairytaleId, userId)
+                .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 접근 권한이 없습니다. ID: " + fairytaleId));
+
+        log.info("동화 상세 조회 - ID: {}, 제목: {}", fairytale.getId(), fairytale.getTitle());
+
+        return FairytaleDetailResponse.from(fairytale);
     }
 
     // 동화 생성
@@ -91,12 +103,12 @@ public class FairytaleService {
         Fairytale savedFairytale = fairytaleRepository.save(fairytale);
 
         // 키워드 저장
-        saveKeyword(savedFairytale, request.childName(), KeywordType.아이이름);
-        saveKeyword(savedFairytale, request.childRole(), KeywordType.아이역할);
-        saveKeywords(savedFairytale, request.characters(), KeywordType.캐릭터들);
-        saveKeywords(savedFairytale, request.place(), KeywordType.장소);
-        saveKeywords(savedFairytale, request.lesson(), KeywordType.교훈);
-        saveKeywords(savedFairytale, request.mood(), KeywordType.분위기);
+        saveKeyword(savedFairytale, request.childName(), KeywordType.CHILD_NAME);
+        saveKeyword(savedFairytale, request.childRole(), KeywordType.CHILD_ROLE);
+        saveKeywords(savedFairytale, request.characters(), KeywordType.CHARACTERS);
+        saveKeywords(savedFairytale, request.place(), KeywordType.PLACE);
+        saveKeywords(savedFairytale, request.lesson(), KeywordType.LESSON);
+        saveKeywords(savedFairytale, request.mood(), KeywordType.MOOD);
 
         log.info("동화 생성 완료 - ID: {}, 제목: {}, 사용자: {}", savedFairytale.getId(), title, user.getName());
 
@@ -138,19 +150,10 @@ public class FairytaleService {
         prompt.append("조건:\n");
         prompt.append("- 아이 이름: ").append(request.childName()).append("\n");
         prompt.append("- 아이 역할: ").append(request.childRole()).append("\n");
-
-        if (request.characters() != null && !request.characters().trim().isEmpty()) {
-            prompt.append("- 등장인물: ").append(request.characters()).append("\n");
-        }
-        if (request.place() != null && !request.place().trim().isEmpty()) {
-            prompt.append("- 장소: ").append(request.place()).append("\n");
-        }
-        if (request.lesson() != null && !request.lesson().trim().isEmpty()) {
-            prompt.append("- 교훈: ").append(request.lesson()).append("\n");
-        }
-        if (request.mood() != null && !request.mood().trim().isEmpty()) {
-            prompt.append("- 분위기: ").append(request.mood()).append("\n");
-        }
+        prompt.append("- 등장인물: ").append(request.childName()).append("\n");
+        prompt.append("- 장소: ").append(request.childRole()).append("\n");
+        prompt.append("- 교훈: ").append(request.childName()).append("\n");
+        prompt.append("- 분위기: ").append(request.childRole()).append("\n");
 
         prompt.append("\n").append(request.childName()).append("이(가) ").append(request.childRole()).append(" 역할로 나오는 ");
         prompt.append("900-1300자 정도의 완성된 동화를 만들어주세요.");
@@ -172,5 +175,15 @@ public class FairytaleService {
         }
 
         return new String[]{title, content};
+    }
+
+    // 동화 삭제
+    public void deleteFairytaleByIdAndUserId(Long fairytaleId, Long userId) {
+        Fairytale fairytale = fairytaleRepository.findByIdAndUserId(fairytaleId, userId)
+                .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 삭제 권한이 없습니다. ID: " + fairytaleId));
+
+        fairytaleRepository.delete(fairytale);
+
+        log.info("동화 삭제 완료 - ID: {}", fairytaleId);
     }
 }

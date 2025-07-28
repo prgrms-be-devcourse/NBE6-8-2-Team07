@@ -44,7 +44,7 @@ public class KeywordControllerTest {
         com.back.fairytale.domain.keyword.entity.Keyword keyword = keywordRepository.save(
                 com.back.fairytale.domain.keyword.entity.Keyword.builder()
                         .keyword("공주")
-                        .keywordType(com.back.fairytale.domain.keyword.enums.KeywordType.캐릭터들)
+                        .keywordType(com.back.fairytale.domain.keyword.enums.KeywordType.CHARACTERS)
                         .usageCount(5)
                         .build()
         );

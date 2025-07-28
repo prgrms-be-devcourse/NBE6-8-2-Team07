@@ -1,6 +1,7 @@
 package com.back.fairytale.domain.fairytale.controller;
 
 import com.back.fairytale.domain.fairytale.dto.FairytaleCreateRequest;
+import com.back.fairytale.domain.fairytale.dto.FairytaleDetailResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleListResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleResponse;
 import com.back.fairytale.domain.fairytale.exception.FairytaleNotFoundException;
@@ -45,10 +46,52 @@ public class FairytaleController {
 
     // 동화 전체 조회
     @GetMapping
-    public ResponseEntity<?> getAllFairytales() {
+    public ResponseEntity<?> getAllFairytales(
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         try {
-            List<FairytaleListResponse> response = fairytaleService.getAllFairytales();
+            //Long userId = customOAuth2User.getId();
+
+            // test 용도 데이터
+            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+
+            List<FairytaleListResponse> response = fairytaleService.getAllFairytalesByUserId(userId);
             return ResponseEntity.ok(response);
+        } catch (FairytaleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // 동화 상세 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getFairytaleById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        try {
+            //Long userId = customOAuth2User.getId();
+
+            // test 용도 데이터
+            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+
+            FairytaleDetailResponse response = fairytaleService.getFairytaleByIdAndUserId(id, userId);
+            return ResponseEntity.ok(response);
+        } catch (FairytaleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // 동화 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteFairytale(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        try {
+            //Long userId = customOAuth2User.getId();
+
+            // test 용도 데이터
+            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+
+            fairytaleService.deleteFairytaleByIdAndUserId(id, userId);
+            return ResponseEntity.noContent().build();
         } catch (FairytaleNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
