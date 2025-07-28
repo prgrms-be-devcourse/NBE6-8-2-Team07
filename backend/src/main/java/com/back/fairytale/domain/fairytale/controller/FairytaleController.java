@@ -78,4 +78,22 @@ public class FairytaleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    // 동화 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteFairytale(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        try {
+            //Long userId = customOAuth2User.getId();
+
+            // test 용도 데이터
+            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+
+            fairytaleService.deleteFairytaleByIdAndUserId(id, userId);
+            return ResponseEntity.noContent().build();
+        } catch (FairytaleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }
