@@ -28,6 +28,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ActiveProfiles("test")
@@ -48,6 +49,29 @@ public class FairytaleControllerTest {
     @Autowired
     private KeywordRepository keywordRepository;
 
+    // 동화 생성 메서드
+    private FairytaleResponse createFairytale(String requestJson) throws Exception {
+        MvcResult result = mockMvc.perform(post("/fairytales")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+
+        String responseBody = result.getResponse().getContentAsString();
+        return objectMapper.readValue(responseBody, FairytaleResponse.class);
+    }
+
+    // 동화 생성만 하고 응답이 필요 없는 경우 메서드
+    private void createFairytaleOnly(String requestJson) throws Exception {
+        MvcResult result = mockMvc.perform(post("/fairytales")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+    }
+
     @Test
     @DisplayName("Gemini API를 통한 동화 생성 - 실제 API 호출")
     void t1() throws Exception {
@@ -62,16 +86,7 @@ public class FairytaleControllerTest {
             }
             """;
 
-        MvcResult result = mockMvc.perform(post("/fairytales")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andDo(print())
-                .andReturn();
-
-        assertThat(result.getResponse().getStatus()).isEqualTo(200);
-
-        String responseBody = result.getResponse().getContentAsString();
-        FairytaleResponse response = objectMapper.readValue(responseBody, FairytaleResponse.class);
+        FairytaleResponse response = createFairytale(requestJson);
 
         assertThat(response.id()).isNotNull();
         assertThat(response.title()).isNotNull();
@@ -119,13 +134,7 @@ public class FairytaleControllerTest {
             }
             """;
 
-        // 동화 생성
-        MvcResult createResult = mockMvc.perform(post("/fairytales")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andReturn();
-
-        assertThat(createResult.getResponse().getStatus()).isEqualTo(200);
+        createFairytaleOnly(requestJson);
 
         MvcResult listResult = mockMvc.perform(get("/fairytales")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -175,16 +184,7 @@ public class FairytaleControllerTest {
             """;
 
         // 동화 생성
-        MvcResult result = mockMvc.perform(post("/fairytales")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andDo(print())
-                .andReturn();
-
-        assertThat(result.getResponse().getStatus()).isEqualTo(200);
-
-        String responseBody = result.getResponse().getContentAsString();
-        FairytaleResponse response = objectMapper.readValue(responseBody, FairytaleResponse.class);
+        FairytaleResponse response = createFairytale(requestJson);
 
         Optional<Fairytale> savedFairytale = fairytaleRepository.findById(response.id());
         assertThat(savedFairytale).isPresent();
@@ -245,10 +245,7 @@ public class FairytaleControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/fairytales")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(firstRequestJson))
-                .andReturn();
+        createFairytaleOnly(firstRequestJson);
 
         // 첫 번째 동화 생성 후 키워드 개수 확인
         long keywordCountAfterFirst = keywordRepository.count();
@@ -265,12 +262,7 @@ public class FairytaleControllerTest {
             }
             """;
 
-        MvcResult result = mockMvc.perform(post("/fairytales")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(secondRequestJson))
-                .andReturn();
-
-        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        createFairytaleOnly(secondRequestJson);
 
         long keywordCountAfterSecond = keywordRepository.count();
 
@@ -304,16 +296,8 @@ public class FairytaleControllerTest {
         }
         """;
 
-        MvcResult createResult = mockMvc.perform(post("/fairytales")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andReturn();
-
-        assertThat(createResult.getResponse().getStatus()).isEqualTo(200);
-
-        String createResponseBody = createResult.getResponse().getContentAsString();
-        FairytaleResponse createResponse = objectMapper.readValue(createResponseBody, FairytaleResponse.class);
-        Long fairytaleId = createResponse.id();
+        FairytaleResponse response = createFairytale(requestJson);
+        Long fairytaleId = response.id();
 
         MvcResult detailResult = mockMvc.perform(get("/fairytales/" + fairytaleId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -337,5 +321,36 @@ public class FairytaleControllerTest {
         assertThat(detailResponse.createdAt()).isNotNull();
 
         System.out.println("사용자별 동화 상세 조회 성공");
+    }
+
+    @Test
+    @DisplayName("동화 삭제 - 성공")
+    void t10() throws Exception {
+        String requestJson = """
+        {
+            "childName": "하늘",
+            "childRole": "마법사",
+            "characters": "용, 요정",
+            "place": "마법의 숲",
+            "lesson": "용기",
+            "mood": "환상적인"
+        }
+        """;
+
+        FairytaleResponse response = createFairytale(requestJson);
+        Long fairytaleId = response.id();
+
+        MvcResult deleteResult = mockMvc.perform(delete("/fairytales/" + fairytaleId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andReturn();
+
+        // 삭제 성공 확인
+        assertThat(deleteResult.getResponse().getStatus()).isEqualTo(204);
+
+        // 삭제 후 존재하지 않는지 확인
+        assertThat(fairytaleRepository.findById(fairytaleId)).isEmpty();
+
+        System.out.println("동화 삭제 성공");
     }
 }
