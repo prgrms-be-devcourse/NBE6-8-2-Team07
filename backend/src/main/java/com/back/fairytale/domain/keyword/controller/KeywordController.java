@@ -24,7 +24,6 @@ public class KeywordController {
         }
         return ResponseEntity.ok(keywordService.getAllKeywords());
     }
-
     // 단건(특정 키워드) 조회
     @GetMapping("/{id}")
     public ResponseEntity<KeywordResponseDto> getKeyword(@PathVariable Long id) {
