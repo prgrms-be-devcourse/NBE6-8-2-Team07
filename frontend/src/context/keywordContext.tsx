@@ -1,9 +1,6 @@
 "use client";
 
-/* 변수명
-아이이름,
-아이역할,
-캐릭터들,
-장소,
-분위기,
-교훈 */
+/* ERD 변수명
+keyword
+keyword_type
+usage_count */
