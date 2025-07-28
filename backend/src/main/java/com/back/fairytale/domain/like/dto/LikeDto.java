@@ -13,9 +13,6 @@ import lombok.NoArgsConstructor;
 public class LikeDto {
 
     @NotNull
-    private Long userId;
-
-    @NotNull
     private Long fairytaleId;
 
 }

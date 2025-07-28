@@ -8,7 +8,9 @@ import lombok.*;
 @Entity
 @Getter
 @Builder
-@Table(name = "bookmark")
+@Table(name = "bookmark", indexes = {
+        @Index(name = "idx_bookmark_user_fairytale", columnList = "user_id, fairytale_id")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class BookMark {

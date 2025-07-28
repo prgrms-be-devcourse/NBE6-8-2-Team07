@@ -8,7 +8,9 @@ import lombok.*;
 @Entity
 @Getter
 @Builder
-@Table(name = "likes")
+@Table(name = "likes", indexes = {
+        @Index(name = "idx_like_user_fairytale", columnList = "user_id, fairytale_id")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Like {

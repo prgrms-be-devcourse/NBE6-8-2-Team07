@@ -5,6 +5,7 @@ import com.back.fairytale.domain.keyword.enums.KeywordType;
 import com.back.fairytale.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class Fairytale {
     @Column(nullable = false)
     private String content;
 
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

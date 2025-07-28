@@ -34,7 +34,6 @@ public class LikeService {
 
         for (Like like : likes) {
             likeDtos.add(LikeDto.builder()
-                    .userId(like.getUser().getId())
                     .fairytaleId(like.getFairytale().getId())
                     .build());
         }
@@ -76,5 +75,10 @@ public class LikeService {
 
         likeRepository.deleteById(like.getId());
 
+    }
+
+    // 해당 사용자가 좋아요를 누른 동화인지 확인하는 메서드
+    public boolean isLikedByUser(Long userId, Long fairytaleId) {
+        return likeRepository.findByUserIdAndFairytaleId(userId, fairytaleId).isPresent();
     }
 }
