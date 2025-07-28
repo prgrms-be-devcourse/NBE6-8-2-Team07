@@ -23,7 +23,7 @@ public class BookMarkController {
         return ResponseEntity.ok(favorites);
     }
 
-    @PostMapping("/{fairytaleId}/bookmark")
+    @PostMapping("/bookmark/{fairytaleId}")
     public ResponseEntity<String> addFavorite(@AuthenticationPrincipal CustomOAuth2User oAuth2User, @PathVariable Long fairytaleId) {
         try {
             bookMarkService.addBookMark(fairytaleId, oAuth2User.getId());
@@ -33,7 +33,7 @@ public class BookMarkController {
         }
     }
 
-    @DeleteMapping("/{fairytaleId}/bookmark")
+    @DeleteMapping("/bookmark/{fairytaleId}")
     public ResponseEntity<String> removeFavorite(@AuthenticationPrincipal CustomOAuth2User oAuth2User, @PathVariable Long fairytaleId) {
         try {
             bookMarkService.removeBookMark(oAuth2User.getId(), fairytaleId);
