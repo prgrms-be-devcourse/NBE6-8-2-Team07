@@ -24,15 +24,16 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomLogoutHandler logoutHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/**").permitAll() //todo 토큰 검증 구현 이후 변경
+                        .requestMatchers("/reissue", "/logout", "/h2-console/**", "/**").permitAll() //todo 토큰 검증 구현 이후 변경
                         .anyRequest().authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable) //fixme jwt를 쿠키로 사용할 예정이라 확인이 필요할 듯함
+                .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement((session) -> session
@@ -45,7 +46,8 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler))
-                .addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class)
+                .logout(logout -> logout.addLogoutHandler(logoutHandler));
 
         return http.build();
     }
