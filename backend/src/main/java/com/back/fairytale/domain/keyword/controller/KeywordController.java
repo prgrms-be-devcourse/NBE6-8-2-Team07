@@ -29,4 +29,10 @@ public class KeywordController {
     public ResponseEntity<KeywordResponseDto> getKeyword(@PathVariable Long id) {
         return ResponseEntity.ok(keywordService.getKeywordById(id));
     }
+    // 키워드 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteKeyword(@PathVariable Long id) {
+        keywordService.deleteKeyword(id);
+        return ResponseEntity.noContent().build();
+    }
 }
