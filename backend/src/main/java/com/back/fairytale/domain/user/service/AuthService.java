@@ -4,6 +4,7 @@ package com.back.fairytale.domain.user.service;
 import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.global.security.JWTProvider;
+import com.back.fairytale.global.security.LogoutService;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
-public class AuthService {
+@Transactional(readOnly = true)
+public class AuthService implements LogoutService {
 
     private final JWTProvider jwtProvider;
     private final UserRepository userRepository;
@@ -52,13 +53,23 @@ public class AuthService {
 
         Long userId = jwtProvider.getUserIdFromRefreshToken(refreshToken);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. " + userId));
+        User user = findUserById(userId);
 
         if (!refreshToken.equals(user.getRefreshToken())) {
             throw new IllegalArgumentException("Refresh Token이 일치하지 않습니다.");
         }
 
         return user;
+    }
+
+    @Override
+    public void logout(Long userId) {
+        User findUser = findUserById(userId);
+        findUser.setRefreshToken(null);
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. " + userId));
     }
 }
