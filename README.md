@@ -96,7 +96,7 @@ JWT_SECRET=your_jwt_secret_key
 
 | 이름 | 역할 | 담당 내용 | GitHub |
 |------|------|------------|--------|
-| 김영건 | 프론트엔드, 백엔드 개발 | - React UI/UX 구현<br>- 추가 | [@johnbosco0414](https://github.com/johnbosco0414) |
+| 김영건 | 프론트엔드, 백엔드 개발 | - React UI/UX 구현<br>- 프론트엔드/백엔드 연동<br>- 추가 | [@johnbosco0414](https://github.com/johnbosco0414) |
 | 김유석 | 백엔드 개발 | - 키워드 조회 및 삭제 기능 구현<br>- 추가  | [@YouSeok518](https://github.com/YouSeok518) |
 | 이용호 | 백엔드 개발 | - 동화 즐겨찾기 기능 구현<br>- 동화 좋아요/싫어요 기능 구현<br>- 추가 | [@yongho9064](https://github.com/yongho9064 ) |
 | 임정민 | 백엔드 개발 | - Gemini API 연동<br>- 동화 생성/조회/삭제 기능 구현<br>- 추가 | [@simount3](https://github.com/simount3) |

@@ -104,17 +104,9 @@ export default function RootLayout({
             <Link href="/fairytaleGallery" className="py-2">
               동화갤러리
             </Link>
-            <div className="relative group">
-              <button className="cursor-pointer py-2">소개</button>
-              <div className="absolute z-10 hidden group-hover:block bg-[#FAF9F6] shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
-                <Link href="/introduction/service" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
-                  서비스소개
-                </Link>
-                <Link href="/introduction/project" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
-                  프로젝트소개
-                </Link>
-              </div>
-            </div>
+            <Link href="/introduction" className="py-2">
+              소개
+            </Link>
             {isLoggedIn ? (
               <button onClick={handleLogout} className="py-2 cursor-pointer">
                 로그아웃
