@@ -17,6 +17,7 @@ import java.io.IOException;
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JWTProvider jwtProvider;
+    private final UserTokenService userTokenService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -25,9 +26,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Long userId = customUser.getId();
         String role = authentication.getAuthorities().iterator().next().getAuthority();
+        String refreshToken = userTokenService.getUserToken(userId);
 
         Cookie accessCookie = jwtProvider.createAccessTokenCookie(userId, role);
-        Cookie refreshCookie = jwtProvider.createRefreshTokenCookie(userId, role);
+        Cookie refreshCookie = jwtProvider.createRefreshTokenCookie(refreshToken);
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
