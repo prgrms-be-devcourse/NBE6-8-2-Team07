@@ -46,4 +46,13 @@ public class KeywordService {
         }
         keywordRepository.deleteById(id);
     }
+    @Transactional
+    public void incrementUsageCountWithOptimisticLock(Long keywordId) {
+        Keyword keyword = keywordRepository.findById(keywordId)
+                .orElseThrow(() -> new IllegalArgumentException("키워드가 존재하지 않습니다."));
+
+        keyword.incrementUsageCount(); // usage_count 1 증가
+        keywordRepository.save(keyword); // @Version 필드로 동시성 체크
+    }
 }
+

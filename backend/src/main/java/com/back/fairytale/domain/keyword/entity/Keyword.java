@@ -26,6 +26,9 @@ public class Keyword {
 
     @Column(name = "usage_count", nullable = false)
     private int usageCount;
+    //동시성 처리를 위한 버전 필드
+    @Version
+    private Long version;
 
     public static Keyword of(String keyword, KeywordType keywordType) {
         return Keyword.builder()
@@ -33,5 +36,8 @@ public class Keyword {
                 .keywordType(keywordType)
                 .usageCount(0)
                 .build();
+    }
+    public void incrementUsageCount() {
+        this.usageCount++;
     }
 }
