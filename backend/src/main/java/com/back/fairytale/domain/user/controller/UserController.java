@@ -1,5 +1,6 @@
 package com.back.fairytale.domain.user.controller;
 
+import com.back.fairytale.domain.user.dto.TokenPairDto;
 import com.back.fairytale.domain.user.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,11 +23,10 @@ public class UserController {
         try {
             String refreshToken = authService.getRefreshTokenFromCookies(request.getCookies());
 
-            String newAccessToken = authService.reissueAccessToken(refreshToken);
-            String newRefreshToken = authService.reissueRefreshToken(refreshToken);
+            TokenPairDto tokenPairDto = authService.reissueTokens(refreshToken);
 
-            response.addCookie(authService.createAccessTokenCookie(newAccessToken));
-            response.addCookie(authService.createRefreshTokenCookie(newRefreshToken));
+            response.addCookie(authService.createAccessTokenCookie(tokenPairDto.accessToken()));
+            response.addCookie(authService.createRefreshTokenCookie(tokenPairDto.refreshToken()));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.warn("Refresh token invalid: {}", e.getMessage());
