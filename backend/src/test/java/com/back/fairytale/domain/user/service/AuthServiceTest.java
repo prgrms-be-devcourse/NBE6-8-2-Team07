@@ -1,5 +1,6 @@
 package com.back.fairytale.domain.user.service;
 
+import com.back.fairytale.domain.user.dto.TokenPairDto;
 import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.enums.IsDeleted;
 import com.back.fairytale.domain.user.enums.Role;
@@ -58,8 +59,9 @@ class AuthServiceTest {
 
         // When
         String extractedRefreshToken = authService.getRefreshTokenFromCookies(cookies);
-        String newAccessToken = authService.reissueAccessToken(extractedRefreshToken);
-        String newRefreshToken = authService.reissueRefreshToken(extractedRefreshToken);
+        TokenPairDto tokenPairDto = authService.reissueTokens(extractedRefreshToken);
+        String newAccessToken = tokenPairDto.accessToken();
+        String newRefreshToken = tokenPairDto.refreshToken();
 
         Cookie accessTokenCookie = authService.createAccessTokenCookie(newAccessToken);
         Cookie newRefreshTokenCookie = authService.createRefreshTokenCookie(newRefreshToken);
@@ -82,7 +84,7 @@ class AuthServiceTest {
         String invalidRefreshToken = "invalid.refresh.token";
 
         // When & Then
-        assertThatThrownBy(() -> authService.reissueAccessToken(invalidRefreshToken))
+        assertThatThrownBy(() -> authService.reissueTokens(invalidRefreshToken))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Refresh token이 유효하지 않습니다.");
     }
@@ -95,7 +97,7 @@ class AuthServiceTest {
         String tokenForNonExistentUser = jwtProvider.createRefreshToken(nonExistentUserId, "USER");
 
         // When & Then
-        assertThatThrownBy(() -> authService.reissueAccessToken(tokenForNonExistentUser))
+        assertThatThrownBy(() -> authService.reissueTokens(tokenForNonExistentUser))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("해당 유저가 존재하지 않습니다" );
     }
@@ -104,10 +106,10 @@ class AuthServiceTest {
     @DisplayName("리프레시 토큰이 다를 경우 재발급이 실패한다.")
     void reissueAccessToken_TokenMismatch() {
         // Given
-        String differentRefreshToken = authService.reissueRefreshToken(validRefreshToken);
+        TokenPairDto tokenPairDto = authService.reissueTokens(validRefreshToken);
 
         // When & Then - 원래 토큰으로 재발급 시도
-        assertThatThrownBy(() -> authService.reissueAccessToken(validRefreshToken))
+        assertThatThrownBy(() -> authService.reissueTokens(validRefreshToken))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Refresh Token이 일치하지 않습니다.");
     }
