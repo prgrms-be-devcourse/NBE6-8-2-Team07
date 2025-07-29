@@ -1,8 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function FairytaleCreatePage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [slides, setSlides] = useState([
     { title: '동화를 쓰기에 앞서', content: '생성방법 설명창', image: '', addedItems: [], name: '' },
     { title: '주인공', content: '주인공의 이름과 역할을 적어주세요.', image: '', addedItems: [], name: '' },
@@ -56,8 +59,48 @@ export default function FairytaleCreatePage() {
     setSlides(newSlides);
   };
 
+  const handleCreateFairytale = async () => {
+    setIsLoading(true);
+    const fairytaleCreateRequest = {
+      childName: slides[1].name,
+      childRole: slides[1].addedItems.join(', '),
+      characters: slides[2].addedItems.join(', '),
+      place: slides[3].addedItems.join(', '),
+      mood: slides[4].addedItems.join(', '),
+      lesson: slides[5].addedItems.join(', '),
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/fairytales', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(fairytaleCreateRequest),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Fairytale created successfully:', result);
+      router.push(`/fairytale/get/${result.id}`);
+    } catch (error) {
+      console.error('Failed to create fairytale:', error);
+      alert('동화 생성에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="text-white text-2xl">동화가 자라나는 중...</div>
+        </div>
+      )}
       <div className="relative w-full h-full p-8 bg-[#FAF9F6] rounded-lg shadow-lg flex flex-col">
         {/* 슬라이드 내용 영역 */}
         <div className="flex-grow p-4">
@@ -197,7 +240,7 @@ export default function FairytaleCreatePage() {
                                   setSlides(newSlides);
                                 }}
                                 className="ml-1.5 -mr-0.5 w-4 h-4 inline-flex items-center justify-center rounded-full bg-orange-300 text-gray-50 hover:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 cursor-pointer"
-                              >
+                          >
                                 <svg className="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                 </svg>
@@ -232,6 +275,7 @@ export default function FairytaleCreatePage() {
             </button>
             {currentSlide === 6 ? (
               <button
+                onClick={handleCreateFairytale}
                 className="px-4 py-2 font-bold text-white bg-orange-600 rounded hover:bg-orange-500 cursor-pointer"
               >
                 동화 만들기

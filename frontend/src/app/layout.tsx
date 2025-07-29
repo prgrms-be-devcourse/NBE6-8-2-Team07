@@ -34,7 +34,7 @@ export default function RootLayout({
             <div className="relative group">
               <button className="cursor-pointer py-2">나의 동화책</button>
               <div className="absolute z-10 hidden group-hover:block bg-[#FAF9F6] shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
-                <Link href="/fairytale/create" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
+                <Link href="/fairytale/post" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
                   동화책만들기
                 </Link>
                 <Link href="/fairytale/get" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
