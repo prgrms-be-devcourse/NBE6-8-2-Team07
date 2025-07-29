@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 export default function FairytaleCreatePage() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [slides, setSlides] = useState([
     { title: '동화를 쓰기에 앞서', content: '생성방법 설명창', image: '', addedItems: [], name: '' },
     { title: '주인공', content: '주인공의 이름과 역할을 적어주세요.', image: '', addedItems: [], name: '' },
@@ -59,6 +60,7 @@ export default function FairytaleCreatePage() {
   };
 
   const handleCreateFairytale = async () => {
+    setIsLoading(true);
     const fairytaleCreateRequest = {
       childName: slides[1].name,
       childRole: slides[1].addedItems.join(', '),
@@ -87,11 +89,18 @@ export default function FairytaleCreatePage() {
     } catch (error) {
       console.error('Failed to create fairytale:', error);
       alert('동화 생성에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="text-white text-2xl">동화가 자라나는 중...</div>
+        </div>
+      )}
       <div className="relative w-full h-full p-8 bg-[#FAF9F6] rounded-lg shadow-lg flex flex-col">
         {/* 슬라이드 내용 영역 */}
         <div className="flex-grow p-4">
