@@ -1,16 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Fairytale } from '@/context/fairytaleContext';
 
 interface GroupedKeywords {
   [key: string]: string[]; // 각 키워드는 문자열 배열로 예상
 }
 
-const FairytaleReader = () => {
-  const searchParams = useSearchParams();
-  const fairytaleId = searchParams.get('id');
+const FairytaleReader = ({ params }: { params: { id: string } }) => {
+  const fairytaleId = params.id;
 
   const [isKeywordPopupOpen, setIsKeywordPopupOpen] = useState(false);
   const [fairytale, setFairytale] = useState<Fairytale | null>(null);
