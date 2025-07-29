@@ -29,14 +29,6 @@ const FairytaleList = () => {
     fetchFairyTales();
   }, []);
 
-  // const handleToggleFavorite = (id: number) => {
-  //   setFairyTales(
-  //     fairyTales.map((tale) =>
-  //       tale.id === id ? { ...tale, isFavorite: !tale.isFavorite } : tale
-  //     )
-  //   );
-  // };
-
   if (loading) return <div className="container mx-auto p-4">로딩 중...</div>;
   if (error) return <div className="container mx-auto p-4 text-red-500">에러: {error}</div>;
 
@@ -62,7 +54,7 @@ const FairytaleList = () => {
                   </button>
                 </td> */}
                 <td className="py-4 px-6 whitespace-nowrap">
-                  <Link href={`/fairytale/read?id=${tale.id}`} className="hover:underline">
+                  <Link href={`/fairytale/get/${tale.id}`} className="hover:underline">
                     {tale.title}
                   </Link>
                 </td>
