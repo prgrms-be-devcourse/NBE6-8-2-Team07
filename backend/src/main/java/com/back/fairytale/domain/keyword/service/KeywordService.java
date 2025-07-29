@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,15 @@ public class KeywordService {
         Keyword keyword = keywordRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("키워드가 존재하지 않습니다."));
         return KeywordResponseDto.fromEntity(keyword);
+    }
+
+    // 키워드 유효성 검사
+    public void validateKeyword(String keyword) {
+        // 욕설 필터링
+        List<String> badWords = Arrays.asList("욕설1", "욕설2", "부적절한단어");
+        if (badWords.stream().anyMatch(bad -> keyword.toLowerCase().contains(bad))) {
+            throw new IllegalArgumentException("부적절한 키워드입니다.");
+        }
     }
 
     @Transactional
