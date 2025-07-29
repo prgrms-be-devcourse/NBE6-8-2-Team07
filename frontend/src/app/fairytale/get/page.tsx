@@ -1,19 +1,28 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { FaRegStar, FaStar } from 'react-icons/fa';
+import { FaRegStar, FaBook, FaStar } from 'react-icons/fa';
 import Link from 'next/link';
 import { Fairytale } from '@/context/fairytaleContext';
 
 const FairytaleList = () => {
   const [fairyTales, setFairyTales] = useState<Fairytale[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFairyTales = async () => {
+      setLoading(true);
+      setError(null);
+      setNotFound(false);
+
       try {
         const response = await fetch('http://localhost:8080/fairytales');
+        if (response.status === 404) {
+          setNotFound(true);
+          return;
+        }
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -29,8 +38,36 @@ const FairytaleList = () => {
     fetchFairyTales();
   }, []);
 
-  if (loading) return <div className="container mx-auto p-4">로딩 중...</div>;
+  if (loading) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <span className="ml-3 text-lg">동화를 불러오는 중...</span>
+        </div>
+      </div>
+    );
+  }
   if (error) return <div className="container mx-auto p-4 text-red-500">에러: {error}</div>;
+
+  // 404 에러 (동화가 없음)
+  if (notFound) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="text-center py-12">
+          <FaBook className="mx-auto text-gray-400 text-6xl mb-4" />
+          <h2 className="text-xl font-semibold text-gray-600 mb-2">아직 동화가 없습니다</h2>
+          <p className="text-gray-500">첫 번째 동화를 만들어보세요!</p>
+          <Link 
+            href="/fairytale/post" 
+            className="inline-block mt-4 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+          >
+            동화 만들기
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
