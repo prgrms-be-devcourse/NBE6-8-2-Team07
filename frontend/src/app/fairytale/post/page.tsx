@@ -83,7 +83,7 @@ export default function FairytaleCreatePage() {
 
       const result = await response.json();
       console.log('Fairytale created successfully:', result);
-      router.push(`/fairytale/${result.id}`);
+      router.push(`/fairytale/get/${result.id}`);
     } catch (error) {
       console.error('Failed to create fairytale:', error);
       alert('동화 생성에 실패했습니다.');

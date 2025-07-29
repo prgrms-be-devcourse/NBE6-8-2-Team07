@@ -57,7 +57,7 @@ export default function Home() {
               </div>
               <div className="w-full max-w-sm space-y-2">
                 <Link
-                  href="/fairytale/create"
+                  href="/fairytale/post"
                   className="inline-flex h-10 items-center justify-center rounded-md bg-orange-400 px-4 py-6 text-2xl font-medium text-gray-50 shadow transition-colors hover:bg-orange-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50"
                 >
                   아이와 함께 동화쓰기
@@ -203,7 +203,7 @@ export default function Home() {
           </div>
           <div className="mx-auto w-full max-w-sm space-y-2">
             <Link
-              href="/fairytale/create"
+              href="/fairytale/post"
                             className="inline-flex h-10 items-center justify-center rounded-md bg-orange-400 px-4 py-6 text-2xl font-medium text-gray-50 shadow transition-colors hover:bg-orange-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50"
             >
               아이와 함께 동화쓰기
