@@ -1,10 +1,12 @@
 package com.back.fairytale.domain.user.service;
 
 
+import com.back.fairytale.domain.user.dto.TokenPairDto;
 import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.global.security.JWTProvider;
 import com.back.fairytale.global.security.LogoutService;
+import com.back.fairytale.global.security.UserTokenService;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class AuthService implements LogoutService {
+public class AuthService implements LogoutService, UserTokenService {
 
     private final JWTProvider jwtProvider;
     private final UserRepository userRepository;
@@ -22,19 +24,15 @@ public class AuthService implements LogoutService {
         return jwtProvider.extractRefreshToken(cookies);
     }
 
-    public String reissueAccessToken(String refreshToken) {
-        User user = validateRefreshTokenAndGetUser(refreshToken);
-        return jwtProvider.createAccessToken(user.getId(), user.getRole().getKey());
-    }
-
-    public String reissueRefreshToken(String refreshToken) {
+    public TokenPairDto reissueTokens(String refreshToken) {
         User user = validateRefreshTokenAndGetUser(refreshToken);
 
+        String newAccessToken = jwtProvider.createAccessToken(user.getId(), user.getRole().getKey());
         String newRefreshToken = jwtProvider.createRefreshToken(user.getId(), user.getRole().getKey());
-        user.setRefreshToken(newRefreshToken);
-        userRepository.save(user);
 
-        return newRefreshToken;
+        user.setRefreshToken(newRefreshToken);
+
+        return TokenPairDto.of(newAccessToken, newRefreshToken);
     }
 
     public Cookie createAccessTokenCookie(String token) {
@@ -65,6 +63,11 @@ public class AuthService implements LogoutService {
     public void logout(Long userId) {
         User findUser = findUserById(userId);
         findUser.setRefreshToken(null);
+    }
+
+    @Override
+    public String getUserToken(Long userId) {
+        return findUserById(userId).getRefreshToken();
     }
 
     private User findUserById(Long userId) {

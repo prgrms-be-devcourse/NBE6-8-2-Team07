@@ -1,6 +1,7 @@
 package com.back.fairytale.global.security;
 
 import jakarta.servlet.http.Cookie;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ public class JWTProvider {
 
     private final JWTUtil jwtUtil;
 
+    @Getter
     public enum TokenType {
         ACCESS("Authorization", 10 * 60 * 1000L, 600),
         REFRESH("refresh", 24 * 60 * 60 * 1000L, 86400);
@@ -26,18 +28,14 @@ public class JWTProvider {
             this.expirationMs = expirationMs;
             this.cookieMaxAge = cookieMaxAge;
         }
-
-        public String getName() { return name; }
-        public Long getExpirationMs() { return expirationMs; }
-        public int getCookieMaxAge() { return cookieMaxAge; }
     }
 
     public Cookie createAccessTokenCookie(Long userId, String role) {
         return createTokenCookie(userId, role, TokenType.ACCESS);
     }
 
-    public Cookie createRefreshTokenCookie(Long userId, String role) {
-        return createTokenCookie(userId, role, TokenType.REFRESH);
+    public Cookie createRefreshTokenCookie(String refreshToken) {
+        return createCookie(refreshToken, TokenType.REFRESH.getName(), TokenType.REFRESH.getCookieMaxAge());
     }
 
     public String createAccessToken(Long userId, String role) {
