@@ -1,15 +1,23 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { FaRegStar, FaBook, FaStar } from 'react-icons/fa';
+import { FaRegStar, FaBook, FaStar, FaCalendarAlt } from 'react-icons/fa';
+// 뷰모드 전환을 위한 아이콘 추가
+import { MdViewList, MdGridView } from 'react-icons/md';
 import Link from 'next/link';
 import { Fairytale } from '@/context/fairytaleContext';
+
+// 뷰모드 타입 정의 (테이블 또는 그리드)
+type ViewMode = 'table' | 'grid';
 
 const FairytaleList = () => {
   const [fairyTales, setFairyTales] = useState<Fairytale[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // 뷰모드 상태 추가 (기본값: 테이블)
+  const [viewMode, setViewMode] = useState<ViewMode>('table');
 
   useEffect(() => {
     const fetchFairyTales = async () => {
@@ -48,6 +56,7 @@ const FairytaleList = () => {
       </div>
     );
   }
+  
   if (error) return <div className="container mx-auto p-4 text-red-500">에러: {error}</div>;
 
   // 404 에러 (동화가 없음)
@@ -71,36 +80,157 @@ const FairytaleList = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">동화 목록</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow-md rounded-lg">
-          <thead className="bg-orange-200">
-            <tr>
-              {/* <th className="py-3 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">즐겨찾기</th> */}
-              <th className="py-3 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">제목</th>
-              <th className="py-3 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">생성일자</th>
-            </tr>
-          </thead>
-          <tbody className="bg-[#FAF9F6] divide-y divide-gray-200">
-            {fairyTales.map((tale) => (
-              <tr key={tale.id} className="hover:bg-gray-100">
-                {/* 즐겨찾기 UI 주석처리 */}
-                {/* <td className="py-4 px-6 whitespace-nowrap">
-                  <button onClick={() => handleToggleFavorite(tale.id)} className="text-2xl text-[#FFB347] cursor-pointer">
-                    {tale.isFavorite ? <FaStar /> : <FaRegStar />}
-                  </button>
-                </td> */}
-                <td className="py-4 px-6 whitespace-nowrap">
-                  <Link href={`/fairytale/get/${tale.id}`} className="hover:underline">
+      {/* 헤더 영역: 제목과 뷰모드 전환 버튼 */}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">동화 목록</h1>
+        
+        {/* 뷰모드 전환 버튼 그룹 */}
+        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+          {/* 테이블 뷰 버튼 */}
+          <button
+            onClick={() => setViewMode('table')}
+            className={`p-2 transition-colors ${
+              viewMode === 'table' 
+                ? 'bg-orange-100 text-orange-800'  // 선택된 상태
+                : 'bg-white hover:bg-gray-50'       // 선택되지 않은 상태
+            }`}
+            title="테이블 뷰"
+          >
+            <MdViewList />
+          </button>
+          
+          {/* 그리드 뷰 버튼 */}
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`p-2 border-l border-gray-300 transition-colors ${
+              viewMode === 'grid' 
+                ? 'bg-orange-100 text-orange-800'   // 선택된 상태
+                : 'bg-white hover:bg-gray-50'        // 선택되지 않은 상태
+            }`}
+            title="그리드 뷰"
+          >
+            <MdGridView />
+          </button>
+        </div>
+      </div>
+      
+      {/* 테이블 뷰 (디자인 보완) - viewMode가 'table'일 때만 표시 */}
+      {viewMode === 'table' && (
+        <div className="bg-white border-gray-300 rounded-lg shadow-sm border overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="bg-orange-50">
+                <tr>
+                  {/* 즐겨찾기 컬럼 (주석처리) */}
+                  {/* <th className="py-3 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    즐겨찾기
+                  </th> */}
+                  <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    제목
+                  </th>
+                  <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    생성일자
+                  </th>
+                  <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    액션
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {fairyTales.map((tale) => (
+                  <tr key={tale.id} className="hover:bg-gray-50 transition-colors">
+                    {/* 즐겨찾기 셀 (주석처리) */}
+                    {/* <td className="py-4 px-6 whitespace-nowrap">
+                      <button 
+                        onClick={() => handleToggleFavorite(tale.id)} 
+                        className="text-xl text-yellow-500 hover:text-yellow-600 transition-colors"
+                      >
+                        {tale.isFavorite ? <FaStar /> : <FaRegStar />}
+                      </button>
+                    </td> */}
+                    
+                    {/* 제목 셀 - 개선된 디자인 */}
+                    <td className="py-4 px-6">
+                      <Link 
+                        href={`/fairytale/get/${tale.id}`} 
+                        className="text-gray-900 hover:text-orange-600 hover:underline font-medium transition-colors text-lg"
+                      >
+                        {tale.title}
+                      </Link>
+                    </td>
+                    
+                    {/* 생성일자 셀 - 아이콘 추가 */}
+                    <td className="py-4 px-6 whitespace-nowrap text-gray-500">
+                      <div className="flex items-center">
+                        <FaCalendarAlt className="mr-2 text-gray-400" />
+                        <span className="text-sm">
+                          {new Date(tale.createdAt).toLocaleDateString('ko-KR')}
+                        </span>
+                      </div>
+                    </td>
+                    
+                    {/* 액션 셀 - 읽기 버튼 추가 */}
+                    <td className="py-4 px-6 whitespace-nowrap">
+                      <Link
+                        href={`/fairytale/get/${tale.id}`}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 hover:bg-orange-200 transition-colors"
+                      >
+                        읽기 →
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      
+      {/* 그리드 뷰 - viewMode가 'grid'일 때만 표시 */}
+      {viewMode === 'grid' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {fairyTales.map((tale) => (
+            <div key={tale.id} className="bg-white rounded-lg shadow-md border hover:shadow-lg transition-shadow">
+              {/* 카드 내용 */}
+              <div className="p-4">
+                {/* 동화 제목 */}
+                <h3 className="font-semibold text-gray-900 text-lg leading-tight mb-3">
+                  <Link 
+                    href={`/fairytale/get/${tale.id}`}
+                    className="hover:text-orange-600 transition-colors"
+                  >
                     {tale.title}
                   </Link>
-                </td>
-                <td className="py-4 px-6 whitespace-nowrap">{new Date(tale.createdAt).toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </h3>
+                
+                {/* 생성일자 */}
+                <div className="flex items-center text-sm text-gray-500 mb-4">
+                  <FaCalendarAlt className="mr-2" />
+                  {new Date(tale.createdAt).toLocaleDateString('ko-KR')}
+                </div>
+                
+                {/* 즐겨찾기 버튼 (주석처리) */}
+                {/* <div className="flex items-center justify-between mb-4">
+                  <button 
+                    onClick={() => handleToggleFavorite(tale.id)} 
+                    className="text-lg text-yellow-500 hover:text-yellow-600 transition-colors"
+                  >
+                    {tale.isFavorite ? <FaStar /> : <FaRegStar />}
+                  </button>
+                </div> */}
+                
+                {/* 읽기 버튼 */}
+                <Link
+                  href={`/fairytale/get/${tale.id}`}
+                  className="block w-full text-center py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+                >
+                  읽기
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
