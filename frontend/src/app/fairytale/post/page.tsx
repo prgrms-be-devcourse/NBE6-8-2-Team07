@@ -103,12 +103,6 @@ export default function FairytaleCreatePage() {
   // useState에 Slide[] 타입을 명시적으로 적용합니다.
   const [slides, setSlides] = useState<Slide[]>([
     {
-      title: "아이와 함께 아이만의 동화를 만들어주세요!",
-      content:
-        "아래 슬라이드들을 따라가며 키워드를 입력해 주세요.\n주인공: 이름과 역할을 하나씩 입력해요.\n등장인물 / 장소 / 분위기 / 교훈: 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.\n마지막 슬라이드에서는 입력한 내용을 확인하고, 동화 만들기 버튼을 눌러 나만의 동화를 완성할 수 있어요!",
-      image: "",
-    },
-    {
       title: "주인공",
       content: "주인공의 이름과 역할을 적어주세요.",
       image: "",
@@ -352,87 +346,78 @@ export default function FairytaleCreatePage() {
             /* ========================================
                🎨 첫 번째 슬라이드 (안내 문구) 디자인 개선 부분
                ======================================== */
-            <div className="flex flex-row space-x-8 h-full">
-              {/* 왼쪽 이미지 영역 */}
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <div className="w-96 h-96 bg-gradient-to-br from-orange-200 to-orange-300 rounded-2xl shadow-lg flex items-center justify-center relative overflow-hidden">
-                  {slides[currentSlide]?.image ? (
-                    <img
-                      src={slides[currentSlide]?.image}
-                      alt="동화 만들기 안내"
-                      className="max-h-full max-w-full object-contain"
-                    />
-                  ) : (
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">📚</div>
-                      <div className="text-white text-xl font-semibold">
-                        동화 만들기
-                      </div>
-                    </div>
-                  )}
-                  {/* 장식적 요소들 */}
-                  <div className="absolute top-4 right-4 text-3xl animate-bounce">✨</div>
-                  <div className="absolute bottom-4 left-4 text-2xl animate-pulse">🌟</div>
-                </div>
-              </div>
+               <div className="flex justify-center items-center h-full relative pt-[35px]">
 
-              {/* 오른쪽 콘텐츠 영역 */}
-              <div className="flex-1 flex flex-col justify-center">
+              {/* 메인 콘텐츠 */}
+              <div className="max-w-5xl mx-auto z-10 relative">
                 {/* 메인 타이틀 */}
-                <div className="mb-8">
-                  <h1 className="text-4xl font-bold text-gray-800 mb-2 leading-tight">
-                    {slides[currentSlide]?.title}
-                  </h1>
-                  <div className="w-20 h-1 bg-orange-400 rounded-full"></div>
+                <div className="mb-12 text-center">
+                  <div className="inline-block p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-3xl shadow-lg mb-6">
+                    <h1 className="text-5xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent mb-4 leading-tight">
+                      아이와 함께 아이만의 동화를 만들어주세요!
+                    </h1>
+                    <div className="w-32 h-1 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full mx-auto"></div>
+                  </div>
                 </div>
 
-                {/* 안내 카드들 */}
+                {/* 안내 텍스트 - 카드 형태로 업그레이드 */}
                 <div className="space-y-6">
-                  {/* 주인공 카드 */}
-                  <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-orange-400 transform hover:scale-105 transition-transform duration-200">
-                    <div className="flex items-center mb-3">
-                      <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                        <span className="text-orange-600 font-bold">1</span>
+                  {/* 주인공 설정 */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-gradient-to-r from-orange-300 to-amber-300 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0 shadow-md">
+                        <span className="text-white font-bold text-xl">1</span>
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-800">주인공 설정</h3>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                          주인공 설정 
+                        </h3>
+                        <p className="text-gray-600 text-lg leading-relaxed">
+                          주인공의 <span className="font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">이름과 역할</span>을 하나씩 입력해요.
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-gray-600 text-lg leading-relaxed">
-                      주인공의 <span className="font-medium text-orange-600">이름과 역할</span>을 하나씩 입력해요.
-                    </p>
                   </div>
 
-                  {/* 키워드 입력 카드 */}
-                  <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-blue-400 transform hover:scale-105 transition-transform duration-200">
-                    <div className="flex items-center mb-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                        <span className="text-blue-600 font-bold">2</span>
+                  {/* 키워드 입력 */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-yellow-100 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-gradient-to-r from-yellow-300 to-orange-300 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0 shadow-md">
+                        <span className="text-white font-bold text-xl">2</span>
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-800">키워드 입력</h3>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                          키워드 입력
+                        </h3>
+                        <p className="text-gray-600 text-lg leading-relaxed">
+                          <span className="font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">등장인물 · 장소 · 분위기 · 교훈</span> 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-gray-600 text-lg leading-relaxed">
-                      <span className="font-medium text-blue-600">등장인물 · 장소 · 분위기 · 교훈</span> 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.
-                    </p>
                   </div>
 
-                  {/* 동화 완성 카드 */}
-                  <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-green-400 transform hover:scale-105 transition-transform duration-200">
-                    <div className="flex items-center mb-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                        <span className="text-green-600 font-bold">3</span>
+                  {/* 동화 완성 */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-amber-100 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-gradient-to-r from-amber-300 to-yellow-300 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0 shadow-md">
+                        <span className="text-white font-bold text-xl">3</span>
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-800">동화 완성</h3>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                          동화 완성
+                        </h3>
+                        <p className="text-gray-600 text-lg leading-relaxed">
+                          마지막 슬라이드에서 입력한 내용을 확인하고, <span className="font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">동화 만들기 버튼</span>을 눌러 나만의 동화를 완성할 수 있어요!
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-gray-600 text-lg leading-relaxed">
-                      마지막 슬라이드에서 입력한 내용을 확인하고, <span className="font-medium text-green-600">동화 만들기 버튼</span>을 눌러 나만의 동화를 완성할 수 있어요!
-                    </p>
                   </div>
                 </div>
 
-                {/* 시작하기 버튼 영역 */}
-                <div className="mt-8 text-center">
-                  <div className="inline-flex items-center bg-gradient-to-r from-orange-400 to-orange-500 text-white px-6 py-3 rounded-full shadow-lg">
-                    <span className="text-lg font-semibold mr-2">준비되셨나요?</span>
-                    <span className="text-xl">🚀</span>
+                {/* 하단 격려 메시지 */}
+                <div className="mt-12 text-center">
+                  <div className="inline-flex items-center bg-gradient-to-r from-orange-400 to-amber-400 text-white px-8 py-4 rounded-full shadow-lg animate-pulse">
+                    <span className="text-xl font-semibold mr-3">함께 멋진 동화를 만들어봐요!</span>
                   </div>
                 </div>
               </div>
