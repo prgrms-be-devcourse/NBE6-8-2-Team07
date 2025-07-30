@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { FaRegStar, FaBook, FaStar, FaCalendarAlt, FaTrashAlt } from 'react-icons/fa';
+import { FaBook, FaCalendarAlt, FaTrashAlt } from 'react-icons/fa';
 // 뷰모드 전환을 위한 아이콘 추가
 import { MdViewList, MdGridView } from 'react-icons/md';
 import Link from 'next/link';
@@ -49,10 +49,11 @@ const FairytaleList = () => {
       // 성공 메시지 (선택사항)
       alert(`"${title}" 동화가 삭제되었습니다.`);
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       // 에러 발생 시 사용자에게 알림
       console.error('삭제 중 오류 발생:', error);
-      alert(`삭제 중 오류가 발생했습니다: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      alert(`삭제 중 오류가 발생했습니다: ${errorMessage}`);
     } finally {
       // 삭제 중인 상태 해제 (성공/실패 관계없이 실행)
       setDeletingIds(prev => {
@@ -80,8 +81,9 @@ const FairytaleList = () => {
         }
         const data: Fairytale[] = await response.json();
         setFairyTales(data);
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
