@@ -9,7 +9,6 @@ import { Fairytale, FairytaleWithBookmark } from '@/context/fairytaleContext';
 // 뷰모드 타입 정의 (테이블 또는 그리드)
 type ViewMode = 'table' | 'grid';
 
-
 const FairytaleList = () => {
   const [fairyTales, setFairyTales] = useState<FairytaleWithBookmark[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,8 +16,14 @@ const FairytaleList = () => {
   const [error, setError] = useState<string | null>(null);
   
   const [viewMode, setViewMode] = useState<ViewMode>('table');
+  const [filterMode, setFilterMode] = useState<'all' | 'bookmarked'>('all');
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [bookmarkingIds, setBookmarkingIds] = useState<Set<string>>(new Set());
+
+  // 필터링된 동화 목록
+  const filteredFairyTales = filterMode === 'all' 
+    ? fairyTales 
+    : fairyTales.filter(tale => tale.isBookmarked);
 
   // 즐겨찾기 토글 함수
   const handleToggleBookmark = async (fairytaleId: number, currentBookmarkStatus: boolean) => {
@@ -78,6 +83,7 @@ const FairytaleList = () => {
     try {
       const response = await fetch(`http://localhost:8080/fairytales/${id}`, {
         method: 'DELETE',
+        credentials: 'include', // 인증 정보 포함
       });
 
       if (!response.ok) {
@@ -193,35 +199,70 @@ const FairytaleList = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">동화 목록</h1>
         
-        {/* 뷰모드 전환 버튼 그룹 */}
-        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-          {/* 테이블 뷰 버튼 */}
-          <button
-            onClick={() => setViewMode('table')}
-            className={`p-2 transition-colors ${
-              viewMode === 'table' 
-                ? 'bg-orange-100 text-orange-800' 
-                : 'bg-white hover:bg-gray-50'      
-            }`}
-            title="테이블 뷰"
-          >
-            <MdViewList />
-          </button>
+        <div className="flex items-center space-x-4">
+          {/* 필터 버튼 그룹 */}
+          <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setFilterMode('all')}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                filterMode === 'all' 
+                  ? 'bg-blue-100 text-blue-800' 
+                  : 'bg-white hover:bg-gray-50 text-gray-700'      
+              }`}
+            >
+              전체보기
+            </button>
+            <button
+              onClick={() => setFilterMode('bookmarked')}
+              className={`px-4 py-2 border-l border-gray-300 text-sm font-medium transition-colors ${
+                filterMode === 'bookmarked' 
+                  ? 'bg-blue-100 text-blue-800'   
+                  : 'bg-white hover:bg-gray-50 text-gray-700'      
+              }`}
+            >
+              즐겨찾기만
+            </button>
+          </div>
           
-          {/* 그리드 뷰 버튼 */}
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 border-l border-gray-300 transition-colors ${
-              viewMode === 'grid' 
-                ? 'bg-orange-100 text-orange-800'   
-                : 'bg-white hover:bg-gray-50'      
-            }`}
-            title="그리드 뷰"
-          >
-            <MdGridView />
-          </button>
+          {/* 뷰모드 전환 버튼 그룹 */}
+          <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+            {/* 테이블 뷰 버튼 */}
+            <button
+              onClick={() => setViewMode('table')}
+              className={`p-2 transition-colors ${
+                viewMode === 'table' 
+                  ? 'bg-orange-100 text-orange-800' 
+                  : 'bg-white hover:bg-gray-50'      
+              }`}
+              title="테이블 뷰"
+            >
+              <MdViewList />
+            </button>
+            
+            {/* 그리드 뷰 버튼 */}
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 border-l border-gray-300 transition-colors ${
+                viewMode === 'grid' 
+                  ? 'bg-orange-100 text-orange-800'   
+                  : 'bg-white hover:bg-gray-50'      
+              }`}
+              title="그리드 뷰"
+            >
+              <MdGridView />
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* 필터 결과 안내 메시지 */}
+      {filterMode === 'bookmarked' && filteredFairyTales.length === 0 && fairyTales.length > 0 && (
+        <div className="text-center py-8 bg-yellow-50 rounded-lg mb-4">
+          <FaStar className="mx-auto text-yellow-400 text-4xl mb-2" />
+          <p className="text-gray-600">아직 즐겨찾기한 동화가 없습니다.</p>
+          <p className="text-sm text-gray-500">별 아이콘을 클릭해서 동화를 즐겨찾기에 추가해보세요!</p>
+        </div>
+      )}
       
       {/* 테이블 뷰 */}
       {viewMode === 'table' && (
@@ -246,7 +287,7 @@ const FairytaleList = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {fairyTales.map((tale) => (
+                {filteredFairyTales.map((tale) => (
                   <tr key={tale.id} className="hover:bg-gray-50 transition-colors">
                     {/* 즐겨찾기 셀 */}
                     <td className="py-4 px-6 whitespace-nowrap">
@@ -330,7 +371,7 @@ const FairytaleList = () => {
       {/* 그리드 뷰 */}
       {viewMode === 'grid' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {fairyTales.map((tale) => (
+          {filteredFairyTales.map((tale) => (
             <div key={tale.id} className="bg-white rounded-lg shadow-md border hover:shadow-lg transition-shadow">
               {/* 카드 내용 */}
               <div className="p-4">
