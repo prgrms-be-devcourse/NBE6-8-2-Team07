@@ -291,9 +291,89 @@ export default function FairytaleCreatePage() {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="text-white text-2xl">동화가 자라나는 중...</div>
+        <div className="fixed inset-0 bg-gradient-to-br from-orange-100 via-yellow-50 to-amber-100 flex justify-center items-center z-50">
+        <div className="text-center">
+          {/* 메인 로딩 애니메이션 */}
+          <div className="relative mb-8">
+            {/* 책 애니메이션 */}
+            <div className="relative w-32 h-24 mx-auto mb-6">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-400 rounded-lg shadow-lg transform rotate-3 animate-bounce"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-lg shadow-lg animate-pulse"></div>
+              <div className="absolute top-2 left-2 right-2 bottom-2 bg-white rounded opacity-90"></div>
+              <div className="absolute top-4 left-4 right-4 space-y-1">
+                <div className="h-1 bg-gray-300 rounded animate-pulse"></div>
+                <div className="h-1 bg-gray-300 rounded animate-pulse delay-75"></div>
+                <div className="h-1 bg-gray-300 rounded animate-pulse delay-150"></div>
+                <div className="h-1 bg-gray-300 rounded animate-pulse delay-300"></div>
+              </div>
+            </div>
+    
+            {/* 마법 별들 */}
+            <div className="absolute -top-4 -left-8 text-yellow-400 animate-bounce delay-100">✨</div>
+            <div className="absolute -top-6 right-4 text-orange-400 animate-bounce delay-300">⭐</div>
+            <div className="absolute top-2 -right-8 text-amber-400 animate-bounce delay-500">✨</div>
+            <div className="absolute -bottom-2 -left-4 text-yellow-500 animate-bounce delay-700">🌟</div>
+            <div className="absolute -bottom-4 right-2 text-orange-300 animate-bounce delay-900">✨</div>
+          </div>
+    
+          {/* 로딩 텍스트 */}
+          <div className="mb-6">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent mb-3 animate-pulse">
+              동화가 자라나는 중...
+            </h2>
+            <p className="text-lg text-gray-600 animate-fade-in-out">
+              아이만의 특별한 이야기를 만들고 있어요!
+            </p>
+          </div>
+    
+          {/* 프로그레스 바 */}
+          <div className="w-80 mx-auto mb-6">
+            <div className="bg-orange-100 rounded-full h-3 shadow-inner">
+              <div className="bg-gradient-to-r from-orange-400 to-amber-400 h-3 rounded-full shadow-sm animate-loading-progress"></div>
+            </div>
+          </div>
+    
+          {/* 로딩 단계 텍스트 (순환) */}
+          <div className="text-sm text-gray-500 animate-loading-text">
+            <span>상상의 나래를 펼치는 중...</span>
+          </div>
         </div>
+    
+        {/* 추가 CSS 애니메이션을 위한 스타일 */}
+        <style jsx>{`
+          @keyframes loading-progress {
+            0% { width: 0%; }
+            25% { width: 30%; }
+            50% { width: 60%; }
+            75% { width: 85%; }
+            100% { width: 95%; }
+          }
+          
+          @keyframes fade-in-out {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+          }
+          
+          @keyframes loading-text {
+            0% { content: "상상의 나래를 펼치는 중..."; }
+            33% { content: "마법의 이야기를 짜는 중..."; }
+            66% { content: "특별한 모험을 준비하는 중..."; }
+            100% { content: "아름다운 동화를 완성하는 중..."; }
+          }
+          
+          .animate-loading-progress {
+            animation: loading-progress 3s ease-in-out infinite;
+          }
+          
+          .animate-fade-in-out {
+            animation: fade-in-out 2s ease-in-out infinite;
+          }
+          
+          .animate-loading-text {
+            animation: loading-text 4s ease-in-out infinite;
+          }
+        `}</style>
+      </div>
       )}
       <div className="relative w-full h-full p-8 bg-[#FAF9F6] rounded-lg shadow-lg flex flex-col">
         <div className="flex-grow p-4">
