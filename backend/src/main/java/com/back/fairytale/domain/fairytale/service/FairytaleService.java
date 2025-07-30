@@ -160,10 +160,10 @@ public class FairytaleService {
         prompt.append("조건:\n");
         prompt.append("- 아이 이름: ").append(request.childName()).append("\n");
         prompt.append("- 아이 역할: ").append(request.childRole()).append("\n");
-        prompt.append("- 등장인물: ").append(request.childName()).append("\n");
-        prompt.append("- 장소: ").append(request.childRole()).append("\n");
-        prompt.append("- 교훈: ").append(request.childName()).append("\n");
-        prompt.append("- 분위기: ").append(request.childRole()).append("\n");
+        prompt.append("- 등장인물: ").append(request.characters()).append("\n");
+        prompt.append("- 장소: ").append(request.place()).append("\n");
+        prompt.append("- 교훈: ").append(request.lesson()).append("\n");
+        prompt.append("- 분위기: ").append(request.mood()).append("\n");
 
         prompt.append("\n").append(request.childName()).append("이(가) ").append(request.childRole()).append(" 역할로 나오는 ");
         prompt.append("900-1300자 정도의 완성된 동화를 만들어주세요.");
