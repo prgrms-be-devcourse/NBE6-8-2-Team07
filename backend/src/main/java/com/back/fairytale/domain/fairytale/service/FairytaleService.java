@@ -132,6 +132,10 @@ public class FairytaleService {
                     .orElseGet(() -> keywordRepository.save(
                             Keyword.of(keywordValue.trim(), type)));
 
+            // usage_count 증가
+            keyword.incrementUsageCount();
+            keywordRepository.save(keyword);
+
             fairytale.addKeyword(keyword);
         }
     }
@@ -146,6 +150,10 @@ public class FairytaleService {
                     Keyword keyword = keywordRepository.findByKeywordAndKeywordType(trimmedKeyword, type)
                             .orElseGet(() -> keywordRepository.save(
                                     Keyword.of(trimmedKeyword, type)));
+
+                    // usage_count 증가
+                    keyword.incrementUsageCount();
+                    keywordRepository.save(keyword);
 
                     fairytale.addKeyword(keyword);
                 }
