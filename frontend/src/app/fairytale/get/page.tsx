@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { FaRegStar, FaBook, FaStar, FaCalendarAlt } from 'react-icons/fa';
+import { FaRegStar, FaBook, FaStar, FaCalendarAlt, FaTrashAlt } from 'react-icons/fa';
 // 뷰모드 전환을 위한 아이콘 추가
 import { MdViewList, MdGridView } from 'react-icons/md';
 import Link from 'next/link';
@@ -18,6 +18,50 @@ const FairytaleList = () => {
   
   // 뷰모드 상태 추가 (기본값: 테이블)
   const [viewMode, setViewMode] = useState<ViewMode>('table');
+  // 삭제 중인 동화 ID를 추적하는 상태 (로딩 표시용)
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
+
+  // 동화 삭제 함수
+  const handleDeleteFairytale = async (id: number, title: string) => {
+    // 사용자에게 삭제 확인 요청
+    const isConfirmed = window.confirm(`"${title}" 동화를 정말 삭제하시겠습니까?`);
+    
+    if (!isConfirmed) {
+      return; // 사용자가 취소한 경우 함수 종료
+    }
+
+    // 삭제 중인 상태로 설정 (버튼 비활성화용)
+    setDeletingIds(prev => new Set([...prev, id.toString()]));
+
+    try {
+      // 백엔드에 DELETE 요청 보내기
+      const response = await fetch(`http://localhost:8080/fairytales/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`삭제 실패! status: ${response.status}`);
+      }
+
+      // 성공적으로 삭제된 경우, 로컬 상태에서도 해당 동화 제거
+      setFairyTales(prev => prev.filter(tale => tale.id !== id));
+      
+      // 성공 메시지 (선택사항)
+      alert(`"${title}" 동화가 삭제되었습니다.`);
+      
+    } catch (error: any) {
+      // 에러 발생 시 사용자에게 알림
+      console.error('삭제 중 오류 발생:', error);
+      alert(`삭제 중 오류가 발생했습니다: ${error.message}`);
+    } finally {
+      // 삭제 중인 상태 해제 (성공/실패 관계없이 실행)
+      setDeletingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id.toString());
+        return newSet;
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchFairyTales = async () => {
@@ -169,14 +213,32 @@ const FairytaleList = () => {
                       </div>
                     </td>
                     
-                    {/* 액션 셀 - 읽기 버튼 추가 */}
+                    {/* 액션 셀 - 읽기/삭제 버튼 */}
                     <td className="py-4 px-6 whitespace-nowrap">
-                      <Link
-                        href={`/fairytale/get/${tale.id}`}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 hover:bg-orange-200 transition-colors"
-                      >
-                        읽기 →
-                      </Link>
+                      <div className="flex items-center space-x-2">
+                        {/* 읽기 버튼 */}
+                        <Link
+                          href={`/fairytale/get/${tale.id}`}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 hover:bg-orange-200 transition-colors"
+                        >
+                          읽기 →
+                        </Link>
+                        
+                        {/* 삭제 버튼 */}
+                        <button
+                          onClick={() => handleDeleteFairytale(tale.id, tale.title)}
+                          disabled={deletingIds.has(tale.id.toString())} // 삭제 중일 때 버튼 비활성화
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${
+                            deletingIds.has(tale.id.toString())
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' // 삭제 중 스타일
+                              : 'bg-red-100 text-red-800 hover:bg-red-200'     // 일반 스타일
+                          }`}
+                          title={deletingIds.has(tale.id.toString()) ? '삭제 중...' : '동화 삭제'}
+                        >
+                          <FaTrashAlt className="mr-1" />
+                          {deletingIds.has(tale.id.toString()) ? '삭제 중...' : '삭제'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -219,13 +281,31 @@ const FairytaleList = () => {
                   </button>
                 </div> */}
                 
-                {/* 읽기 버튼 */}
-                <Link
-                  href={`/fairytale/get/${tale.id}`}
-                  className="block w-full text-center py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-                >
-                  읽기
-                </Link>
+                {/* 버튼 그룹 - 간격 개선 */}
+                <div className="space-y-3">
+                  {/* 읽기 버튼 */}
+                  <Link
+                    href={`/fairytale/get/${tale.id}`}
+                    className="block w-full text-center py-3 px-4 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition-colors font-medium"
+                  >
+                    읽기
+                  </Link>
+                  
+                  {/* 삭제 버튼 */}
+                  <button
+                    onClick={() => handleDeleteFairytale(tale.id, tale.title)}
+                    disabled={deletingIds.has(tale.id.toString())} // number를 string으로 변환
+                    className={`block w-full text-center py-3 px-4 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
+                      deletingIds.has(tale.id.toString())
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed' // 삭제 중 스타일
+                        : 'bg-red-500 text-white hover:bg-red-600'        // 일반 스타일
+                    }`}
+                    title={deletingIds.has(tale.id.toString()) ? '삭제 중...' : '동화 삭제'}
+                  >
+                    <FaTrashAlt className="inline mr-2" />
+                    {deletingIds.has(tale.id.toString()) ? '삭제 중...' : '삭제'}
+                  </button>
+                </div>
               </div>
             </div>
           ))}
