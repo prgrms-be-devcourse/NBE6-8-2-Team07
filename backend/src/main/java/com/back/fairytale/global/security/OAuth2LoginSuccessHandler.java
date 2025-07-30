@@ -25,13 +25,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         CustomOAuth2User customUser = (CustomOAuth2User) authentication.getPrincipal();
 
         Long userId = customUser.getId();
-        String role = authentication.getAuthorities().iterator().next().getAuthority();
         String refreshToken = userTokenService.getUserToken(userId);
 
-        Cookie accessCookie = jwtProvider.createAccessTokenCookie(userId, role);
         Cookie refreshCookie = jwtProvider.createRefreshTokenCookie(refreshToken);
 
-        response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
         response.sendRedirect("http://localhost:3000/");
     }

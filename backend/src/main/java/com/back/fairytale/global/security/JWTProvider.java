@@ -3,6 +3,7 @@ package com.back.fairytale.global.security;
 import jakarta.servlet.http.Cookie;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -13,6 +14,12 @@ import java.util.Arrays;
 public class JWTProvider {
 
     private final JWTUtil jwtUtil;
+
+    @Value("${spring.cookie.secure}")
+    private boolean cookieSecure;
+
+    @Value("${spring.cookie.same-site}")
+    private String cookieSameSite;
 
     @Getter
     public enum TokenType {
@@ -28,10 +35,6 @@ public class JWTProvider {
             this.expirationMs = expirationMs;
             this.cookieMaxAge = cookieMaxAge;
         }
-    }
-
-    public Cookie createAccessTokenCookie(Long userId, String role) {
-        return createTokenCookie(userId, role, TokenType.ACCESS);
     }
 
     public Cookie createRefreshTokenCookie(String refreshToken) {
@@ -91,7 +94,8 @@ public class JWTProvider {
         Cookie cookie = new Cookie(name, token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        // cookie.setSecure(true);
+        cookie.setSecure(cookieSecure);
+        cookie.setAttribute("SameSite", cookieSameSite);
         cookie.setMaxAge(maxAge);
         return cookie;
     }
