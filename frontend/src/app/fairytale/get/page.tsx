@@ -56,9 +56,10 @@ const FairytaleList = () => {
       // 성공 메시지 (선택사항)
       alert(`즐겨찾기가 ${currentBookmarkStatus ? '해제' : '추가'}되었습니다.`);
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('즐겨찾기 처리 중 오류 발생:', error);
-      alert(`즐겨찾기 처리 중 오류가 발생했습니다: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      alert(`즐겨찾기 처리 중 오류가 발생했습니다: ${errorMessage}`);
     } finally {
       setBookmarkingIds(prev => {
         const newSet = new Set(prev);
@@ -94,9 +95,10 @@ const FairytaleList = () => {
       
       alert(`"${title}" 동화가 삭제되었습니다.`);
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('삭제 중 오류 발생:', error);
-      alert(`삭제 중 오류가 발생했습니다: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      alert(`삭제 중 오류가 발생했습니다: ${errorMessage}`);
     } finally {
       setDeletingIds(prev => {
         const newSet = new Set(prev);
@@ -138,7 +140,7 @@ const FairytaleList = () => {
           
           if (bookmarksResponse.ok) {
             const bookmarksData = await bookmarksResponse.json();
-            bookmarkedIds = bookmarksData.map((bookmark: any) => bookmark.fairytaleId);
+            bookmarkedIds = bookmarksData.map((bookmark: { fairytaleId: number }) => bookmark.fairytaleId);
           }
         } catch (bookmarkError) {
           console.warn('즐겨찾기 정보를 가져오는데 실패했습니다:', bookmarkError);
@@ -152,8 +154,9 @@ const FairytaleList = () => {
         }));
 
         setFairyTales(fairytalesWithBookmarks);
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
