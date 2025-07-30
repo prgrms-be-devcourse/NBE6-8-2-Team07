@@ -1,11 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { useParams } from 'next/navigation';
-=======
-import { useSearchParams } from 'next/navigation';
->>>>>>> 859f8d2f9d3ce527cab0dc2cf6bdc9b49c36e7fd
 import { Fairytale } from '@/context/fairytaleContext';
 
 interface GroupedKeywords {
@@ -13,13 +9,8 @@ interface GroupedKeywords {
 }
 
 const FairytaleReader = () => {
-<<<<<<< HEAD
   const params = useParams();
   const fairytaleId = params.id as string;
-=======
-  const searchParams = useSearchParams();
-  const fairytaleId = searchParams.get('id');
->>>>>>> 859f8d2f9d3ce527cab0dc2cf6bdc9b49c36e7fd
 
   const [isKeywordPopupOpen, setIsKeywordPopupOpen] = useState(false);
   const [fairytale, setFairytale] = useState<Fairytale | null>(null);
@@ -65,19 +56,18 @@ const FairytaleReader = () => {
           str ? str.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
 
         const newGroupedKeywords: GroupedKeywords = {
-          CHILD_NAME: parseKeywords(fairytaleData.childName),
-          CHILD_ROLE: parseKeywords(fairytaleData.childRole),
-          CHARACTERS: parseKeywords(fairytaleData.characters),
-          PLACE: parseKeywords(fairytaleData.place),
-          MOOD: parseKeywords(fairytaleData.mood),
-          LESSON: parseKeywords(fairytaleData.lesson),
+          CHILD_NAME: parseKeywords((fairytaleData as any).childName),
+          CHILD_ROLE: parseKeywords((fairytaleData as any).childRole),
+          CHARACTERS: parseKeywords((fairytaleData as any).characters),
+          PLACE: parseKeywords((fairytaleData as any).place),
+          MOOD: parseKeywords((fairytaleData as any).mood),
+          LESSON: parseKeywords((fairytaleData as any).lesson),
         };
 
         setGroupedKeywords(newGroupedKeywords);
 
-      } catch (e: unknown) {
-        const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred';
-        setError(errorMessage);
+      } catch (e: any) {
+        setError(e.message);
       } finally {
         setLoading(false);
       }
@@ -148,5 +138,4 @@ const FairytaleReader = () => {
 };
 
 export default FairytaleReader;
-
 
