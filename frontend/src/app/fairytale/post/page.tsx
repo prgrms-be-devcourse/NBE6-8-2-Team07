@@ -103,41 +103,46 @@ export default function FairytaleCreatePage() {
   // useState에 Slide[] 타입을 명시적으로 적용합니다.
   const [slides, setSlides] = useState<Slide[]>([
     {
+      title: "",
+      content: "",
+      image: "",
+    },
+    {
       title: "주인공",
       content: "주인공의 이름과 역할을 적어주세요.",
-      image: "",
+      image: "/images/post1.png",
       name: "",
       role: "",
     },
     {
       title: "등장인물",
       content: "동화에 등장할 사람이나 동물을 적어주세요.",
-      image: "",
+      image: "/images/post2.png",
       addedItems: [],
     },
     {
       title: "장소",
       content: "동화에 등장할 장소를 적어주세요.",
-      image: "",
+      image: "/images/post3.png",
       addedItems: [],
     },
     {
       title: "분위기",
       content: "동화의 분위기를 적어주세요.",
-      image: "",
+      image: "/images/post4.png",
       addedItems: [],
     },
     {
       title: "교훈",
       content: "동화의 교훈을 적어주세요.",
-      image: "",
+      image: "/images/post5.png",
       addedItems: [],
     },
     {
       title: "입력 내용 확인",
       content:
         "아이와 함께 고른 키워드들이 잘 들어갔는지 마지막으로 체크해볼까요?",
-      image: "",
+      image: "/images/post4.png",
     },
   ]);
 
@@ -343,10 +348,7 @@ export default function FairytaleCreatePage() {
               </div>
             </div>
           ) : currentSlide === 0 ? (
-            /* ========================================
-               🎨 첫 번째 슬라이드 (안내 문구) 디자인 개선 부분
-               ======================================== */
-               <div className="flex justify-center items-center h-full relative pt-[35px]">
+               <div className="flex justify-center items-center h-full relative">
 
               {/* 메인 콘텐츠 */}
               <div className="max-w-5xl mx-auto z-10 relative">
@@ -422,9 +424,6 @@ export default function FairytaleCreatePage() {
                 </div>
               </div>
             </div>
-            /* ========================================
-               🎨 첫 번째 슬라이드 디자인 개선 부분 끝
-               ======================================== */
           ) : (
             // 일반 슬라이드
             <div className="flex flex-row space-x-4 h-full">
@@ -441,7 +440,7 @@ export default function FairytaleCreatePage() {
                 <h2 className="text-3xl font-bold mb-2">{slides[currentSlide]?.title}</h2>
                 <p className="text-gray-500 mb-2 text-lg">{slides[currentSlide]?.content}</p>
 
-                {currentSlide === 1 && (
+                {currentSlide === 1  && (
                   <div className="mb-2">
                     {showSlide1NameInput ? (
                       <div>

@@ -193,7 +193,7 @@ const FairytaleList = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 relative pt-[55px]">
+    <div className="container mx-auto p-4 relative pt-[40px]">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">동화 목록</h1>
         
