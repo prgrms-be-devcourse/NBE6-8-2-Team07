@@ -1,5 +1,6 @@
 package com.back.fairytale.domain.user.controller;
 
+import com.back.fairytale.domain.user.dto.TokenPairDto;
 import com.back.fairytale.domain.user.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,8 +45,7 @@ class UserControllerTest {
 
         when(request.getCookies()).thenReturn(cookies);
         when(authService.getRefreshTokenFromCookies(cookies)).thenReturn(refreshToken);
-        when(authService.reissueAccessToken(refreshToken)).thenReturn(newAccessToken);
-        when(authService.reissueRefreshToken(refreshToken)).thenReturn(newRefreshToken);
+        when(authService.reissueTokens(refreshToken)).thenReturn(TokenPairDto.of(newAccessToken, newRefreshToken));
         when(authService.createAccessTokenCookie(newAccessToken)).thenReturn(accessTokenCookie);
         when(authService.createRefreshTokenCookie(newRefreshToken)).thenReturn(refreshTokenCookie);
 
@@ -66,7 +66,7 @@ class UserControllerTest {
 
         when(request.getCookies()).thenReturn(cookies);
         when(authService.getRefreshTokenFromCookies(cookies)).thenReturn(invalidRefreshToken);
-        when(authService.reissueAccessToken(invalidRefreshToken))
+        when(authService.reissueTokens(invalidRefreshToken))
                 .thenThrow(new IllegalArgumentException(errorMessage));
 
         // When
@@ -75,7 +75,7 @@ class UserControllerTest {
         // Then
         assertThat(result.getStatusCode()).isEqualTo((HttpStatus.BAD_REQUEST));
         assertThat(result.getBody()).isEqualTo(errorMessage);
-        verify(authService, never()).reissueRefreshToken(anyString());
+        verify(authService).reissueTokens(anyString());
         verify(response, never()).addCookie(any(Cookie.class));
     }
 
@@ -90,8 +90,7 @@ class UserControllerTest {
 
         when(request.getCookies()).thenReturn(cookies);
         when(authService.getRefreshTokenFromCookies(cookies)).thenReturn(refreshToken);
-        when(authService.reissueAccessToken(refreshToken)).thenReturn(newAccessToken);
-        when(authService.reissueRefreshToken(refreshToken))
+        when(authService.reissueTokens(refreshToken))
                 .thenThrow(new IllegalArgumentException(errorMessage));
 
         // When
