@@ -23,22 +23,20 @@ public class JWTProvider {
 
     @Getter
     public enum TokenType {
-        ACCESS("Authorization", 10 * 60 * 1000L, 600),
-        REFRESH("refresh", 24 * 60 * 60 * 1000L, 86400);
+        ACCESS("Authorization", 10 * 60 * 1000L),
+        REFRESH("refresh", 24 * 60 * 60 * 1000L);
 
         private final String name;
         private final Long expirationMs;
-        private final int cookieMaxAge;
 
-        TokenType(String name, Long expirationMs, int cookieMaxAge) {
+        TokenType(String name, Long expirationMs) {
             this.name = name;
             this.expirationMs = expirationMs;
-            this.cookieMaxAge = cookieMaxAge;
         }
     }
 
     public Cookie createRefreshTokenCookie(String refreshToken) {
-        return createCookie(refreshToken, TokenType.REFRESH.getName(), TokenType.REFRESH.getCookieMaxAge());
+        return createSessionCookie(refreshToken, TokenType.REFRESH.getName());
     }
 
     public String createAccessToken(Long userId, String role) {
@@ -50,7 +48,7 @@ public class JWTProvider {
     }
 
     public Cookie wrapTokenToCookie(String token, TokenType tokenType) {
-        return createCookie(token, tokenType.getName(), tokenType.getCookieMaxAge());
+        return createSessionCookie(token, tokenType.getName());
     }
 
     public Cookie wrapAccessTokenToCookie(String token) {
@@ -90,13 +88,22 @@ public class JWTProvider {
         return getUserIdFromToken(refreshToken, TokenType.REFRESH);
     }
 
-    public Cookie createCookie(String token, String name, int maxAge) {
+    public Cookie createSessionCookie(String token, String name) {
         Cookie cookie = new Cookie(name, token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setSecure(cookieSecure);
         cookie.setAttribute("SameSite", cookieSameSite);
+        return cookie;
+    }
+
+    public Cookie createCookie(String token, String name, int maxAge) {
+        Cookie cookie = new Cookie(name, token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setSecure(cookieSecure);
         cookie.setMaxAge(maxAge);
+        cookie.setAttribute("SameSite", cookieSameSite);
         return cookie;
     }
 
@@ -112,11 +119,6 @@ public class JWTProvider {
             throw new IllegalArgumentException("Invalid " + tokenType.getName() + " token");
         }
         return jwtUtil.getUserId(token);
-    }
-
-    private Cookie createTokenCookie(Long userId, String role, TokenType tokenType) {
-        String token = createToken(userId, role, tokenType);
-        return createCookie(token, tokenType.getName(), tokenType.getCookieMaxAge());
     }
 
     private String createToken(Long userId, String role, TokenType tokenType) {
