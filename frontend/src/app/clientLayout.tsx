@@ -162,9 +162,9 @@ export default function ClientLayout({
         </div>
       )}
 
-      <body>
+      <>
         {children}
-      </body>
+      </>
       <footer className="bg-[#FFD6A5]">
         <div>
            <br/>
