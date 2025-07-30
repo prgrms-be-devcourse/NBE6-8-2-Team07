@@ -18,13 +18,13 @@ export default function FairytaleCreatePage() {
   const [isLoading, setIsLoading] = useState(false);
   // useState에 Slide[] 타입을 명시적으로 적용합니다.
   const [slides, setSlides] = useState<Slide[]>([
-    { title: '동화를 쓰기에 앞서', content: '생성방법 설명창', image: '' },
+    { title: '아이와 함께 아이만의 동화를 만들어주세요!', content: '아래 슬라이드들을 따라가며 키워드를 입력해 주세요.\n주인공: 이름과 역할을 하나씩 입력해요.\n등장인물 / 장소 / 분위기 / 교훈: 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.\n마지막 슬라이드에서는 입력한 내용을 확인하고, 동화 만들기 버튼을 눌러 나만의 동화를 완성할 수 있어요!', image: '' },
     { title: '주인공', content: '주인공의 이름과 역할을 적어주세요.', image: '', name: '', role: '' },
     { title: '등장인물', content: '동화에 등장할 사람이나 동물을 적어주세요.', image: '', addedItems: [] },
     { title: '장소', content: '동화에 등장할 장소를 적어주세요.', image: '', addedItems: [] },
     { title: '분위기', content: '동화의 분위기를 적어주세요.', image: '', addedItems: [] },
     { title: '교훈', content: '동화의 교훈을 적어주세요.', image: '', addedItems: [] },
-    { title: '입력 내용 확인', content: '지금까지 입력한 내용을 확인해주세요.', image: '' },
+    { title: '입력 내용 확인', content: '아이와 함께 고른 키워드들이 잘 들어갔는지 마지막으로 체크해볼까요?', image: '' },
   ]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -164,16 +164,16 @@ export default function FairytaleCreatePage() {
               </div>
               <div className="flex-1 flex flex-col">
                 <h2 className="text-3xl font-bold mb-2">{slides[currentSlide]?.title}</h2>
-                <p className="text-gray-500 mb-2 text-lg">{slides[currentSlide]?.content}</p>
+                <p className="text-gray-500 text-lg">{slides[currentSlide]?.content}</p>
                 <div className="mb-2">
                   {slides.slice(1, -1).map((slide, index) => (
                     <div key={index} className="p-4">
-                      <h3 className="text-xl font-semibold mb-4 text-orange-500">{slide.title}</h3>
+                      <h3 className="text-xl font-semibold mb-2 text-orange-500">{slide.title}</h3>
                       {/* name, role, addedItems 속성이 있는지 확인 후 렌더링 */}
                       {slide.name && (
                         <div className="mb-2">
                           <span className="text-lg">이름 : </span>
-                          <div className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2">
+                          <div className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2">
                             <span className="whitespace-nowrap">{slide.name}</span>
                           </div>
                         </div>
@@ -187,9 +187,9 @@ export default function FairytaleCreatePage() {
                         </div>
                       )}
                       {slide.addedItems && slide.addedItems.length > 0 && (
-                        <div className="mt-2 flex items-center flex-wrap">
+                        <div className="flex items-center flex-wrap">
                           {slide.addedItems.map((item, itemIndex) => (
-                            <div key={itemIndex} className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2">
+                            <div key={itemIndex} className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2">
                               <span className="whitespace-nowrap">{item}</span>
                             </div>
                           ))}
@@ -214,7 +214,7 @@ export default function FairytaleCreatePage() {
               </div>
               <div className="flex-1 flex flex-col">
                 <h2 className="text-3xl font-bold mb-2">{slides[currentSlide]?.title}</h2>
-                <p className="text-gray-500 mb-2 text-lg">{slides[currentSlide]?.content}</p>
+                <p className="text-gray-500 mb-2 text-lg" style={{ whiteSpace: 'pre-line' }}>{slides[currentSlide]?.content}</p>
 
                 {currentSlide === 1 && (
                   <div className="mb-2">
