@@ -23,6 +23,7 @@ export default function RootLayout({
 }>) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false); // 로그인 필요 팝업 상태
 
   // 백엔드를 통해 로그인 상태를 확인하는 함수
   const checkLoginStatusOnBackend = async () => {
@@ -82,6 +83,14 @@ export default function RootLayout({
     }
   };
 
+  // 로그인이 필요한 메뉴 클릭 핸들러
+  const handleProtectedLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      setShowLoginRequiredPopup(true);
+    }
+  };
+
   return (
     <html lang="en">
       <header className="">
@@ -91,17 +100,17 @@ export default function RootLayout({
           </Link>
           <nav className="flex items-center space-x-8">
             <div className="relative group">
-              <button className="cursor-pointer py-2">나의 동화책</button>
+              <button className="cursor-pointer py-2" onClick={(e) => { if (!isLoggedIn) { e.preventDefault(); setShowLoginRequiredPopup(true); }}}>나의 동화책</button>
               <div className="absolute z-10 hidden group-hover:block bg-[#FAF9F6] shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
-                <Link href="/fairytale/post" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
+                <Link href="/fairytale/post" onClick={handleProtectedLinkClick} className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
                   동화책만들기
                 </Link>
-                <Link href="/fairytale/get" className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
+                <Link href="/fairytale/get" onClick={handleProtectedLinkClick} className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
                   동화책펼치기
                 </Link>
               </div>
             </div>
-            <Link href="/fairytaleGallery" className="py-2">
+            <Link href="/fairytaleGallery" onClick={handleProtectedLinkClick} className="py-2">
               동화갤러리
             </Link>
             <Link href="/introduction" className="py-2">
@@ -120,6 +129,7 @@ export default function RootLayout({
         </div>
       </header>
 
+      {/* 로그인 팝업 */}
       {showLoginPopup && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
@@ -129,13 +139,35 @@ export default function RootLayout({
             className="bg-white p-8 rounded-lg shadow-xl"
             onClick={(e) => e.stopPropagation()} // Prevent popup from closing when clicking inside
           >
-            <a 
+            <Link 
               href="http://localhost:8080/oauth2/authorization/naver"
               onClick={handleLoginClick}
               className="bg-[#03C75A] text-white font-bold py-2 px-4 rounded"
             >
               네이버 로그인
-            </a>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* 로그인 필요 팝업 */}
+      {showLoginRequiredPopup && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          onClick={() => setShowLoginRequiredPopup(false)}
+        >
+          <div 
+            className="bg-white p-8 rounded-lg shadow-xl text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="mb-7">로그인이 필요합니다.</p>
+            <Link 
+              href="http://localhost:8080/oauth2/authorization/naver"
+              onClick={handleLoginClick}
+              className="bg-[#03C75A] text-white font-bold py-2 px-4 rounded"
+            >
+              네이버 로그인
+            </Link>
           </div>
         </div>
       )}
