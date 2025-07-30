@@ -56,18 +56,19 @@ const FairytaleReader = () => {
           str ? str.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
 
         const newGroupedKeywords: GroupedKeywords = {
-          CHILD_NAME: parseKeywords((fairytaleData as any).childName),
-          CHILD_ROLE: parseKeywords((fairytaleData as any).childRole),
-          CHARACTERS: parseKeywords((fairytaleData as any).characters),
-          PLACE: parseKeywords((fairytaleData as any).place),
-          MOOD: parseKeywords((fairytaleData as any).mood),
-          LESSON: parseKeywords((fairytaleData as any).lesson),
+          CHILD_NAME: parseKeywords(fairytaleData.childName),
+          CHILD_ROLE: parseKeywords(fairytaleData.childRole),
+          CHARACTERS: parseKeywords(fairytaleData.characters),
+          PLACE: parseKeywords(fairytaleData.place),
+          MOOD: parseKeywords(fairytaleData.mood),
+          LESSON: parseKeywords(fairytaleData.lesson),
         };
 
         setGroupedKeywords(newGroupedKeywords);
 
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
