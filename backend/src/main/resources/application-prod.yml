@@ -30,3 +30,20 @@ spring:
   cookie:
     secure: true
     same-site: None
+
+app:
+  cors:
+    allowed-origins:
+      - ${FRONTEND_URL}
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+    allowed-headers:
+      - "*"
+    allow-credentials: true
+    exposed-headers:
+      - "Set-Cookie"
