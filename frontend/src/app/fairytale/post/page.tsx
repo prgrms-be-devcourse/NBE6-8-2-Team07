@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 // 모든 슬라이드 객체의 타입을 명확하게 정의하기위한 인터페이스
 interface Slide {
@@ -18,20 +18,56 @@ export default function FairytaleCreatePage() {
   const [isLoading, setIsLoading] = useState(false);
   // useState에 Slide[] 타입을 명시적으로 적용합니다.
   const [slides, setSlides] = useState<Slide[]>([
-    { title: '아이와 함께 아이만의 동화를 만들어주세요!', content: '아래 슬라이드들을 따라가며 키워드를 입력해 주세요.\n주인공: 이름과 역할을 하나씩 입력해요.\n등장인물 / 장소 / 분위기 / 교훈: 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.\n마지막 슬라이드에서는 입력한 내용을 확인하고, 동화 만들기 버튼을 눌러 나만의 동화를 완성할 수 있어요!', image: '' },
-    { title: '주인공', content: '주인공의 이름과 역할을 적어주세요.', image: '', name: '', role: '' },
-    { title: '등장인물', content: '동화에 등장할 사람이나 동물을 적어주세요.', image: '', addedItems: [] },
-    { title: '장소', content: '동화에 등장할 장소를 적어주세요.', image: '', addedItems: [] },
-    { title: '분위기', content: '동화의 분위기를 적어주세요.', image: '', addedItems: [] },
-    { title: '교훈', content: '동화의 교훈을 적어주세요.', image: '', addedItems: [] },
-    { title: '입력 내용 확인', content: '아이와 함께 고른 키워드들이 잘 들어갔는지 마지막으로 체크해볼까요?', image: '' },
+    {
+      title: "아이와 함께 아이만의 동화를 만들어주세요!",
+      content:
+        "아래 슬라이드들을 따라가며 키워드를 입력해 주세요.\n주인공: 이름과 역할을 하나씩 입력해요.\n등장인물 / 장소 / 분위기 / 교훈: 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.\n마지막 슬라이드에서는 입력한 내용을 확인하고, 동화 만들기 버튼을 눌러 나만의 동화를 완성할 수 있어요!",
+      image: "",
+    },
+    {
+      title: "주인공",
+      content: "주인공의 이름과 역할을 적어주세요.",
+      image: "",
+      name: "",
+      role: "",
+    },
+    {
+      title: "등장인물",
+      content: "동화에 등장할 사람이나 동물을 적어주세요.",
+      image: "",
+      addedItems: [],
+    },
+    {
+      title: "장소",
+      content: "동화에 등장할 장소를 적어주세요.",
+      image: "",
+      addedItems: [],
+    },
+    {
+      title: "분위기",
+      content: "동화의 분위기를 적어주세요.",
+      image: "",
+      addedItems: [],
+    },
+    {
+      title: "교훈",
+      content: "동화의 교훈을 적어주세요.",
+      image: "",
+      addedItems: [],
+    },
+    {
+      title: "입력 내용 확인",
+      content:
+        "아이와 함께 고른 키워드들이 잘 들어갔는지 마지막으로 체크해볼까요?",
+      image: "",
+    },
   ]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentInput, setCurrentInput] = useState('');
-  const [slide1NameInput, setSlide1NameInput] = useState('');
+  const [currentInput, setCurrentInput] = useState("");
+  const [slide1NameInput, setSlide1NameInput] = useState("");
   const [showSlide1NameInput, setShowSlide1NameInput] = useState(true);
-  const [slide1RoleInput, setSlide1RoleInput] = useState('');
+  const [slide1RoleInput, setSlide1RoleInput] = useState("");
   const [showSlide1RoleInput, setShowSlide1RoleInput] = useState(true);
 
   const nextSlide = () => {
@@ -54,7 +90,7 @@ export default function FairytaleCreatePage() {
       if (slide && slide.addedItems) {
         slide.addedItems.push(currentInput.trim());
         setSlides(newSlides);
-        setCurrentInput('');
+        setCurrentInput("");
       }
     }
   };
@@ -73,11 +109,11 @@ export default function FairytaleCreatePage() {
 
   const handleResetName = () => {
     setShowSlide1NameInput(true);
-    setSlide1NameInput('');
+    setSlide1NameInput("");
     const newSlides = [...slides];
     const slide = newSlides[1];
     if (slide) {
-      slide.name = '';
+      slide.name = "";
       setSlides(newSlides);
     }
   };
@@ -96,11 +132,11 @@ export default function FairytaleCreatePage() {
 
   const handleResetRole = () => {
     setShowSlide1RoleInput(true);
-    setSlide1RoleInput('');
+    setSlide1RoleInput("");
     const newSlides = [...slides];
     const slide = newSlides[1];
     if (slide) {
-      slide.role = '';
+      slide.role = "";
       setSlides(newSlides);
     }
   };
@@ -109,21 +145,22 @@ export default function FairytaleCreatePage() {
     setIsLoading(true);
     // 옵셔널 체이닝(?.)과 null 병합 연산자(??)로 안전하게 데이터에 접근합니다.
     const fairytaleCreateRequest = {
-      childName: slides[1]?.name ?? '',
-      childRole: slides[1]?.role ?? '',
-      characters: slides[2]?.addedItems?.join(', ') ?? '',
-      place: slides[3]?.addedItems?.join(', ') ?? '',
-      mood: slides[4]?.addedItems?.join(', ') ?? '',
-      lesson: slides[5]?.addedItems?.join(', ') ?? '',
+      childName: slides[1]?.name ?? "",
+      childRole: slides[1]?.role ?? "",
+      characters: slides[2]?.addedItems?.join(", ") ?? "",
+      place: slides[3]?.addedItems?.join(", ") ?? "",
+      mood: slides[4]?.addedItems?.join(", ") ?? "",
+      lesson: slides[5]?.addedItems?.join(", ") ?? "",
     };
 
     try {
-      const response = await fetch('http://localhost:8080/fairytales', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8080/fairytales", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(fairytaleCreateRequest),
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -131,11 +168,11 @@ export default function FairytaleCreatePage() {
       }
 
       const result = await response.json();
-      console.log('Fairytale created successfully:', result);
+      console.log("Fairytale created successfully:", result);
       router.push(`/fairytale/get/${result.id}`);
     } catch (error) {
-      console.error('Failed to create fairytale:', error);
-      alert('동화 생성에 실패했습니다.');
+      console.error("Failed to create fairytale:", error);
+      alert("동화 생성에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -156,25 +193,37 @@ export default function FairytaleCreatePage() {
               <div className="flex-1 flex flex-col items-center">
                 <div className="mb-4 w-150 h-150 flex items-center justify-center bg-orange-100 text-gray-500 relative">
                   {slides[currentSlide]?.image ? (
-                    <img src={slides[currentSlide]?.image} alt="Slide Image" className="max-h-full max-w-full object-contain" />
+                    <img
+                      src={slides[currentSlide]?.image}
+                      alt="Slide Image"
+                      className="max-h-full max-w-full object-contain"
+                    />
                   ) : (
                     "이미지 삽입 공간"
                   )}
                 </div>
               </div>
               <div className="flex-1 flex flex-col">
-                <h2 className="text-3xl font-bold mb-2">{slides[currentSlide]?.title}</h2>
-                <p className="text-gray-500 text-lg">{slides[currentSlide]?.content}</p>
+                <h2 className="text-3xl font-bold mb-2">
+                  {slides[currentSlide]?.title}
+                </h2>
+                <p className="text-gray-500 text-lg">
+                  {slides[currentSlide]?.content}
+                </p>
                 <div className="mb-2">
                   {slides.slice(1, -1).map((slide, index) => (
                     <div key={index} className="p-4">
-                      <h3 className="text-xl font-semibold mb-2 text-orange-500">{slide.title}</h3>
+                      <h3 className="text-xl font-semibold mb-2 text-orange-500">
+                        {slide.title}
+                      </h3>
                       {/* name, role, addedItems 속성이 있는지 확인 후 렌더링 */}
                       {slide.name && (
                         <div className="mb-2">
                           <span className="text-lg">이름 : </span>
                           <div className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2">
-                            <span className="whitespace-nowrap">{slide.name}</span>
+                            <span className="whitespace-nowrap">
+                              {slide.name}
+                            </span>
                           </div>
                         </div>
                       )}
@@ -182,14 +231,19 @@ export default function FairytaleCreatePage() {
                         <div>
                           <span className="text-lg">역할 : </span>
                           <div className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2">
-                            <span className="whitespace-nowrap">{slide.role}</span>
+                            <span className="whitespace-nowrap">
+                              {slide.role}
+                            </span>
                           </div>
                         </div>
                       )}
                       {slide.addedItems && slide.addedItems.length > 0 && (
                         <div className="flex items-center flex-wrap">
                           {slide.addedItems.map((item, itemIndex) => (
-                            <div key={itemIndex} className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2">
+                            <div
+                              key={itemIndex}
+                              className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2"
+                            >
                               <span className="whitespace-nowrap">{item}</span>
                             </div>
                           ))}
@@ -206,15 +260,26 @@ export default function FairytaleCreatePage() {
               <div className="flex-1 flex flex-col items-center">
                 <div className="mb-4 w-150 h-150 flex items-center justify-center bg-orange-100 text-gray-500 relative">
                   {slides[currentSlide]?.image ? (
-                    <img src={slides[currentSlide]?.image} alt="Slide Image" className="max-h-full max-w-full object-contain" />
+                    <img
+                      src={slides[currentSlide]?.image}
+                      alt="Slide Image"
+                      className="max-h-full max-w-full object-contain"
+                    />
                   ) : (
                     "이미지 삽입 공간"
                   )}
                 </div>
               </div>
               <div className="flex-1 flex flex-col">
-                <h2 className="text-3xl font-bold mb-2">{slides[currentSlide]?.title}</h2>
-                <p className="text-gray-500 mb-2 text-lg" style={{ whiteSpace: 'pre-line' }}>{slides[currentSlide]?.content}</p>
+                <h2 className="text-3xl font-bold mb-2">
+                  {slides[currentSlide]?.title}
+                </h2>
+                <p
+                  className="text-gray-500 mb-2 text-lg"
+                  style={{ whiteSpace: "pre-line" }}
+                >
+                  {slides[currentSlide]?.content}
+                </p>
 
                 {currentSlide === 1 && (
                   <div className="mb-2">
@@ -244,8 +309,20 @@ export default function FairytaleCreatePage() {
                             onClick={handleResetName}
                             className="ml-1.5 -mr-0.5 w-4 h-4 inline-flex items-center justify-center rounded-full bg-orange-300 text-gray-50 hover:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 cursor-pointer"
                           >
-                            <svg className="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            <svg
+                              className="w-2 h-2"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 14 14"
+                            >
+                              <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                              />
                             </svg>
                           </button>
                         </div>
@@ -273,13 +350,27 @@ export default function FairytaleCreatePage() {
                         <>
                           <span className="text-xl">역할 : </span>
                           <div className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2">
-                            <p className="whitespace-nowrap">{slides[1]?.role}</p>
+                            <p className="whitespace-nowrap">
+                              {slides[1]?.role}
+                            </p>
                             <button
                               onClick={handleResetRole}
                               className="ml-1.5 -mr-0.5 w-4 h-4 inline-flex items-center justify-center rounded-full bg-orange-300 text-gray-50 hover:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 cursor-pointer"
                             >
-                              <svg className="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                              <svg
+                                className="w-2 h-2"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 14 14"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                                />
                               </svg>
                             </button>
                           </div>
@@ -299,7 +390,7 @@ export default function FairytaleCreatePage() {
                         value={currentInput}
                         onChange={(e) => setCurrentInput(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
+                          if (e.key === "Enter" && !e.shiftKey) {
                             e.preventDefault();
                             handleAdd();
                           }
@@ -314,31 +405,53 @@ export default function FairytaleCreatePage() {
                       </button>
                     </div>
                     <div className="mt-1 p-2 rounded-md bg-gray-50 overflow-y-auto">
-                      {slides[currentSlide]?.addedItems && slides[currentSlide].addedItems.length > 0 ? (
+                      {slides[currentSlide]?.addedItems &&
+                      slides[currentSlide].addedItems.length > 0 ? (
                         <div className="flex flex-wrap">
-                          {slides[currentSlide].addedItems.map((item, index) => (
-                            <div key={index} className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2">
-                              <span className="whitespace-nowrap">{item}</span>
-                              <button
-                                onClick={() => {
-                                  const newSlides = [...slides];
-                                  const slide = newSlides[currentSlide];
-                                  if (slide && slide.addedItems) {
-                                    slide.addedItems.splice(index, 1);
-                                    setSlides(newSlides);
-                                  }
-                                }}
-                                className="ml-1.5 -mr-0.5 w-4 h-4 inline-flex items-center justify-center rounded-full bg-orange-300 text-gray-50 hover:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 cursor-pointer"
+                          {slides[currentSlide].addedItems.map(
+                            (item, index) => (
+                              <div
+                                key={index}
+                                className="inline-flex items-center bg-orange-400 text-gray-50 text-xl font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2"
                               >
-                                <svg className="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                </svg>
-                              </button>
-                            </div>
-                          ))}
+                                <span className="whitespace-nowrap">
+                                  {item}
+                                </span>
+                                <button
+                                  onClick={() => {
+                                    const newSlides = [...slides];
+                                    const slide = newSlides[currentSlide];
+                                    if (slide && slide.addedItems) {
+                                      slide.addedItems.splice(index, 1);
+                                      setSlides(newSlides);
+                                    }
+                                  }}
+                                  className="ml-1.5 -mr-0.5 w-4 h-4 inline-flex items-center justify-center rounded-full bg-orange-300 text-gray-50 hover:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 cursor-pointer"
+                                >
+                                  <svg
+                                    className="w-2 h-2"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 14 14"
+                                  >
+                                    <path
+                                      stroke="currentColor"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            )
+                          )}
                         </div>
                       ) : (
-                        <p className="text-gray-500">입력된 키워드가 없습니다.</p>
+                        <p className="text-gray-500">
+                          입력된 키워드가 없습니다.
+                        </p>
                       )}
                     </div>
                   </>
