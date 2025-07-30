@@ -14,3 +14,7 @@ export interface Fairytale {
   lesson: string;
   mood: string;
 }
+
+export interface FairytaleWithBookmark extends Fairytale {
+  isBookmarked: boolean;
+}

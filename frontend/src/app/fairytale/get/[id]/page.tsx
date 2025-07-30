@@ -43,7 +43,9 @@ const FairytaleReader = () => {
 
       try {
         // Fetch fairytale details
-        const fairytaleResponse = await fetch(`http://localhost:8080/fairytales/${fairytaleId}`);
+        const fairytaleResponse = await fetch(`http://localhost:8080/fairytales/${fairytaleId}`,{
+          credentials: 'include', // 인증 정보 포함
+        });
         if (!fairytaleResponse.ok) {
           throw new Error(`Failed to fetch fairytale: ${fairytaleResponse.statusText}`);
         }
