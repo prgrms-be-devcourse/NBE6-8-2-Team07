@@ -20,9 +20,24 @@ const validateName = (name: string): { isValid: boolean; message: string } => {
   if (name.trim().length < 1 || name.trim().length > 50) {
     return { isValid: false, message: '이름은 1-50자 사이로 입력해주세요.' };
   }
-  if (!/^[가-힣a-zA-Z0-9\s]+$/.test(name.trim())) {
-    return { isValid: false, message: '이름에는 한글, 영문, 숫자, 공백만 입력 가능합니다.' };
+  
+  const trimmedName = name.trim();
+  
+  // 개별 자모 문자 체크 (기본 자모 + 복합 자모)
+  if (/[ㄱ-ㅎㅏ-ㅣㅐㅒㅔㅖㅘㅙㅚㅝㅞㅟㅢ]/.test(trimmedName)) {
+    return { isValid: false, message: '올바른 단어를 입력해주세요.' };
   }
+  
+  // 완성된 한글만 있는지 체크 (자모 제외)
+  if (!/^[가-힣a-zA-Z0-9\s]+$/.test(trimmedName)) {
+    return { isValid: false, message: '올바른 형식을 입력해주세요.' };
+  }
+  
+  // 한글이 포함되어야 함
+  if (!/[가-힣]/.test(trimmedName)) {
+    return { isValid: false, message: '이름에는 한글이 포함되어야 합니다.' };
+  }
+  
   return { isValid: true, message: '' };
 };
 
@@ -33,9 +48,24 @@ const validateRole = (role: string): { isValid: boolean; message: string } => {
   if (role.trim().length < 1 || role.trim().length > 50) {
     return { isValid: false, message: '역할은 1-50자 사이로 입력해주세요.' };
   }
-  if (!/^[가-힣a-zA-Z0-9\s]+$/.test(role.trim())) {
-    return { isValid: false, message: '역할에는 한글, 영문, 숫자, 공백만 입력 가능합니다.' };
+  
+  const trimmedRole = role.trim();
+  
+  // 개별 자모 문자 체크 (기본 자모 + 복합 자모)
+  if (/[ㄱ-ㅎㅏ-ㅣㅐㅒㅔㅖㅘㅙㅚㅝㅞㅟㅢ]/.test(trimmedRole)) {
+    return { isValid: false, message: '올바른 단어를 입력해주세요.' };
   }
+  
+  // 완성된 한글만 있는지 체크 (자모 제외)
+  if (!/^[가-힣a-zA-Z0-9\s]+$/.test(trimmedRole)) {
+    return { isValid: false, message: '올바른 형식을 입력해주세요.' };
+  }
+  
+  // 한글이 포함되어야 함
+  if (!/[가-힣]/.test(trimmedRole)) {
+    return { isValid: false, message: '역할에는 한글이 포함되어야 합니다.' };
+  }
+  
   return { isValid: true, message: '' };
 };
 
@@ -46,9 +76,24 @@ const validateKeyword = (keyword: string): { isValid: boolean; message: string }
   if (keyword.trim().length < 1 || keyword.trim().length > 200) {
     return { isValid: false, message: '키워드는 1-200자 사이로 입력해주세요.' };
   }
-  if (!/^[가-힣a-zA-Z0-9\s,]+$/.test(keyword.trim())) {
-    return { isValid: false, message: '키워드에는 한글, 영문, 숫자, 공백, 쉼표만 입력 가능합니다.' };
+  
+  const trimmedKeyword = keyword.trim();
+  
+  // 개별 자모 문자 체크 (기본 자모 + 복합 자모)
+  if (/[ㄱ-ㅎㅏ-ㅣㅐㅒㅔㅖㅘㅙㅚㅝㅞㅟㅢ]/.test(trimmedKeyword)) {
+    return { isValid: false, message: '올바른 단어를 입력해주세요.' };
   }
+  
+  // 완성된 한글만 있는지 체크 (자모 제외)
+  if (!/^[가-힣a-zA-Z0-9\s]+$/.test(trimmedKeyword)) {
+    return { isValid: false, message: '올바른 형식을 입력해주세요.' };
+  }
+  
+  // 한글이 포함되어야 함
+  if (!/[가-힣]/.test(trimmedKeyword)) {
+    return { isValid: false, message: '키워드에는 한글이 포함되어야 합니다.' };
+  }
+  
   return { isValid: true, message: '' };
 };
 
@@ -57,13 +102,49 @@ export default function FairytaleCreatePage() {
   const [isLoading, setIsLoading] = useState(false);
   // useState에 Slide[] 타입을 명시적으로 적용합니다.
   const [slides, setSlides] = useState<Slide[]>([
-    { title: '동화를 쓰기에 앞서', content: '생성방법 설명창', image: '' },
-    { title: '주인공', content: '주인공의 이름과 역할을 적어주세요.', image: '', name: '', role: '' },
-    { title: '등장인물', content: '동화에 등장할 사람이나 동물을 적어주세요.', image: '', addedItems: [] },
-    { title: '장소', content: '동화에 등장할 장소를 적어주세요.', image: '', addedItems: [] },
-    { title: '분위기', content: '동화의 분위기를 적어주세요.', image: '', addedItems: [] },
-    { title: '교훈', content: '동화의 교훈을 적어주세요.', image: '', addedItems: [] },
-    { title: '입력 내용 확인', content: '지금까지 입력한 내용을 확인해주세요.', image: '' },
+    {
+      title: "아이와 함께 아이만의 동화를 만들어주세요!",
+      content:
+        "아래 슬라이드들을 따라가며 키워드를 입력해 주세요.\n주인공: 이름과 역할을 하나씩 입력해요.\n등장인물 / 장소 / 분위기 / 교훈: 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.\n마지막 슬라이드에서는 입력한 내용을 확인하고, 동화 만들기 버튼을 눌러 나만의 동화를 완성할 수 있어요!",
+      image: "",
+    },
+    {
+      title: "주인공",
+      content: "주인공의 이름과 역할을 적어주세요.",
+      image: "",
+      name: "",
+      role: "",
+    },
+    {
+      title: "등장인물",
+      content: "동화에 등장할 사람이나 동물을 적어주세요.",
+      image: "",
+      addedItems: [],
+    },
+    {
+      title: "장소",
+      content: "동화에 등장할 장소를 적어주세요.",
+      image: "",
+      addedItems: [],
+    },
+    {
+      title: "분위기",
+      content: "동화의 분위기를 적어주세요.",
+      image: "",
+      addedItems: [],
+    },
+    {
+      title: "교훈",
+      content: "동화의 교훈을 적어주세요.",
+      image: "",
+      addedItems: [],
+    },
+    {
+      title: "입력 내용 확인",
+      content:
+        "아이와 함께 고른 키워드들이 잘 들어갔는지 마지막으로 체크해볼까요?",
+      image: "",
+    },
   ]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -189,6 +270,7 @@ export default function FairytaleCreatePage() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(fairytaleCreateRequest),
       });
 
@@ -293,6 +375,12 @@ export default function FairytaleCreatePage() {
                             placeholder="여기에 이름을 입력하세요."
                             value={slide1NameInput}
                             onChange={(e) => setSlide1NameInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleSaveName();
+                              }
+                            }}
                           ></textarea>
                           <button
                             onClick={handleSaveName}
@@ -331,6 +419,12 @@ export default function FairytaleCreatePage() {
                               placeholder="여기에 역할을 입력하세요."
                               value={slide1RoleInput}
                               onChange={(e) => setSlide1RoleInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  handleSaveRole();
+                                }
+                              }}
                             ></textarea>
                             <button
                               onClick={handleSaveRole}
@@ -373,6 +467,12 @@ export default function FairytaleCreatePage() {
                           placeholder="여기에 키워드를 입력하세요."
                           value={currentInput}
                           onChange={(e) => setCurrentInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleAdd();
+                            }
+                          }}
                         ></textarea>
                         <button
                           onClick={handleAdd}
