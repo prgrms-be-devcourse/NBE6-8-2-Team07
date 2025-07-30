@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getRequestURI().startsWith("/h2-console");
+        return request.getRequestURI().startsWith("/h2-console") || request.getRequestURI().equals("/reissue") ;
     }
 
     @Override
