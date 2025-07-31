@@ -22,7 +22,7 @@ public class LikeController {
         return ResponseEntity.ok(likes);
     }
 
-    @PostMapping("/{fairytaleId}/like")
+    @PostMapping("like/{fairytaleId}")
     public ResponseEntity<String> addLike(@AuthenticationPrincipal CustomOAuth2User user, @PathVariable Long fairytaleId) {
         try {
             likeService.addLike(user.getId(), fairytaleId);
@@ -33,7 +33,7 @@ public class LikeController {
         return ResponseEntity.ok("게시물 " + fairytaleId + " 좋아요가 추가되었습니다.");
     }
 
-    @DeleteMapping("/{fairytaleId}/like")
+    @DeleteMapping("like/{fairytaleId}")
     public ResponseEntity<String> removeLike(@AuthenticationPrincipal CustomOAuth2User user, @PathVariable Long fairytaleId) {
         try {
             likeService.removeLike(user.getId(), fairytaleId);

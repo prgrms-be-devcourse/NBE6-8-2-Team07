@@ -47,7 +47,7 @@ public class LikeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
 
-        Fairytale fairytale = fairytaleRepository.findById(fairytaleId)
+        Fairytale fairytale = fairytaleRepository.findByIdWithPessimisticLock(fairytaleId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 동화를 찾을 수 없습니다."));
 
         Optional<Like> existLike = likeRepository.findByUserIdAndFairytaleId(user.getId(), fairytale.getId());
@@ -60,6 +60,9 @@ public class LikeService {
                 .fairytale(fairytale)
                 .build();
 
+        // 좋아요 수 증가
+        fairytale.increaseLikeCount();
+
         return likeRepository.save(like);
     }
 
@@ -67,11 +70,14 @@ public class LikeService {
     public void removeLike(Long userId, Long fairytaleId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
-        Fairytale fairytale = fairytaleRepository.findById(fairytaleId)
+        Fairytale fairytale = fairytaleRepository.findByIdWithPessimisticLock(fairytaleId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 동화를 찾을 수 없습니다."));
 
         Like like = likeRepository.findByUserIdAndFairytaleId(user.getId(), fairytale.getId())
                 .orElseThrow(() -> new LikeNotFoundException("좋아요가 없는 동화입니다."));
+
+        // 좋아요 수 감소
+        fairytale.decreaseLikeCount();
 
         likeRepository.deleteById(like.getId());
 
