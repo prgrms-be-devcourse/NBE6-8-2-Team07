@@ -83,7 +83,7 @@ export default function ClientLayout({
 
   return (
     <>
-      <header className="">
+      <header className="h-20">
         <div className="container mx-auto flex justify-between items-center p-4">
           <Link href="/" className="font-bold text-xl">
             <img src="/images/logo.png" alt="로고" className="h-25" />

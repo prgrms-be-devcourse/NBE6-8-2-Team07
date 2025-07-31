@@ -4,9 +4,9 @@ import Link from 'next/link';
 
 export default function IntroductionPage() {
   return (
-    <main className="py-12 space-y-16 text-gray-800">
-      <section className="w-full py-12 md:py-18 lg:py-18 bg-[#FFE0B5] relative">
-        <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto px-6 pb-8">
+    <main className="py-12 space-y-14 text-gray-800">
+      <section className="w-full py-12 md:py-16 lg:py-16 bg-[#FFE0B5] relative">
+        <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto px-6 pb-6">
           <h1 className="text-5xl font-extrabold text-orange-500 tracking-tight">
             동화공방 소개
           </h1>
@@ -20,7 +20,7 @@ export default function IntroductionPage() {
           <p className="text-lg text-gray-700">
             <strong>우리 아이의 생각과 꿈이 동화가 됩니다.</strong><br />
             동화공방은 아이가 선택한 키워드를 바탕으로, 아이만을 위한 특별한 이야기를 만듭니다.<br />
-            아이는 부모님과 함께 이야기를 읽고, 나눌 수 있는 따뜻한 시간을 보낼 수 있습니다.
+            아이는 부모님과 함께 이야기를 읽고, 생각을 나누며 따뜻한 시간을 보낼 수 있습니다.
           </p>
         </div>
       </section>
@@ -49,7 +49,7 @@ export default function IntroductionPage() {
             <li>생성된 동화 저장 및 다시보기 기능</li>
           </ul>
           <p className="text-lg text-gray-700">
-            가장 중요한 건 기술이 아니라 <strong>아이 중심의 이야기 경험</strong>입니다.<br />
+            가장 중요한 건 기술이 아니라 <strong>아이의 추억과 경험</strong>입니다.<br />
           </p>
         </div>
       </section>
@@ -58,7 +58,7 @@ export default function IntroductionPage() {
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-orange-400 mb-3">지금, 우리 아이만의 이야기를 시작해보세요</h2>
           <p className="text-lg text-gray-700">          
-            지금 바로 세상에 단 하나뿐인 동화를 만나세요!
+            세상에 단 하나뿐인 특별한 동화를 함께 만들어보세요
           </p>
         </div>
       </section>
