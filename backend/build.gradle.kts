@@ -47,6 +47,9 @@ dependencies {
 
     // OpenAPI
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+
+    implementation("org.springframework.boot:spring-boot-starter-webflux") // WebClient용
+    implementation("commons-io:commons-io:2.11.0") // 파일 처리용
 }
 
 tasks.withType<Test> {

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.LAZY;
-// test
+
 @Entity
 @Table(name = "fairytale")
 @Getter
@@ -35,6 +35,9 @@ public class Fairytale {
     @Lob
     @Column(nullable = false)
     private String content;
+
+    @Column(name = "image_url", length = 255)
+    private String imageUrl;
 
     @CreationTimestamp
     @Column(name = "created_at")
