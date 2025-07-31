@@ -156,6 +156,56 @@ export default function FairytaleCreatePage() {
   const [nameError, setNameError] = useState('');
   const [roleError, setRoleError] = useState('');
   const [keywordError, setKeywordError] = useState('');
+  const [nameSuccess, setNameSuccess] = useState('');
+  const [roleSuccess, setRoleSuccess] = useState('');
+  const [keywordSuccess, setKeywordSuccess] = useState('');
+
+  // 실시간 검증 함수들
+  const handleNameChange = (value: string) => {
+    setSlide1NameInput(value);
+    const validation = validateName(value);
+    if (validation.isValid) {
+      setNameError(''); // 성공 시 에러 메시지 지우기
+      setNameSuccess('✅ 올바른 입력입니다!'); // 성공 메시지 추가
+    } else {
+      setNameError(validation.message);
+      setNameSuccess(''); // 성공 메시지 지우기
+    }
+  };
+
+  const handleRoleChange = (value: string) => {
+    setSlide1RoleInput(value);
+    const validation = validateRole(value);
+    if (validation.isValid) {
+      setRoleError(''); // 성공 시 에러 메시지 지우기
+      setRoleSuccess('✅ 올바른 입력입니다!'); // 성공 메시지 추가
+    } else {
+      setRoleError(validation.message);
+      setRoleSuccess(''); // 성공 메시지 지우기
+    }
+  };
+
+  const handleKeywordChange = (value: string) => {
+    setCurrentInput(value);
+    const validation = validateKeyword(value);
+    
+    // 중복 검사
+    const currentSlideData = slides[currentSlide];
+    const isDuplicate = currentSlideData?.addedItems?.includes(value.trim());
+    
+    if (validation.isValid) {
+      if (isDuplicate) {
+        setKeywordError('이미 추가된 키워드입니다.');
+        setKeywordSuccess(''); // 성공 메시지 지우기
+      } else {
+        setKeywordError(''); // 성공 시 에러 메시지 지우기
+        setKeywordSuccess('✅ 올바른 입력입니다!'); // 성공 메시지 추가
+      }
+    } else {
+      setKeywordError(validation.message);
+      setKeywordSuccess(''); // 성공 메시지 지우기
+    }
+  };
 
   const nextSlide = () => {
     if (currentSlide === 1) {
@@ -183,6 +233,14 @@ export default function FairytaleCreatePage() {
   const handleAdd = () => {
     const validation = validateKeyword(currentInput);
     if (validation.isValid) {
+      // 중복 검사
+      const currentSlideData = slides[currentSlide];
+      if (currentSlideData?.addedItems?.includes(currentInput.trim())) {
+        setKeywordError('이미 추가된 키워드입니다.');
+        setKeywordSuccess(''); // 성공 메시지 초기화
+        return;
+      }
+      
       const newSlides = [...slides];
       const slide = newSlides[currentSlide];
       if (slide && slide.addedItems) {
@@ -190,9 +248,11 @@ export default function FairytaleCreatePage() {
         setSlides(newSlides);
         setCurrentInput('');
         setKeywordError(''); // 에러 메시지 초기화
+        setKeywordSuccess(''); // 성공 메시지 초기화
       }
     } else {
       setKeywordError(validation.message);
+      setKeywordSuccess(''); // 성공 메시지 초기화
     }
   };
 
@@ -206,9 +266,11 @@ export default function FairytaleCreatePage() {
         setSlides(newSlides);
         setShowSlide1NameInput(false);
         setNameError(''); // 에러 메시지 초기화
+        setNameSuccess(''); // 성공 메시지 초기화
       }
     } else {
       setNameError(validation.message);
+      setNameSuccess(''); // 성공 메시지 초기화
     }
   };
 
@@ -216,6 +278,7 @@ export default function FairytaleCreatePage() {
     setShowSlide1NameInput(true);
     setSlide1NameInput('');
     setNameError(''); // 에러 메시지 초기화
+    setNameSuccess(''); // 성공 메시지 초기화
     const newSlides = [...slides];
     const slide = newSlides[1];
     if (slide) {
@@ -234,9 +297,11 @@ export default function FairytaleCreatePage() {
         setSlides(newSlides);
         setShowSlide1RoleInput(false);
         setRoleError(''); // 에러 메시지 초기화
+        setRoleSuccess(''); // 성공 메시지 초기화
       }
     } else {
       setRoleError(validation.message);
+      setRoleSuccess(''); // 성공 메시지 초기화
     }
   };
 
@@ -244,6 +309,7 @@ export default function FairytaleCreatePage() {
     setShowSlide1RoleInput(true);
     setSlide1RoleInput('');
     setRoleError(''); // 에러 메시지 초기화
+    setRoleSuccess(''); // 성공 메시지 초기화
     const newSlides = [...slides];
     const slide = newSlides[1];
     if (slide) {
@@ -531,7 +597,7 @@ export default function FairytaleCreatePage() {
                             rows={1}
                             placeholder="여기에 이름을 입력하세요."
                             value={slide1NameInput}
-                            onChange={(e) => setSlide1NameInput(e.target.value)}
+                            onChange={(e) => handleNameChange(e.target.value)}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 e.preventDefault();
@@ -548,6 +614,9 @@ export default function FairytaleCreatePage() {
                         </div>
                         {nameError && (
                           <div className="text-red-500 text-sm mt-1">{nameError}</div>
+                        )}
+                        {nameSuccess && (
+                          <div className="text-green-500 text-sm mt-1">{nameSuccess}</div>
                         )}
                       </div>
                     ) : (
@@ -575,7 +644,7 @@ export default function FairytaleCreatePage() {
                               rows={1}
                               placeholder="여기에 역할을 입력하세요."
                               value={slide1RoleInput}
-                              onChange={(e) => setSlide1RoleInput(e.target.value)}
+                              onChange={(e) => handleRoleChange(e.target.value)}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                   e.preventDefault();
@@ -592,6 +661,9 @@ export default function FairytaleCreatePage() {
                           </div>
                           {roleError && (
                             <div className="text-red-500 text-sm mt-1">{roleError}</div>
+                          )}
+                          {roleSuccess && (
+                            <div className="text-green-500 text-sm mt-1">{roleSuccess}</div>
                           )}
                         </div>
                       ) : (
@@ -623,7 +695,7 @@ export default function FairytaleCreatePage() {
                           rows={1}
                           placeholder="여기에 키워드를 입력하세요."
                           value={currentInput}
-                          onChange={(e) => setCurrentInput(e.target.value)}
+                          onChange={(e) => handleKeywordChange(e.target.value)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                               e.preventDefault();
@@ -640,6 +712,9 @@ export default function FairytaleCreatePage() {
                       </div>
                       {keywordError && (
                         <div className="text-red-500 text-sm mt-1">{keywordError}</div>
+                      )}
+                      {keywordSuccess && (
+                        <div className="text-green-500 text-sm mt-1">{keywordSuccess}</div>
                       )}
                     </div>
                     <div className="mb-2">
