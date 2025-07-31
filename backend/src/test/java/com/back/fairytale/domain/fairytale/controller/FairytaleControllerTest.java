@@ -356,15 +356,15 @@ public class FairytaleControllerTest {
 
     @Test
     @DisplayName("동화 생성과 이미지 생성 통합 테스트")
-    void t12() throws Exception {
+    void t11() throws Exception {
         String requestJson = """
         {
             "childName": "소라",
-            "childRole": "마법사",
-            "characters": "공주, 왕자",
-            "place": "숲",
+            "childRole": "바다 공주",
+            "characters": "돌고래, 거북이",
+            "place": "바다",
             "lesson": "친구의 소중함",
-            "mood": "따듯한, 모험적인"
+            "mood": "따듯한, 신비로운"
         }
         """;
 

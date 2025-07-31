@@ -117,7 +117,7 @@ public class FairytaleService {
             // TODO : S3 업로드 서비스 호출해서 imageUrl 받기
             // imageUrl = s3UploadService.uploadImage() 이런식으로 나중에
 
-            // 테스트용: 로컬에 파일 저장
+            // 테스트용: 로컬에 이미지 파일 저장
             String fileName = "test_image_" + System.currentTimeMillis() + ".png";
             Path path = Paths.get("src/main/resources/static/images/" + fileName);
             Files.createDirectories(path.getParent());
@@ -159,7 +159,7 @@ public class FairytaleService {
         prompt.append("어리고 귀여운 ").append(request.characters()).append("과(와) 함께 ");
         prompt.append("웃는 장면, ");
         prompt.append(request.mood()).append(" 분위기, ");
-        prompt.append("어린이 동화책 삽화 스타일, 아름답고 따뜻한 색감, 어린이용, 동양적인 느낌,");
+        prompt.append("어린이 동화책 삽화 스타일, 따뜻한 색감, 어린이를 위한,");
         prompt.append("1:1 비율, 정사각형 이미지");
 
         // Gemini에게 번역 요청 (이미지 생성 모델이 한국어를 인식 못하는듯 하다.. 그래서 번역!)

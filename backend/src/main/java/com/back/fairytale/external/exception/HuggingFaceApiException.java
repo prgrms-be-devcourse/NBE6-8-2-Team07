@@ -4,8 +4,4 @@ public class HuggingFaceApiException extends RuntimeException{
     public HuggingFaceApiException(String message) {
         super(message);
     }
-
-    public HuggingFaceApiException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

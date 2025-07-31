@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.LAZY;
-// test
+
 @Entity
 @Table(name = "fairytale")
 @Getter
