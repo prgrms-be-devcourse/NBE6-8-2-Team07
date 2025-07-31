@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Fairytale } from '@/context/fairytaleContext';
+import { customFetch } from '@/utils/customFetch';
 
 interface GroupedKeywords {
   [key: string]: string[]; // 각 키워드는 문자열 배열로 예상
@@ -43,7 +44,7 @@ const FairytaleReader = () => {
 
       try {
         // Fetch fairytale details
-        const fairytaleResponse = await fetch(`http://localhost:8080/fairytales/${fairytaleId}`,{
+        const fairytaleResponse = await customFetch(`http://localhost:8080/fairytales/${fairytaleId}`,{
           credentials: 'include', // 인증 정보 포함
         });
         if (!fairytaleResponse.ok) {
@@ -94,7 +95,7 @@ const FairytaleReader = () => {
         </div>
         <button
           onClick={() => setIsKeywordPopupOpen(true)}
-          className="fixed bottom-8 right-8 bg-orange-400 text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-500 transition-colors cursor-pointer"
+          className="fixed bottom-8 right-8 bg-orange-400 text-white text-lg px-4 py-2 rounded-full shadow-lg hover:bg-orange-500 transition-colors cursor-pointer"
         >
           키워드 보기
         </button>

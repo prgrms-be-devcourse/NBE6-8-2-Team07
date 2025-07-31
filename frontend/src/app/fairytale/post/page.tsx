@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { customFetch } from '@/utils/customFetch';
 
 // 모든 슬라이드 객체의 타입을 명확하게 정의하기위한 인터페이스
 interface Slide {
@@ -330,7 +331,7 @@ export default function FairytaleCreatePage() {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/fairytales', {
+      const response = await customFetch('http://localhost:8080/fairytales', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
