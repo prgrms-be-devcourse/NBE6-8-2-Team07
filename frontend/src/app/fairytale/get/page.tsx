@@ -199,7 +199,7 @@ const FairytaleList = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 relative pt-[40px]">
+    <div className="container mx-auto p-4 mb-6 relative pt-[40px]">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">동화 목록</h1>
         
@@ -211,7 +211,7 @@ const FairytaleList = () => {
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 filterMode === 'all' 
                   ? 'bg-blue-100 text-blue-800' 
-                  : 'bg-white hover:bg-gray-50 text-gray-700'      
+                  : 'bg-white hover:bg-gray-50 text-gray-700 cursor-pointer'      
               }`}
             >
               전체보기
@@ -221,7 +221,7 @@ const FairytaleList = () => {
               className={`px-4 py-2 border-l border-gray-300 text-sm font-medium transition-colors ${
                 filterMode === 'bookmarked' 
                   ? 'bg-blue-100 text-blue-800'   
-                  : 'bg-white hover:bg-gray-50 text-gray-700'      
+                  : 'bg-white hover:bg-gray-50 text-gray-700 cursor-pointer'      
               }`}
             >
               즐겨찾기만
@@ -236,7 +236,7 @@ const FairytaleList = () => {
               className={`p-2 transition-colors ${
                 viewMode === 'table' 
                   ? 'bg-orange-100 text-orange-800' 
-                  : 'bg-white hover:bg-gray-50'      
+                  : 'bg-white hover:bg-gray-50 cursor-pointer'      
               }`}
               title="테이블 뷰"
             >
@@ -249,7 +249,7 @@ const FairytaleList = () => {
               className={`p-2 border-l border-gray-300 transition-colors ${
                 viewMode === 'grid' 
                   ? 'bg-orange-100 text-orange-800'   
-                  : 'bg-white hover:bg-gray-50'      
+                  : 'bg-white hover:bg-gray-50 cursor-pointer'      
               }`}
               title="그리드 뷰"
             >
@@ -298,7 +298,7 @@ const FairytaleList = () => {
                       <button 
                         onClick={() => handleToggleBookmark(tale.id, tale.isBookmarked)} 
                         disabled={bookmarkingIds.has(tale.id.toString())}
-                        className={`text-xl transition-colors ${
+                        className={`text-xl transition-colors cursor-pointer ${
                           bookmarkingIds.has(tale.id.toString())
                             ? 'text-gray-400 cursor-not-allowed'
                             : tale.isBookmarked 
