@@ -8,18 +8,18 @@ export default function Home() {
   const fairytaleExamples = [
     {
       title: "용감한 아기 사자 레오",
-      description: "작은 아기 사자 레오가 숲 속 친구들과 함께 용기를 찾아 떠나는 이야기.",
-      image: "/placeholder.svg",
+      description: "작은 아기 사자 레오가 숲 속 친구들과 함께 용기를 찾아 떠나는 이야기",
+      image: "/images/image5.png",
     },
     {
       title: "반짝이는 별똥별의 비밀",
-      description: "하늘에서 떨어진 별똥별이 작은 소녀에게 들려주는 신비로운 모험 이야기.",
-      image: "/placeholder.svg",
+      description: "하늘에서 떨어진 별똥별이 작은 소녀에게 들려주는 신비로운 모험 이야기",
+      image: "/images/image6.png",
     },
     {
       title: "꼬마 마법사 릴리의 첫 주문",
-      description: "엉뚱한 꼬마 마법사 릴리가 실수로 걸어버린 첫 주문으로 벌어지는 소동.",
-      image: "/placeholder.svg",
+      description: "엉뚱한 꼬마 마법사 릴리가 실수로 걸어버린 첫 주문으로 벌어지는 소동",
+      image: "/images/image7.png",
     },
   ];
 
@@ -64,8 +64,9 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="bg-orange-100 h-96 w-96 rounded-lg">
+            <div>
               {/* 이미지가 들어갈 공간 */}
+              <Image src="/images/image1.png" alt="메인 이미지" width={500} height={500} style={{objectFit: 'cover'}}/>
             </div>
           </div>
         </div>
@@ -81,8 +82,9 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="bg-gray-50 h-72 w-72 rounded-lg mx-auto mb-4">
+              <div className="bg-gray-50 h-72 w-72 rounded-lg mx-auto mb-4 overflow-hidden">
                 {/* 이미지가 들어갈 공간 */}
+                <Image src="/images/image2.png" alt="메인 이미지" width={400} height={400} style={{objectFit: 'cover'}}/>
               </div>
               <p className="text-2xl font-bold">
                 키워드를 입력해요
@@ -93,8 +95,9 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <div className="bg-gray-50 h-72 w-72 rounded-lg mx-auto mb-4">
+              <div className="bg-gray-50 h-72 w-72 rounded-lg mx-auto mb-4 overflow-hidden">
                 {/* 이미지가 들어갈 공간 */}
+                <Image src="/images/image3.png" alt="메인 이미지" width={400} height={400} style={{objectFit: 'cover'}}/>
               </div>
               <p className="text-2xl font-bold">
                 AI가 동화를 만들어줘요
@@ -105,8 +108,9 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <div className="bg-gray-50 h-72 w-72 rounded-lg mx-auto mb-4">
+              <div className="bg-gray-50 h-72 w-72 rounded-lg mx-auto mb-4 overflow-hidden">
                 {/* 이미지가 들어갈 공간 */}
+                <Image src="/images/image4.png" alt="메인 이미지" width={400} height={400} style={{objectFit: 'cover'}}/>
               </div>
               <p className="text-2xl font-bold">
                 함께 읽고 저장해요

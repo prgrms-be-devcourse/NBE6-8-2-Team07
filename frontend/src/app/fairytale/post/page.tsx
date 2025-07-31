@@ -103,47 +103,46 @@ export default function FairytaleCreatePage() {
   // useState에 Slide[] 타입을 명시적으로 적용합니다.
   const [slides, setSlides] = useState<Slide[]>([
     {
-      title: "아이와 함께 아이만의 동화를 만들어주세요!",
-      content:
-        "아래 슬라이드들을 따라가며 키워드를 입력해 주세요.\n주인공: 이름과 역할을 하나씩 입력해요.\n등장인물 / 장소 / 분위기 / 교훈: 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.\n마지막 슬라이드에서는 입력한 내용을 확인하고, 동화 만들기 버튼을 눌러 나만의 동화를 완성할 수 있어요!",
+      title: "",
+      content: "",
       image: "",
     },
     {
       title: "주인공",
       content: "주인공의 이름과 역할을 적어주세요.",
-      image: "",
+      image: "/images/post1.png",
       name: "",
       role: "",
     },
     {
       title: "등장인물",
       content: "동화에 등장할 사람이나 동물을 적어주세요.",
-      image: "",
+      image: "/images/post2.png",
       addedItems: [],
     },
     {
       title: "장소",
       content: "동화에 등장할 장소를 적어주세요.",
-      image: "",
+      image: "/images/post3.png",
       addedItems: [],
     },
     {
       title: "분위기",
       content: "동화의 분위기를 적어주세요.",
-      image: "",
+      image: "/images/post4.png",
       addedItems: [],
     },
     {
       title: "교훈",
       content: "동화의 교훈을 적어주세요.",
-      image: "",
+      image: "/images/post5.png",
       addedItems: [],
     },
     {
       title: "입력 내용 확인",
       content:
         "아이와 함께 고른 키워드들이 잘 들어갔는지 마지막으로 체크해볼까요?",
-      image: "",
+      image: "/images/post4.png",
     },
   ]);
 
@@ -292,9 +291,89 @@ export default function FairytaleCreatePage() {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="text-white text-2xl">동화가 자라나는 중...</div>
+        <div className="fixed inset-0 bg-gradient-to-br from-orange-100 via-yellow-50 to-amber-100 flex justify-center items-center z-50">
+        <div className="text-center">
+          {/* 메인 로딩 애니메이션 */}
+          <div className="relative mb-8">
+            {/* 책 애니메이션 */}
+            <div className="relative w-32 h-24 mx-auto mb-6">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-400 rounded-lg shadow-lg transform rotate-3 animate-bounce"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-lg shadow-lg animate-pulse"></div>
+              <div className="absolute top-2 left-2 right-2 bottom-2 bg-white rounded opacity-90"></div>
+              <div className="absolute top-4 left-4 right-4 space-y-1">
+                <div className="h-1 bg-gray-300 rounded animate-pulse"></div>
+                <div className="h-1 bg-gray-300 rounded animate-pulse delay-75"></div>
+                <div className="h-1 bg-gray-300 rounded animate-pulse delay-150"></div>
+                <div className="h-1 bg-gray-300 rounded animate-pulse delay-300"></div>
+              </div>
+            </div>
+    
+            {/* 마법 별들 */}
+            <div className="absolute -top-4 -left-8 text-yellow-400 animate-bounce delay-100">✨</div>
+            <div className="absolute -top-6 right-4 text-orange-400 animate-bounce delay-300">⭐</div>
+            <div className="absolute top-2 -right-8 text-amber-400 animate-bounce delay-500">✨</div>
+            <div className="absolute -bottom-2 -left-4 text-yellow-500 animate-bounce delay-700">🌟</div>
+            <div className="absolute -bottom-4 right-2 text-orange-300 animate-bounce delay-900">✨</div>
+          </div>
+    
+          {/* 로딩 텍스트 */}
+          <div className="mb-6">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent mb-3 animate-pulse">
+              동화가 자라나는 중...
+            </h2>
+            <p className="text-lg text-gray-600 animate-fade-in-out">
+              아이만의 특별한 이야기를 만들고 있어요!
+            </p>
+          </div>
+    
+          {/* 프로그레스 바 */}
+          <div className="w-80 mx-auto mb-6">
+            <div className="bg-orange-100 rounded-full h-3 shadow-inner">
+              <div className="bg-gradient-to-r from-orange-400 to-amber-400 h-3 rounded-full shadow-sm animate-loading-progress"></div>
+            </div>
+          </div>
+    
+          {/* 로딩 단계 텍스트 (순환) */}
+          <div className="text-sm text-gray-500 animate-loading-text">
+            <span>상상의 나래를 펼치는 중...</span>
+          </div>
         </div>
+    
+        {/* 추가 CSS 애니메이션을 위한 스타일 */}
+        <style jsx>{`
+          @keyframes loading-progress {
+            0% { width: 0%; }
+            25% { width: 30%; }
+            50% { width: 60%; }
+            75% { width: 85%; }
+            100% { width: 95%; }
+          }
+          
+          @keyframes fade-in-out {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+          }
+          
+          @keyframes loading-text {
+            0% { content: "상상의 나래를 펼치는 중..."; }
+            33% { content: "마법의 이야기를 짜는 중..."; }
+            66% { content: "특별한 모험을 준비하는 중..."; }
+            100% { content: "아름다운 동화를 완성하는 중..."; }
+          }
+          
+          .animate-loading-progress {
+            animation: loading-progress 3s ease-in-out infinite;
+          }
+          
+          .animate-fade-in-out {
+            animation: fade-in-out 2s ease-in-out infinite;
+          }
+          
+          .animate-loading-text {
+            animation: loading-text 4s ease-in-out infinite;
+          }
+        `}</style>
+      </div>
       )}
       <div className="relative w-full h-full p-8 bg-[#FAF9F6] rounded-lg shadow-lg flex flex-col">
         <div className="flex-grow p-4">
@@ -348,6 +427,83 @@ export default function FairytaleCreatePage() {
                 </div>
               </div>
             </div>
+          ) : currentSlide === 0 ? (
+               <div className="flex justify-center items-center h-full relative">
+
+              {/* 메인 콘텐츠 */}
+              <div className="max-w-5xl mx-auto z-10 relative">
+                {/* 메인 타이틀 */}
+                <div className="mb-12 text-center">
+                  <div className="inline-block p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-3xl shadow-lg mb-6">
+                    <h1 className="text-5xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent mb-4 leading-tight">
+                      아이와 함께 아이만의 동화를 만들어주세요!
+                    </h1>
+                    <div className="w-32 h-1 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full mx-auto"></div>
+                  </div>
+                </div>
+
+                {/* 안내 텍스트 - 카드 형태로 업그레이드 */}
+                <div className="space-y-6">
+                  {/* 주인공 설정 */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-gradient-to-r from-orange-300 to-amber-300 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0 shadow-md">
+                        <span className="text-white font-bold text-xl">1</span>
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                          주인공 설정 
+                        </h3>
+                        <p className="text-gray-600 text-lg leading-relaxed">
+                          주인공의 <span className="font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">이름과 역할</span>을 하나씩 입력해요.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 키워드 입력 */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-yellow-100 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-gradient-to-r from-yellow-300 to-orange-300 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0 shadow-md">
+                        <span className="text-white font-bold text-xl">2</span>
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                          키워드 입력
+                        </h3>
+                        <p className="text-gray-600 text-lg leading-relaxed">
+                          <span className="font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">등장인물 · 장소 · 분위기 · 교훈</span> 각 항목에 맞는 키워드를 자유롭게 입력할 수 있어요.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 동화 완성 */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-amber-100 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-gradient-to-r from-amber-300 to-yellow-300 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0 shadow-md">
+                        <span className="text-white font-bold text-xl">3</span>
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                          동화 완성
+                        </h3>
+                        <p className="text-gray-600 text-lg leading-relaxed">
+                          마지막 슬라이드에서 입력한 내용을 확인하고, <span className="font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">동화 만들기 버튼</span>을 눌러 나만의 동화를 완성할 수 있어요!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 하단 격려 메시지 */}
+                <div className="mt-12 text-center">
+                  <div className="inline-flex items-center bg-gradient-to-r from-orange-400 to-amber-400 text-white px-8 py-4 rounded-full shadow-lg animate-pulse">
+                    <span className="text-xl font-semibold mr-3">함께 멋진 동화를 만들어봐요!</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             // 일반 슬라이드
             <div className="flex flex-row space-x-4 h-full">
@@ -364,7 +520,7 @@ export default function FairytaleCreatePage() {
                 <h2 className="text-3xl font-bold mb-2">{slides[currentSlide]?.title}</h2>
                 <p className="text-gray-500 mb-2 text-lg">{slides[currentSlide]?.content}</p>
 
-                {currentSlide === 1 && (
+                {currentSlide === 1  && (
                   <div className="mb-2">
                     {showSlide1NameInput ? (
                       <div>

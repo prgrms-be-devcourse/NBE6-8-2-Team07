@@ -53,7 +53,6 @@ const FairytaleList = () => {
         )
       );
 
-      // 성공 메시지 (선택사항)
       alert(`즐겨찾기가 ${currentBookmarkStatus ? '해제' : '추가'}되었습니다.`);
       
     } catch (error: unknown) {
@@ -135,12 +134,12 @@ const FairytaleList = () => {
         let bookmarkedIds: number[] = [];
         try {
           const bookmarksResponse = await fetch('http://localhost:8080/bookmarks', {
-            credentials: 'include', // 인증 정보 포함
+            credentials: 'include', 
           });
           
           if (bookmarksResponse.ok) {
             const bookmarksData = await bookmarksResponse.json();
-            bookmarkedIds = bookmarksData.map((bookmark: { fairytaleId: number }) => bookmark.fairytaleId);
+            bookmarkedIds = bookmarksData.map((bookmark: { fairytaleId: number })=> bookmark.fairytaleId);
           }
         } catch (bookmarkError) {
           console.warn('즐겨찾기 정보를 가져오는데 실패했습니다:', bookmarkError);
@@ -198,7 +197,7 @@ const FairytaleList = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 relative pt-[40px]">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">동화 목록</h1>
         

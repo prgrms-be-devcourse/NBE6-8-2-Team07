@@ -86,7 +86,7 @@ export default function ClientLayout({
       <header className="">
         <div className="container mx-auto flex justify-between items-center p-4">
           <Link href="/" className="font-bold text-xl">
-            로고이미지
+            <img src="/images/logo.png" alt="로고" className="h-25" />
           </Link>
           <nav className="flex items-center space-x-8">
             <div className="relative group">
