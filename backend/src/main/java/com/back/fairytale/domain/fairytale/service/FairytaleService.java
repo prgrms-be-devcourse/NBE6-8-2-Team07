@@ -54,6 +54,21 @@ public class FairytaleService {
                 .map(FairytaleListResponse::from)
                 .collect(Collectors.toList());
     }
+    // 모든 동화 조회
+    @Transactional(readOnly = true)
+    public List<FairytaleListResponse> getAllPublicFairytales() {
+        List<Fairytale> fairytales = fairytaleRepository.findAllOrderByCreatedAtDesc();
+
+        if (fairytales.isEmpty()) {
+            throw new FairytaleNotFoundException("등록된 동화가 없습니다.");
+        }
+
+        log.info("전체 동화 조회 - 총 {}개의 동화를 조회했습니다.", fairytales.size());
+
+        return fairytales.stream()
+                .map(FairytaleListResponse::from)
+                .collect(Collectors.toList());
+    }
 
     // 동화 상세 조회
     @Transactional(readOnly = true)

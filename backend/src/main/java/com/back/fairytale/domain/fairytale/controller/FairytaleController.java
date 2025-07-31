@@ -60,6 +60,16 @@ public class FairytaleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+    // 모든 동화 조회
+    @GetMapping("/public")
+    public ResponseEntity<?> getAllPublicFairytales() {
+        try {
+            List<FairytaleListResponse> response = fairytaleService.getAllPublicFairytales();
+            return ResponseEntity.ok(response);
+        } catch (FairytaleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 
     // 동화 상세 조회
     @GetMapping("/{id}")
