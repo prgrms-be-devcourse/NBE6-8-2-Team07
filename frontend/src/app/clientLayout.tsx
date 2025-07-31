@@ -165,13 +165,15 @@ export default function ClientLayout({
       <>
         {children}
       </>
-      <footer className="bg-[#FFD6A5]">
+      <footer className="bg-[#FFD6A5] text-[#9B4500] py-8 px-4 text-center text-sm">
+        <p>동화공방</p>
+        <p>Team07 | 키워드 기반 AI 동화 생성 서비스</p>
+        <p>프로그래머스 데브코스 백엔드 6기 2차 프로젝트</p>
         <div>
-           <br/>
-           <br/>
-           <br/>
-           <br/>
-           <br/>
+          <Link href="/introduction" className="hover:underline">서비스 소개</Link>
+        </div>
+        <div>
+          <Link href="https://github.com/prgrms-be-devcourse/NBE6-8-2-Team07" className="hover:underline" target="_blank" rel="noopener noreferrer">GitHub 저장소</Link>
         </div>
       </footer>
     </>
