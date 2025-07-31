@@ -85,7 +85,7 @@ const FairytaleReader = () => {
   if (!fairytale) return <div className="container mx-auto p-4">동화를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="container mx-auto p-4 bg-[#FAF9F6] min-h-screen flex flex-col items-center relative">
+    <div className="container mx-auto p-4 mb-6 bg-[#FAF9F6] min-h-screen flex flex-col items-center relative">
       <div className="relative w-full max-w-2xl">
         <div className="bg-white shadow-lg rounded-lg p-8 mt-8">
           <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">{fairytale.title}</h1>
