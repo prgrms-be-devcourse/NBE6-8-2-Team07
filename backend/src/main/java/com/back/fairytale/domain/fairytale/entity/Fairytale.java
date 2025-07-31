@@ -36,6 +36,9 @@ public class Fairytale {
     @Column(nullable = false)
     private String content;
 
+    @Column(name = "image_url", length = 255)
+    private String imageUrl;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;

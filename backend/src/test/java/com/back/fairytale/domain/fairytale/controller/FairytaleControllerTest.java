@@ -353,4 +353,33 @@ public class FairytaleControllerTest {
 
         System.out.println("동화 삭제 성공");
     }
+
+    @Test
+    @DisplayName("동화 생성과 이미지 생성 통합 테스트")
+    void t12() throws Exception {
+        String requestJson = """
+        {
+            "childName": "소라",
+            "childRole": "마법사",
+            "characters": "공주, 왕자",
+            "place": "숲",
+            "lesson": "친구의 소중함",
+            "mood": "따듯한, 모험적인"
+        }
+        """;
+
+        FairytaleResponse response = createFairytale(requestJson);
+
+        // 동화 생성 확인
+        assertThat(response.id()).isNotNull();
+        assertThat(response.title()).isNotNull();
+        assertThat(response.content()).isNotNull();
+        assertThat(response.childName()).isEqualTo("소라");
+
+        // 이미지 URL 확인 (현재는 null)
+        System.out.println("생성된 동화 ID: " + response.id());
+        System.out.println("이미지 URL: " + response.imageUrl()); // 현재는 null
+
+        System.out.println("통합 테스트 - 동화 생성 성공!");
+    }
 }
