@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.back.fairytale.global.security.JWTProvider.TokenType.ACCESS;
+import static com.back.fairytale.global.security.JWTProvider.TokenType.REFRESH;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -35,13 +38,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = getTokenFromCookies(request, "Authorization");
+        String accessToken = getTokenFromCookies(request, ACCESS.getName());
         if (isValidToken(accessToken)) {
-            authenticateWithToken(accessToken, request, response, filterChain);
+            Long userId = jwtUtil.getUserId(accessToken);
+            Optional<User> optionalUser = userRepository.findById(userId);
+
+            if (optionalUser.isPresent()) {
+                saveAuthenticate(optionalUser.get(), request, response, filterChain);
+                return;
+            }
+
+            log.warn("유효한 토큰이나 사용자 없음. ID: {}", userId);
+            filterChain.doFilter(request, response);
             return;
         }
 
-        String refreshToken = getTokenFromCookies(request, "refresh");
+        String refreshToken = getTokenFromCookies(request, REFRESH.getName());
         if (!isValidToken(refreshToken)) {
             log.info("리프레시 토큰이 유효하지 않습니다.");
             filterChain.doFilter(request, response);
@@ -64,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (!refreshToken.equals(user.getRefreshToken())) {
             log.info("이미 갱신된 토큰 요청. 사용자 ID: {}", userId);
             issueAccessToken(user, response);
-            authenticateAndContinue(user, request, response, filterChain);
+            saveAuthenticate(user, request, response, filterChain);
             return;
         }
 
@@ -78,23 +90,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.addCookie(jwtProvider.wrapRefreshTokenToCookie(newRefreshToken));
 
         log.info("토큰 재발급 완료. 사용자 ID: {}", userId);
-        authenticateAndContinue(user, request, response, filterChain);
+        saveAuthenticate(user, request, response, filterChain);
     }
 
-    private void authenticateWithToken(String token, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Long userId = jwtUtil.getUserId(token);
-        Optional<User> optionalUser = userRepository.findById(userId);
-
-        if (optionalUser.isPresent()) {
-            authenticateAndContinue(optionalUser.get(), request, response, filterChain);
-            return;
-        }
-
-        log.warn("유효한 토큰이나 사용자 없음. ID: {}", userId);
-        filterChain.doFilter(request, response);
-    }
-
-    private void authenticateAndContinue(User user, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    private void saveAuthenticate(User user, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         CustomOAuth2User principal = new CustomOAuth2User(user.getId(), user.getSocialId(), user.getRole().getKey());
         Authentication auth = new OAuth2AuthenticationToken(principal, principal.getAuthorities(), "naver");
         SecurityContextHolder.getContext().setAuthentication(auth);
