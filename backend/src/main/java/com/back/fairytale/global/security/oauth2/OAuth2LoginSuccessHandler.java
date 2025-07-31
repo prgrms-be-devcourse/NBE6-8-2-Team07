@@ -1,5 +1,8 @@
-package com.back.fairytale.global.security;
+package com.back.fairytale.global.security.oauth2;
 
+import com.back.fairytale.global.security.CustomOAuth2User;
+import com.back.fairytale.global.security.port.UserTokenService;
+import com.back.fairytale.global.security.jwt.JWTProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

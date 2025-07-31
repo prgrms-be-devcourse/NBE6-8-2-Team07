@@ -1,5 +1,6 @@
 package com.back.fairytale.global.security;
 
+import com.back.fairytale.global.security.jwt.JWTUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -5,7 +5,7 @@ import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.enums.IsDeleted;
 import com.back.fairytale.domain.user.enums.Role;
 import com.back.fairytale.domain.user.repository.UserRepository;
-import com.back.fairytale.global.security.JWTProvider;
+import com.back.fairytale.global.security.jwt.JWTProvider;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

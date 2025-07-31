@@ -1,4 +1,4 @@
-package com.back.fairytale.global.security;
+package com.back.fairytale.global.security.oauth2;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.back.fairytale.global.security;
+package com.back.fairytale.global.security.jwt;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

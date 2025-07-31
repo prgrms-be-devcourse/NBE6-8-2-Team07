@@ -1,5 +1,7 @@
-package com.back.fairytale.global.security;
+package com.back.fairytale.global.security.oauth2;
 
+import com.back.fairytale.global.security.port.LogoutService;
+import com.back.fairytale.global.security.jwt.JWTProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

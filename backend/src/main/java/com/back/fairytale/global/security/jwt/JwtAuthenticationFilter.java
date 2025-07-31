@@ -1,7 +1,8 @@
-package com.back.fairytale.global.security;
+package com.back.fairytale.global.security.jwt;
 
 import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.repository.UserRepository;
+import com.back.fairytale.global.security.CustomOAuth2User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -19,8 +20,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static com.back.fairytale.global.security.JWTProvider.TokenType.ACCESS;
-import static com.back.fairytale.global.security.JWTProvider.TokenType.REFRESH;
+import static com.back.fairytale.global.security.jwt.JWTProvider.TokenType.ACCESS;
+import static com.back.fairytale.global.security.jwt.JWTProvider.TokenType.REFRESH;
 
 @Slf4j
 @Component
