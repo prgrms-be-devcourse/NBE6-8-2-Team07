@@ -15,21 +15,32 @@ export default function ClientLayout({
   const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false); // 로그인 필요 팝업 상태
   const router = useRouter();
 
-  // 페이지 로드 시 로그인 상태를 관리하던 useEffect는 customFetch 로직으로 대체되므로 제거하였습니다.
-  // 로그인 상태는 API 요청의 성공/실패 여부에 따라 결정되도록 합니다.
-  // 초기 로그인 상태는 false로 유지합니다.
-
-  // 로그인 성공 여부를 sessionStorage를 통해 확인하고 알림을 띄우는 로직
   useEffect(() => {
-    const isLoggingIn = sessionStorage.getItem('isLoggingIn');
-    if (isLoggingIn === 'true') {
-      // 이 시점에서 실제 로그인 성공 여부를 확인하기 위해
-      // 간단한 상태 확인용 API(/auth/status 등)를 호출하는 것이 이상적입니다.
-      // 지금은 임시로 sessionStorage 아이템 존재 여부로만 판단합니다.
-      setIsLoggedIn(true);
-      alert('로그인 되었습니다!');
-      sessionStorage.removeItem('isLoggingIn');
-    }
+    const checkInitialLogin = async () => {
+      try {
+        // 인증이 필요한 가벼운 API를 호출하여 로그인 상태 확인
+        const response = await customFetch('http://localhost:8080/fairytales?check=true');
+
+        if (response.ok) {
+          setIsLoggedIn(true);
+
+          // 로그인 직후의 알림 처리
+          const isLoggingIn = sessionStorage.getItem('isLoggingIn');
+          if (isLoggingIn === 'true') {
+            alert('로그인 되었습니다!');
+            sessionStorage.removeItem('isLoggingIn');
+          }
+        } else {
+          // customFetch 내부에서 재발급 실패 시 여기로 올 수 있음
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        // 네트워크 에러 등
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkInitialLogin();
   }, []);
 
   const handleLoginClick = () => {
