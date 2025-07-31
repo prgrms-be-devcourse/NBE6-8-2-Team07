@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from "next/link";
 import { FaRegStar, FaBook, FaStar, FaCalendarAlt, FaTrashAlt } from 'react-icons/fa';
 import { MdViewList, MdGridView } from 'react-icons/md';
-import Link from 'next/link';
+import { customFetch } from '@/utils/customFetch';
 import { Fairytale, FairytaleWithBookmark } from '@/context/fairytaleContext';
+
 
 // 뷰모드 타입 정의 (테이블 또는 그리드)
 type ViewMode = 'table' | 'grid';
@@ -32,7 +34,7 @@ const FairytaleList = () => {
 
     try {
       const method = currentBookmarkStatus ? 'DELETE' : 'POST';
-      const response = await fetch(`http://localhost:8080/bookmark/${fairytaleId}`, {
+      const response = await customFetch(`http://localhost:8080/bookmark/${fairytaleId}`, {
         method: method,
         credentials: 'include', // 인증 정보 포함
         headers: {
@@ -81,7 +83,7 @@ const FairytaleList = () => {
     setDeletingIds(prev => new Set([...prev, id.toString()]));
 
     try {
-      const response = await fetch(`http://localhost:8080/fairytales/${id}`, {
+      const response = await customFetch(`http://localhost:8080/fairytales/${id}`, {
         method: 'DELETE',
         credentials: 'include', // 인증 정보 포함
       });
@@ -115,7 +117,7 @@ const FairytaleList = () => {
 
       try {
         // 동화 목록 가져오기
-        const fairytalesResponse = await fetch('http://localhost:8080/fairytales', {
+        const fairytalesResponse = await customFetch('http://localhost:8080/fairytales', {
           credentials: 'include', // 인증 정보 포함
         });
         
@@ -133,7 +135,7 @@ const FairytaleList = () => {
         // 즐겨찾기 목록 가져오기
         let bookmarkedIds: number[] = [];
         try {
-          const bookmarksResponse = await fetch('http://localhost:8080/bookmarks', {
+          const bookmarksResponse = await customFetch('http://localhost:8080/bookmarks', {
             credentials: 'include', 
           });
           

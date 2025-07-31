@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { customFetch } from '@/utils/customFetch';
 
 export default function ClientLayout({
     children,
@@ -14,43 +15,17 @@ export default function ClientLayout({
   const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false); // 로그인 필요 팝업 상태
   const router = useRouter();
 
-  // 백엔드를 통해 로그인 상태를 확인하는 함수
-  const checkLoginStatusOnBackend = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/reissue', {
-        method: 'POST',
-        credentials: 'include', // HttpOnly 쿠키를 포함하여 요청
-      });
-      // 200 OK 응답은 로그인 상태임을 의미
-      return response.ok; 
-    } catch (error) {
-      console.error("Failed to check login status:", error);
-      return false;
-    }
-  };
-  // 로그인 알림 로직. 세션과 토큰 상태를 확인하여 경우의 수에 따라 로그인 알림창을 띄울지 판단
+  // 로그인 성공 여부를 sessionStorage를 통해 확인하고 알림을 띄우는 로직
   useEffect(() => {
-    const handleInitialLoginCheck = async () => {
-      const isLoggingIn = sessionStorage.getItem('isLoggingIn');
-      const loggedIn = await checkLoginStatusOnBackend();
-
-      if (loggedIn) {
-        setIsLoggedIn(true);
-        if (isLoggingIn) {
-          alert('로그인에 성공했습니다!');
-          sessionStorage.removeItem('isLoggingIn');
-        }
-      } else {
-        setIsLoggedIn(false);
-        if (isLoggingIn) {
-          // 로그인 시도 후 실패한 경우 (예: 토큰 만료 등)
-          alert('로그인에 실패했습니다. 다시 시도해주세요.');
-          sessionStorage.removeItem('isLoggingIn');
-        }
-      }
-    };
-
-    handleInitialLoginCheck();
+    const isLoggingIn = sessionStorage.getItem('isLoggingIn');
+    if (isLoggingIn === 'true') {
+      // 이 시점에서 실제 로그인 성공 여부를 확인하기 위해
+      // 간단한 상태 확인용 API(/auth/status 등)를 호출하는 것이 이상적입니다.
+      // 지금은 임시로 sessionStorage 아이템 존재 여부로만 판단합니다.
+      setIsLoggedIn(true);
+      alert('로그인 되었습니다!');
+      sessionStorage.removeItem('isLoggingIn');
+    }
   }, []);
 
   const handleLoginClick = () => {
@@ -59,7 +34,7 @@ export default function ClientLayout({
   // 로그아웃 로직
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:8080/logout', {
+      await customFetch('http://localhost:8080/logout', {
         method: 'POST',
         credentials: 'include', // 쿠키를 포함하여 요청
       });
