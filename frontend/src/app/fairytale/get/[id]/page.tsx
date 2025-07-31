@@ -95,7 +95,7 @@ const FairytaleReader = () => {
         </div>
         <button
           onClick={() => setIsKeywordPopupOpen(true)}
-          className="fixed bottom-8 right-8 bg-orange-400 text-white px-4 py-2 rounded-full shadow-lg hover:bg-orange-500 transition-colors cursor-pointer"
+          className="fixed bottom-8 right-8 bg-orange-400 text-white text-lg px-4 py-2 rounded-full shadow-lg hover:bg-orange-500 transition-colors cursor-pointer"
         >
           키워드 보기
         </button>

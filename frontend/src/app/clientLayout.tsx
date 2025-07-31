@@ -15,6 +15,10 @@ export default function ClientLayout({
   const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false); // 로그인 필요 팝업 상태
   const router = useRouter();
 
+  // 페이지 로드 시 로그인 상태를 관리하던 useEffect는 customFetch 로직으로 대체되므로 제거하였습니다.
+  // 로그인 상태는 API 요청의 성공/실패 여부에 따라 결정되도록 합니다.
+  // 초기 로그인 상태는 false로 유지합니다.
+
   // 로그인 성공 여부를 sessionStorage를 통해 확인하고 알림을 띄우는 로직
   useEffect(() => {
     const isLoggingIn = sessionStorage.getItem('isLoggingIn');
@@ -58,7 +62,7 @@ export default function ClientLayout({
 
   return (
     <>
-      <header className="h-20">
+      <header className="h-26">
         <div className="container mx-auto flex justify-between items-center p-4">
           <Link href="/" className="font-bold text-xl">
             <img src="/images/logo.png" alt="로고" className="h-25" />
