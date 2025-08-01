@@ -73,8 +73,6 @@ public class GoogleCloudStorge implements CloudStorge {
                 imgFile.getInputStream()
         );
 
-        System.out.println(blobInfo.getMediaLink());
-
         return blobInfo.getMediaLink();
     }
 
