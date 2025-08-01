@@ -43,6 +43,9 @@ public class Fairytale {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column
+    private Long likeCount;
+
     @OneToMany(mappedBy = "fairytale", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<FairytaleKeyword> fairytaleKeywords = new ArrayList<>();
@@ -100,5 +103,13 @@ public class Fairytale {
         return fairytaleKeywords.stream()
                 .filter(fk -> fk.getKeyword().getKeywordType() == type)
                 .collect(Collectors.toList());
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount += 1;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount -= 1;
     }
 }

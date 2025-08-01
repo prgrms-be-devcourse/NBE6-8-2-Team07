@@ -1,7 +1,9 @@
 package com.back.fairytale.domain.fairytale.repository;
 
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -19,5 +21,9 @@ public interface FairytaleRepository extends JpaRepository<Fairytale, Long> {
             "WHERE f.id = :fairytaleId AND f.user.id = :userId")
     Optional<Fairytale> findByIdAndUserIdWithKeywordsFetch(@Param("fairytaleId") Long fairytaleId,
                                                            @Param("userId") Long userId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select f from Fairytale f where f.id = :id")
+    Optional<Fairytale> findByIdWithPessimisticLock(@Param("id") Long id);
 
 }
