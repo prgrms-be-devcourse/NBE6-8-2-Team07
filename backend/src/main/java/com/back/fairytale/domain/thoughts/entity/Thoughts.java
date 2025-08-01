@@ -1,7 +1,7 @@
-package com.back.fairytale.domain.childThoughts.entity;
-
+package com.back.fairytale.domain.thoughts.entity;
 
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
+import com.back.fairytale.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ChildThoughts {
+public class Thoughts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,10 +24,20 @@ public class ChildThoughts {
     @JoinColumn(name = "fairytale_id", nullable = false)
     private Fairytale fairytale;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    // 아이 이름
+    @Column(nullable = false, length = 50)
+    private String name;
+
+    // 아이 생각
     @Lob
     @Column(nullable = false)
     private String content;
 
+    // 부모 생각
     @Lob
     @Column(nullable = false)
     private String parentContent;
@@ -48,5 +58,21 @@ public class ChildThoughts {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // Thoughts 수정
+    public void update(String name, String content, String parentContent) {
+        // 아이이름 수정
+        if (name != null) {
+            this.name = name.trim();
+        }
+        // 아이생각 수정
+        if (content != null) {
+            this.content = content.trim();
+        }
+        // 부모생각 수정
+        if (parentContent != null) {
+            this.parentContent = parentContent.trim();
+        }
     }
 }
