@@ -161,6 +161,7 @@ public class FairytaleController {
 
             fairytaleService.updateFairytaleVisibility(id, userId, isPublic);
             return ResponseEntity.ok().build();
+            
         } catch (FairytaleNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
