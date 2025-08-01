@@ -18,8 +18,8 @@ export default function ClientLayout({
   useEffect(() => {
     const checkInitialLogin = async () => {
       try {
-        // 인증이 필요한 가벼운 API를 호출하여 로그인 상태 확인
-        const response = await customFetch('http://localhost:8080/fairytales?check=true');
+        // 로그인 상태 확인 요청
+        const response = await customFetch('http://localhost:8080/users/me');
 
         if (response.ok) {
           setIsLoggedIn(true);
@@ -51,7 +51,8 @@ export default function ClientLayout({
     try {
       await customFetch('http://localhost:8080/logout', {
         method: 'POST',
-        credentials: 'include', // 쿠키를 포함하여 요청
+        // @ts-ignore
+        noRefresh: true, // 로그아웃 시에는 토큰 재발급 시도 안 함
       });
     } catch (error) {
       console.error("Logout failed:", error);
