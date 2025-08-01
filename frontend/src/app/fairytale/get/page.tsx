@@ -6,6 +6,7 @@ import { FaRegStar, FaBook, FaStar, FaCalendarAlt, FaTrashAlt } from 'react-icon
 import { MdViewList, MdGridView } from 'react-icons/md';
 import { customFetch } from '@/utils/customFetch';
 import { Fairytale, FairytaleWithBookmark } from '@/context/fairytaleContext';
+import { FaLock, FaGlobe } from 'react-icons/fa';
 
 
 // 뷰모드 타입 정의 (테이블 또는 그리드)
@@ -273,14 +274,17 @@ const FairytaleList = () => {
         <div className="bg-white border-gray-300 rounded-lg shadow-sm border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full">
+              {/* 테이블 뷰의 thead 수정 (공개설정 컬럼 추가) */}
               <thead className="bg-orange-50">
                 <tr>
-                  {/* 즐겨찾기 컬럼 */}
                   <th className="py-3 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     즐겨찾기
                   </th>
                   <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     제목
+                  </th>
+                  <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    공개설정 {/* 새로 추가 */}
                   </th>
                   <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     생성일자
@@ -327,6 +331,32 @@ const FairytaleList = () => {
                       </Link>
                     </td>
                     
+                    {/* 공개설정 표시 셀 - 새로 추가 (읽기 전용) */}
+                    <td className="py-4 px-6 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <span
+                          className={`flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                            tale.isPublic
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {tale.isPublic ? (
+                            <>
+                              <FaGlobe className="mr-1" />
+                              공개
+                            </>
+                          ) : (
+                            <>
+                              <FaLock className="mr-1" />
+                              비공개
+                            </>
+                          )}
+                        </span>
+                      </div>
+                    </td>
+
+
                     {/* 생성일자 셀 */}
                     <td className="py-4 px-6 whitespace-nowrap text-gray-500">
                       <div className="flex items-center">
@@ -372,7 +402,7 @@ const FairytaleList = () => {
         </div>
       )}
       
-{/* 그리드 뷰 - 이미지 추가됨 */}
+{/* 그리드 뷰  */}
 {viewMode === 'grid' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredFairyTales.map((tale) => (
@@ -459,10 +489,34 @@ const FairytaleList = () => {
                   </h3>
                 )}
                 
-                {/* 생성일자 */}
-                <div className="flex items-center text-sm text-gray-500 mb-4">
-                  <FaCalendarAlt className="mr-2" />
-                  {new Date(tale.createdAt).toLocaleDateString('ko-KR')}
+                {/* 공개설정과 생성일자를 함께 표시 */}
+                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                  {/* 생성일자 - 기존 코드 */}
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="mr-2" />
+                    {new Date(tale.createdAt).toLocaleDateString('ko-KR')}
+                  </div>
+                  
+                  {/* 공개설정 표시 - 새로 추가 */}
+                  <span
+                    className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      tale.isPublic
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {tale.isPublic ? (
+                      <>
+                        <FaGlobe className="mr-1" />
+                        공개
+                      </>
+                    ) : (
+                      <>
+                        <FaLock className="mr-1" />
+                        비공개
+                      </>
+                    )}
+                  </span>
                 </div>
 
                 {/* 버튼 그룹 - 나란히 배치 */}

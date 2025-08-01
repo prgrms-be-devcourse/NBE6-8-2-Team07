@@ -46,6 +46,10 @@ public class Fairytale {
     @Column
     private Long likeCount;
 
+    @Column(name = "is_public", nullable = false)
+    @Builder.Default
+    private Boolean isPublic = false;
+
     @OneToMany(mappedBy = "fairytale", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<FairytaleKeyword> fairytaleKeywords = new ArrayList<>();
@@ -111,5 +115,9 @@ public class Fairytale {
 
     public void decreaseLikeCount() {
         this.likeCount -= 1;
+    }
+
+    public void setPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
     }
 }
