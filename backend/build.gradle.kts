@@ -50,6 +50,10 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-webflux") // WebClient용
     implementation("commons-io:commons-io:2.11.0") // 파일 처리용
+
+    // Google Cloud Storage
+    implementation(group = "org.springframework.cloud", name = "spring-cloud-gcp-starter", version = "1.2.5.RELEASE")
+    implementation(group = "org.springframework.cloud", name = "spring-cloud-gcp-storage", version = "1.2.5.RELEASE")
 }
 
 tasks.withType<Test> {

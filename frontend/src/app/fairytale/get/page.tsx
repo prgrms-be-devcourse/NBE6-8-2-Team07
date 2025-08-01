@@ -6,6 +6,7 @@ import { FaRegStar, FaBook, FaStar, FaCalendarAlt, FaTrashAlt } from 'react-icon
 import { MdViewList, MdGridView } from 'react-icons/md';
 import { customFetch } from '@/utils/customFetch';
 import { Fairytale, FairytaleWithBookmark } from '@/context/fairytaleContext';
+import { FaLock, FaGlobe } from 'react-icons/fa';
 
 
 // 뷰모드 타입 정의 (테이블 또는 그리드)
@@ -273,14 +274,17 @@ const FairytaleList = () => {
         <div className="bg-white border-gray-300 rounded-lg shadow-sm border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full">
+              {/* 테이블 뷰의 thead 수정 (공개설정 컬럼 추가) */}
               <thead className="bg-orange-50">
                 <tr>
-                  {/* 즐겨찾기 컬럼 */}
                   <th className="py-3 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     즐겨찾기
                   </th>
                   <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     제목
+                  </th>
+                  <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    공개설정 {/* 새로 추가 */}
                   </th>
                   <th className="py-4 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     생성일자
@@ -327,6 +331,32 @@ const FairytaleList = () => {
                       </Link>
                     </td>
                     
+                    {/* 공개설정 표시 셀 - 새로 추가 (읽기 전용) */}
+                    <td className="py-4 px-6 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <span
+                          className={`flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                            tale.isPublic
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {tale.isPublic ? (
+                            <>
+                              <FaGlobe className="mr-1" />
+                              공개
+                            </>
+                          ) : (
+                            <>
+                              <FaLock className="mr-1" />
+                              비공개
+                            </>
+                          )}
+                        </span>
+                      </div>
+                    </td>
+
+
                     {/* 생성일자 셀 */}
                     <td className="py-4 px-6 whitespace-nowrap text-gray-500">
                       <div className="flex items-center">
@@ -372,34 +402,29 @@ const FairytaleList = () => {
         </div>
       )}
       
-      {/* 그리드 뷰 */}
-      {viewMode === 'grid' && (
+{/* 그리드 뷰  */}
+{viewMode === 'grid' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredFairyTales.map((tale) => (
-            <div key={tale.id} className="bg-white rounded-lg shadow-md border hover:shadow-lg transition-shadow">
-              {/* 카드 내용 */}
-              <div className="p-4">
-                {/* 즐겨찾기 버튼과 제목 */}
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-semibold text-gray-900 text-lg leading-tight flex-1 mr-2">
-                    <Link 
-                      href={`/fairytale/get/${tale.id}`}
-                      className="hover:text-orange-600 transition-colors"
-                    >
-                      {tale.title}
-                    </Link>
-                  </h3>
-                  
-                  {/* 즐겨찾기 버튼 */}
+            <div key={tale.id} className="bg-white rounded-lg shadow-md border hover:shadow-lg transition-shadow overflow-hidden">
+              {/* 동화 이미지 - 그리드 뷰에만 추가 */}
+              {tale.imageUrl && (
+                <div className="w-full h-60 relative overflow-hidden">
+                  <img 
+                    src={tale.imageUrl} 
+                    alt={tale.title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                  {/* 즐겨찾기 버튼을 이미지 위에 오버레이 */}
                   <button 
                     onClick={() => handleToggleBookmark(tale.id, tale.isBookmarked)} 
                     disabled={bookmarkingIds.has(tale.id.toString())}
-                    className={`text-lg transition-colors ${
+                    className={`absolute top-2 right-2 text-xl p-2 rounded-full bg-white/90 backdrop-blur-sm transition-colors shadow-sm ${
                       bookmarkingIds.has(tale.id.toString())
                         ? 'text-gray-400 cursor-not-allowed'
                         : tale.isBookmarked 
                           ? 'text-yellow-500 hover:text-yellow-600' 
-                          : 'text-gray-300 hover:text-yellow-500'
+                          : 'text-gray-600 hover:text-yellow-500'
                     }`}
                     title={
                       bookmarkingIds.has(tale.id.toString()) 
@@ -412,19 +437,94 @@ const FairytaleList = () => {
                     {tale.isBookmarked ? <FaStar /> : <FaRegStar />}
                   </button>
                 </div>
+              )}
+              
+              {/* 카드 내용 */}
+              <div className="p-4">
+                {/* 제목과 즐겨찾기 버튼 (이미지가 없는 경우에만 표시) */}
+                {!tale.imageUrl && (
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="font-semibold text-gray-900 text-lg leading-tight flex-1 mr-2">
+                      <Link 
+                        href={`/fairytale/get/${tale.id}`}
+                        className="hover:text-orange-600 transition-colors"
+                      >
+                        {tale.title}
+                      </Link>
+                    </h3>
+                    
+                    {/* 즐겨찾기 버튼 */}
+                    <button 
+                      onClick={() => handleToggleBookmark(tale.id, tale.isBookmarked)} 
+                      disabled={bookmarkingIds.has(tale.id.toString())}
+                      className={`text-lg transition-colors ${
+                        bookmarkingIds.has(tale.id.toString())
+                          ? 'text-gray-400 cursor-not-allowed'
+                          : tale.isBookmarked 
+                            ? 'text-yellow-500 hover:text-yellow-600' 
+                            : 'text-gray-600 hover:text-yellow-500'
+                      }`}
+                      title={
+                        bookmarkingIds.has(tale.id.toString()) 
+                          ? '처리 중...' 
+                          : tale.isBookmarked 
+                            ? '즐겨찾기 해제' 
+                            : '즐겨찾기 추가'
+                      }
+                    >
+                      {tale.isBookmarked ? <FaStar /> : <FaRegStar />}
+                    </button>
+                  </div>
+                )}
                 
-                {/* 생성일자 */}
-                <div className="flex items-center text-sm text-gray-500 mb-4">
-                  <FaCalendarAlt className="mr-2" />
-                  {new Date(tale.createdAt).toLocaleDateString('ko-KR')}
+                {/* 이미지가 있는 경우 제목만 표시 */}
+                {tale.imageUrl && (
+                  <h3 className="font-semibold text-gray-900 text-lg leading-tight mb-3">
+                    <Link 
+                      href={`/fairytale/get/${tale.id}`}
+                      className="hover:text-orange-600 transition-colors"
+                    >
+                      {tale.title}
+                    </Link>
+                  </h3>
+                )}
+                
+                {/* 공개설정과 생성일자를 함께 표시 */}
+                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                  {/* 생성일자 - 기존 코드 */}
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="mr-2" />
+                    {new Date(tale.createdAt).toLocaleDateString('ko-KR')}
+                  </div>
+                  
+                  {/* 공개설정 표시 - 새로 추가 */}
+                  <span
+                    className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      tale.isPublic
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {tale.isPublic ? (
+                      <>
+                        <FaGlobe className="mr-1" />
+                        공개
+                      </>
+                    ) : (
+                      <>
+                        <FaLock className="mr-1" />
+                        비공개
+                      </>
+                    )}
+                  </span>
                 </div>
 
-                {/* 버튼 그룹 */}
-                <div className="space-y-3">
+                {/* 버튼 그룹 - 나란히 배치 */}
+                <div className="flex gap-2 mt-3">
                   {/* 읽기 버튼 */}
                   <Link
                     href={`/fairytale/get/${tale.id}`}
-                    className="block w-full text-center py-3 px-4 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition-colors font-medium"
+                    className="w-1/2 text-center py-3 px-4 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition-colors font-medium"
                   >
                     읽기
                   </Link>
@@ -433,7 +533,7 @@ const FairytaleList = () => {
                   <button
                     onClick={() => handleDeleteFairytale(tale.id, tale.title)}
                     disabled={deletingIds.has(tale.id.toString())} 
-                    className={`block w-full text-center py-3 px-4 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
+                    className={`w-1/2 text-center py-3 px-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
                       deletingIds.has(tale.id.toString())
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                         : 'bg-red-500 text-white hover:bg-red-600'        
