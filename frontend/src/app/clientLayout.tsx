@@ -14,7 +14,7 @@ export default function ClientLayout({
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false); // 로그인 필요 팝업 상태
   const router = useRouter();
-  const [loginError, setLoginError] = useState<string | null>(null);
+  // const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkInitialLogin = async () => {
@@ -24,7 +24,7 @@ export default function ClientLayout({
 
         if (response.ok) {
           setIsLoggedIn(true);
-          setLoginError(null);
+          // setLoginError(null);
           // 로그인 직후의 알림 처리
           const isLoggingIn = sessionStorage.getItem("isLoggingIn");
           if (isLoggingIn === "true") {
@@ -33,12 +33,12 @@ export default function ClientLayout({
         } else {
           // customFetch 내부에서 재발급 실패 시 여기로 올 수 있음
           setIsLoggedIn(false);
-          setLoginError("로그인에 실패했습니다. 다시 시도해 주세요.");
+          // setLoginError("로그인에 실패했습니다. 다시 시도해 주세요.");
         }
       } catch (error) {
         // 네트워크 에러 등
         setIsLoggedIn(false);
-        setLoginError("로그인 중 문제가 발생했습니다.");
+        // setLoginError("로그인 중 문제가 발생했습니다.");
       }
     };
 
@@ -187,9 +187,9 @@ export default function ClientLayout({
               </p>
 
               {/* 로그인 실패 문구*/}
-              {loginError && (
+              {/* {loginError && (
                 <p className="text-red-500 text-sm mt-2 mb-2">{loginError}</p>
-              )}
+              )} */}
 
               {/* 네이버 로그인 버튼 */}
               <Link
@@ -220,7 +220,7 @@ export default function ClientLayout({
               onClick={() => {
                 showLoginPopup && setShowLoginPopup(false);
                 showLoginRequiredPopup && setShowLoginRequiredPopup(false);
-                setLoginError(null);
+                // setLoginError(null);
               }}
               className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors duration-200"
             >
