@@ -3,6 +3,11 @@ gemini:
     key: ${GEMINI_API_KEY}
     url: ${GEMINI_API_URL}
 
+huggingface:
+  api:
+    url: ${HUGGING_FACE_URL}
+    token: ${HUGGING_FACE_TOKEN}
+
 spring:
   application:
     name: backend
