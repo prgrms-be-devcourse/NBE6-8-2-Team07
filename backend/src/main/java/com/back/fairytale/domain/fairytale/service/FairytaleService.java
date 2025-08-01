@@ -111,6 +111,7 @@ public class FairytaleService {
                 .user(user)
                 .title(title)
                 .content(content)
+                .isPublic(false)
                 .build();
 
         Fairytale savedFairytale = fairytaleRepository.save(fairytale);
