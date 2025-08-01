@@ -54,6 +54,21 @@ public class FairytaleService {
                 .map(FairytaleListResponse::from)
                 .collect(Collectors.toList());
     }
+    // 공개 동화 전체 조회 (모든 사용자) - 새로 추가
+    @Transactional(readOnly = true)
+    public List<FairytaleListResponse> getAllPublicFairytales() {
+        List<Fairytale> fairytales = fairytaleRepository.findAllOrderByCreatedAtDesc();
+
+        if (fairytales.isEmpty()) {
+            throw new FairytaleNotFoundException("등록된 동화가 없습니다.");
+        }
+
+        log.info("공개 동화 전체 조회 - 총 {}개의 동화를 조회했습니다.", fairytales.size());
+
+        return fairytales.stream()
+                .map(FairytaleListResponse::from)
+                .collect(Collectors.toList());
+    }
 
     // 동화 상세 조회
     @Transactional(readOnly = true)
@@ -62,6 +77,17 @@ public class FairytaleService {
                 .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 접근 권한이 없습니다. ID: " + fairytaleId));
 
         log.info("동화 상세 조회 - ID: {}, 제목: {}", fairytale.getId(), fairytale.getTitle());
+
+        return FairytaleDetailResponse.from(fairytale);
+    }
+
+    // 공개 동화 상세 조회 (모든 사용자) - 새로 추가
+    @Transactional(readOnly = true)
+    public FairytaleDetailResponse getPublicFairytaleById(Long fairytaleId) {
+        Fairytale fairytale = fairytaleRepository.findByIdWithKeywordsFetch(fairytaleId)
+                .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없습니다. ID: " + fairytaleId));
+
+        log.info("공개 동화 상세 조회 - ID: {}, 제목: {}", fairytale.getId(), fairytale.getTitle());
 
         return FairytaleDetailResponse.from(fairytale);
     }

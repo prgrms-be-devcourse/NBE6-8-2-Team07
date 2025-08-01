@@ -14,6 +14,9 @@ public interface FairytaleRepository extends JpaRepository<Fairytale, Long> {
 
     List<Fairytale> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
+    // 모든 사용자의 동화 조회 (공개용) - 새로 추가
+    List<Fairytale> findAllOrderByCreatedAtDesc();
+
     // Fetch Join으로 N+1 해결 - 상세 조회
     @Query("SELECT f FROM Fairytale f " +
             "LEFT JOIN FETCH f.fairytaleKeywords fk " +
@@ -21,6 +24,13 @@ public interface FairytaleRepository extends JpaRepository<Fairytale, Long> {
             "WHERE f.id = :fairytaleId AND f.user.id = :userId")
     Optional<Fairytale> findByIdAndUserIdWithKeywordsFetch(@Param("fairytaleId") Long fairytaleId,
                                                            @Param("userId") Long userId);
+
+    // Fetch Join으로 N+1 해결 - 상세 조회 (공개용) - 새로 추가
+    @Query("SELECT f FROM Fairytale f " +
+            "LEFT JOIN FETCH f.fairytaleKeywords fk " +
+            "LEFT JOIN FETCH fk.keyword " +
+            "WHERE f.id = :fairytaleId")
+    Optional<Fairytale> findByIdWithKeywordsFetch(@Param("fairytaleId") Long fairytaleId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select f from Fairytale f where f.id = :id")
