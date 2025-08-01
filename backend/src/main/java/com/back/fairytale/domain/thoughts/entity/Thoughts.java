@@ -5,6 +5,8 @@ import com.back.fairytale.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ public class Thoughts {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fairytale_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Fairytale fairytale;
 
     @ManyToOne(fetch = FetchType.LAZY)
