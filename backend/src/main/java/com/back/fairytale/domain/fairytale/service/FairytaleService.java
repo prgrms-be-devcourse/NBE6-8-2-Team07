@@ -3,7 +3,6 @@ package com.back.fairytale.domain.fairytale.service;
 import com.back.fairytale.domain.fairytale.dto.FairytaleCreateRequest;
 import com.back.fairytale.domain.fairytale.dto.FairytaleDetailResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleListResponse;
-import com.back.fairytale.domain.fairytale.dto.FairytalePublicListResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleResponse;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
 import com.back.fairytale.domain.fairytale.exception.FairytaleNotFoundException;
@@ -40,9 +39,9 @@ public class FairytaleService {
     private final GeminiClient geminiClient;
     private final HuggingFaceClient huggingFaceClient;
 
-    // 동화 전체 조회 (기존 - 특정 사용자)
+    // 동화 전체 조회
     @Transactional(readOnly = true)
-    public List<FairytaleListResponse> getAllFairytalesByUserId(Long userId) {
+    public List<FairytaleListResponse>getAllFairytalesByUserId(Long userId) {
         List<Fairytale> fairytales = fairytaleRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
 
         if (fairytales.isEmpty()) {
@@ -55,20 +54,23 @@ public class FairytaleService {
                 .map(FairytaleListResponse::from)
                 .collect(Collectors.toList());
     }
-
-    // 모든 동화 조회
+    // 공개 동화 전체 조회 (모든 사용자) - 새로 추가
     @Transactional(readOnly = true)
-    public List<FairytalePublicListResponse> getAllPublicFairytales() {
+    public List<FairytaleListResponse> getAllPublicFairytales() {
         List<Fairytale> fairytales = fairytaleRepository.findAllOrderByCreatedAtDesc();
 
-        log.info("전체 동화 조회 - 총 {}개의 동화를 조회했습니다.", fairytales.size());
+        if (fairytales.isEmpty()) {
+            throw new FairytaleNotFoundException("등록된 동화가 없습니다.");
+        }
+
+        log.info("공개 동화 전체 조회 - 총 {}개의 동화를 조회했습니다.", fairytales.size());
 
         return fairytales.stream()
-                .map(FairytalePublicListResponse::from)
+                .map(FairytaleListResponse::from)
                 .collect(Collectors.toList());
     }
 
-    // 동화 상세 조회 (기존 - 인증 필요)
+    // 동화 상세 조회
     @Transactional(readOnly = true)
     public FairytaleDetailResponse getFairytaleByIdAndUserId(Long fairytaleId, Long userId) {
         Fairytale fairytale = fairytaleRepository.findByIdAndUserIdWithKeywordsFetch(fairytaleId, userId)
@@ -79,7 +81,7 @@ public class FairytaleService {
         return FairytaleDetailResponse.from(fairytale);
     }
 
-    // 공개 동화 상세 조회 (새로 추가)
+    // 공개 동화 상세 조회 (모든 사용자) - 새로 추가
     @Transactional(readOnly = true)
     public FairytaleDetailResponse getPublicFairytaleById(Long fairytaleId) {
         Fairytale fairytale = fairytaleRepository.findByIdWithKeywordsFetch(fairytaleId)
@@ -113,9 +115,14 @@ public class FairytaleService {
         String title = titleAndContent[0];
         String content = titleAndContent[1];
 
+        // 원래코드
+        //User user = userRepository.findById(userId)
+        //        .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다. ID: " + userId));
+
         // test 용도 데이터
         User user = userRepository.findById(userId)
                 .orElseGet(() -> {
+                    // 없으면 테스트용 User 생성
                     User newUser = User.builder()
                             .socialId("test_" + userId)
                             .name("테스트사용자")
@@ -206,8 +213,10 @@ public class FairytaleService {
                     .orElseGet(() -> keywordRepository.save(
                             Keyword.of(keywordValue.trim(), type)));
 
+            // usage_count 증가
             keyword.incrementUsageCount();
             keywordRepository.save(keyword);
+
             fairytale.addKeyword(keyword);
         }
     }
@@ -223,8 +232,10 @@ public class FairytaleService {
                             .orElseGet(() -> keywordRepository.save(
                                     Keyword.of(trimmedKeyword, type)));
 
+                    // usage_count 증가
                     keyword.incrementUsageCount();
                     keywordRepository.save(keyword);
+
                     fairytale.addKeyword(keyword);
                 }
             }
