@@ -1,4 +1,4 @@
-package com.back.fairytale.global.security;
+package com.back.fairytale.global.security.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

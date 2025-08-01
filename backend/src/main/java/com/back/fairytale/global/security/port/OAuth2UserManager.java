@@ -1,4 +1,6 @@
-package com.back.fairytale.global.security;
+package com.back.fairytale.global.security.port;
+
+import com.back.fairytale.global.security.oauth2.OAuth2UserInfo;
 
 import java.util.Map;
 

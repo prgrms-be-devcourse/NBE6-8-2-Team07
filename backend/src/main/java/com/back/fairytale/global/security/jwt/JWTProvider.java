@@ -1,4 +1,4 @@
-package com.back.fairytale.global.security;
+package com.back.fairytale.global.security.jwt;
 
 import jakarta.servlet.http.Cookie;
 import lombok.Getter;

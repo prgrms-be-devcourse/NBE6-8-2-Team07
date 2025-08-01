@@ -1,5 +1,10 @@
 package com.back.fairytale.global.security;
 
+import com.back.fairytale.global.security.jwt.JwtAuthenticationFilter;
+import com.back.fairytale.global.security.oauth2.CustomAuthenticationEntryPoint;
+import com.back.fairytale.global.security.oauth2.CustomLogoutHandler;
+import com.back.fairytale.global.security.oauth2.CustomOAuth2UserService;
+import com.back.fairytale.global.security.oauth2.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 @EnableConfigurationProperties(CorsProperties.class)
 @Configuration
