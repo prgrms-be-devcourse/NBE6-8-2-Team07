@@ -36,18 +36,18 @@ export default function FairytaleGallery() {
       const response = await fetch('http://localhost:8080/fairytales/public', {
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       const fairytalesWithLikes = data.map((fairytale: Fairytale) => ({
         ...fairytale,
         isLiked: likedFairytales.has(fairytale.id)
       }));
-      
+
       setFairytales(fairytalesWithLikes);
       setError(null);
     } catch (err) {
@@ -68,16 +68,16 @@ export default function FairytaleGallery() {
 
   const toggleLike = (fairytaleId: number) => {
     const newLikedFairytales = new Set(likedFairytales);
-    
+
     if (newLikedFairytales.has(fairytaleId)) {
       newLikedFairytales.delete(fairytaleId);
     } else {
       newLikedFairytales.add(fairytaleId);
     }
-    
+
     setLikedFairytales(newLikedFairytales);
     localStorage.setItem('likedFairytales', JSON.stringify(Array.from(newLikedFairytales)));
-    
+
     setFairytales(prev => 
       prev.map(fairytale => 
         fairytale.id === fairytaleId 
@@ -110,7 +110,7 @@ export default function FairytaleGallery() {
             </h1>
           </div>
         </section>
-        
+
         <section className="max-w-5xl mx-auto px-6">
           <div className="flex justify-center items-center h-64">
             <div className="text-2xl text-gray-600 animate-pulse">
@@ -132,7 +132,7 @@ export default function FairytaleGallery() {
             </h1>
           </div>
         </section>
-        
+
         <section className="max-w-5xl mx-auto px-6">
           <div className="flex justify-center items-center h-64">
             <div className="text-2xl text-red-600">❌ {error}</div>
@@ -152,7 +152,7 @@ export default function FairytaleGallery() {
             </h1>
           </div>
         </section>
-        
+
         <section className="max-w-5xl mx-auto px-6">
           <div className="flex justify-center items-center h-64">
             <div className="text-2xl text-gray-600">📚 아직 등록된 동화가 없습니다.</div>
@@ -171,7 +171,7 @@ export default function FairytaleGallery() {
           </h1>
         </div>
       </section>
-      
+
       <section className="max-w-5xl mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-orange-400 mb-4">
@@ -181,7 +181,7 @@ export default function FairytaleGallery() {
             아이와 함께 만든 소중한 동화들을 모아봤어요
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {fairytales.map((fairytale) => (
             <div
@@ -191,7 +191,7 @@ export default function FairytaleGallery() {
             >
               {/* 상단 오렌지 바 */}
               <div className="h-2 bg-orange-400"></div>
-              
+
               <div className="p-6">
                 {/* 제목 영역 */}
                 <div className="mb-4">
@@ -240,7 +240,7 @@ export default function FairytaleGallery() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* 하단 영역 */}
                 <div className="pt-4 border-t border-orange-200">
                   <div className="flex justify-between items-center">
