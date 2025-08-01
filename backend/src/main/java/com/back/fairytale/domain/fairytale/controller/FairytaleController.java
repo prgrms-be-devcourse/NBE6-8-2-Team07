@@ -8,6 +8,7 @@ import com.back.fairytale.global.security.CustomOAuth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -93,6 +94,71 @@ public class FairytaleController {
 
             fairytaleService.deleteFairytaleByIdAndUserId(id, userId);
             return ResponseEntity.noContent().build();
+        } catch (FairytaleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // 갤러리에서 공개 동화 조회
+    @GetMapping("/gallery")
+    public ResponseEntity<?> getPublicFairytalesForGallery() {
+        try {
+            List<FairytalePublicListResponse> response = fairytaleService.getPublicFairytalesForGallery();
+            return ResponseEntity.ok(response);
+        } catch (FairytaleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // 갤러리에서 공개 동화 조회 (페이징)
+    @GetMapping("/gallery/paged")
+    public ResponseEntity<?> getPublicFairytalesForGalleryWithPaging(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<FairytalePublicListResponse> response = fairytaleService.getPublicFairytalesForGalleryWithPaging(pageable);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("갤러리 조회 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 특정 사용자의 공개 동화 조회
+    @GetMapping("/gallery/user/{userId}")
+    public ResponseEntity<?> getPublicFairytalesByUserId(@PathVariable Long userId) {
+        try {
+            List<FairytalePublicListResponse> response = fairytaleService.getPublicFairytalesByUserId(userId);
+            return ResponseEntity.ok(response);
+        } catch (FairytaleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // 공개 동화 상세 조회 (갤러리용)
+    @GetMapping("/gallery/{id}")
+    public ResponseEntity<?> getPublicFairytaleById(@PathVariable Long id) {
+        try {
+            FairytaleDetailResponse response = fairytaleService.getPublicFairytaleById(id);
+            return ResponseEntity.ok(response);
+        } catch (FairytaleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // 동화 공개/비공개 설정
+    @PatchMapping("/{id}/visibility")
+    public ResponseEntity<?> updateFairytaleVisibility(
+            @PathVariable Long id,
+            @RequestParam Boolean isPublic,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        try {
+            // test 용도 데이터
+            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+
+            fairytaleService.updateFairytaleVisibility(id, userId, isPublic);
+            return ResponseEntity.ok().build();
+
         } catch (FairytaleNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

@@ -39,3 +39,4 @@ out/
 .env
 db_dev.mv.db
 db_dev.trace.db
+global-pagoda-421804-bb01adb01d13.json
