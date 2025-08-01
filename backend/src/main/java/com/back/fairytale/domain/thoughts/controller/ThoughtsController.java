@@ -1,6 +1,11 @@
 package com.back.fairytale.domain.thoughts.controller;
 
+import com.back.fairytale.domain.thoughts.dto.ThoughtsRequest;
+import com.back.fairytale.domain.thoughts.dto.ThoughtsResponse;
+import com.back.fairytale.domain.thoughts.dto.ThoughtsUpdateRequest;
+import com.back.fairytale.domain.thoughts.service.ThoughtsService;
 import com.back.fairytale.global.security.CustomOAuth2User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,13 +23,13 @@ public class ThoughtsController {
 // 아이생각 작성
 @PostMapping
 public ResponseEntity<ThoughtsResponse> createThoughts(
-        @RequestBody ThoughtsRequest request,
+        @Valid @RequestBody ThoughtsRequest request,
         @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
     ThoughtsResponse response = thoughtsService.createThoughts(request, customOAuth2User.getId());
 
     // 새로 생성된 리소스의 URI를 생성
-    URI location = URI.create("/api/thoughts/" + response.getId()); // response에 getId()가 있다고 가정
+    URI location = URI.create("/api/thoughts/" + response.id()); // response에 getId()가 있다고 가정
 
     // 201 Created 상태 코드와 Location 헤더, 응답 본문을 함께 반환
     return ResponseEntity.created(location).body(response);
@@ -45,7 +50,7 @@ public ResponseEntity<ThoughtsResponse> createThoughts(
     @PutMapping("/{id}")
     public ResponseEntity<ThoughtsResponse> updateThoughts(
             @PathVariable Long id,
-            @RequestBody ThoughtsUpdateRequest request,
+            @Valid @RequestBody ThoughtsUpdateRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
         ThoughtsResponse response = thoughtsService.updateThoughts(id, request, customOAuth2User.getId());

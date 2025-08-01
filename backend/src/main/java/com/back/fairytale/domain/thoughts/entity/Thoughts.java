@@ -59,4 +59,20 @@ public class Thoughts {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    // Thoughts 수정
+    public void update(String name, String content, String parentContent) {
+        // 아이이름 수정
+        if (name != null) {
+            this.name = name.trim();
+        }
+        // 아이생각 수정
+        if (content != null) {
+            this.content = content.trim();
+        }
+        // 부모생각 수정
+        if (parentContent != null) {
+            this.parentContent = parentContent.trim();
+        }
+    }
 }

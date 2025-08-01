@@ -2,7 +2,11 @@ package com.back.fairytale.domain.thoughts.service;
 
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
 import com.back.fairytale.domain.fairytale.repository.FairytaleRepository;
+import com.back.fairytale.domain.thoughts.dto.ThoughtsRequest;
+import com.back.fairytale.domain.thoughts.dto.ThoughtsResponse;
+import com.back.fairytale.domain.thoughts.dto.ThoughtsUpdateRequest;
 import com.back.fairytale.domain.thoughts.entity.Thoughts;
+import com.back.fairytale.domain.thoughts.repository.ThoughtsRepository;
 import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +29,11 @@ public class ThoughtsService {
     private Thoughts findThoughtAndCheckUser(Long id, Long userId) {
         // 아이생각 조회
         Thoughts thoughts = thoughtsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Thoughts not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Id가 " + id + "인 thoughts를 찾을 수 없습니다."));
 
         // 유저 확인
         if (!thoughts.getUser().getId().equals(userId)) {
-            throw new RuntimeException("User not authorized to access this thoughts");
+            throw new RuntimeException("접근 권한이 없습니다. thoughts 작성자와 요청한 유저가 일치하지 않습니다.");
         }
 
         return thoughts;
@@ -39,24 +43,24 @@ public class ThoughtsService {
     public ThoughtsResponse createThoughts(ThoughtsRequest request, Long userId) {
         // 유저와 동화조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        Fairytale fairytale = fairytaleRepository.findById(request.getFairytaleId())
-                .orElseThrow(() -> new RuntimeException("Fairytale not found with id: " + request.getFairytaleId()));
+                .orElseThrow(() -> new RuntimeException("Id가 " + userId + "인 유저를 찾을 수 없습니다."));
+        Fairytale fairytale = fairytaleRepository.findById(request.fairytaleId())
+                .orElseThrow(() -> new RuntimeException("Id가 " + request.fairytaleId() + "인 동화를 찾을 수 없습니다."));
 
         // 아이생각 생성
         Thoughts thoughts = Thoughts.builder()
                 .fairytale(fairytale)
                 .user(user)
-                .name(request.getName())
-                .content(request.getContent())
-                .parentContent(request.getParentContent())
+                .name(request.name())
+                .content(request.content())
+                .parentContent(request.parentContent())
                 .build();
 
         // 아이생각 저장
         Thoughts savedThoughts = thoughtsRepository.save(thoughts);
 
         // 응답 생성
-        return new ThoughtsResponse(savedThoughts);
+        return ThoughtsResponse.from(savedThoughts);
     }
 
     // 아이생각 조회
@@ -66,7 +70,7 @@ public class ThoughtsService {
         Thoughts thoughts = findThoughtAndCheckUser(id, userId);
 
         // 응답 생성
-        return new ThoughtsResponse(thoughts);
+        return ThoughtsResponse.from(thoughts);
     }
 
     // 아이생각 수정
@@ -75,10 +79,10 @@ public class ThoughtsService {
         Thoughts thoughts = findThoughtAndCheckUser(id, userId);
 
         // 아이생각 수정
-        thoughts.update(request.getName(), request.getContent(), request.getParentContent());
+        thoughts.update(request.name(), request.content(), request.parentContent());
 
         // 응답 생성
-        return new ThoughtsResponse(thoughts);
+        return ThoughtsResponse.from(thoughts);
     }
 
     // 아이생각 삭제
@@ -89,6 +93,6 @@ public class ThoughtsService {
         // 아이생각 삭제
         thoughtsRepository.delete(thoughts);
 
-        log.info("Thoughts with id {} deleted successfully", id);
+        log.info("Id가 {}인 thoughts 삭제에 성공했습니다.", id);
     }
 }
