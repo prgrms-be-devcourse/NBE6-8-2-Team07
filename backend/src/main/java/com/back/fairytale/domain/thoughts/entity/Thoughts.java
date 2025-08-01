@@ -1,6 +1,7 @@
 package com.back.fairytale.domain.thoughts.entity;
 
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
+import com.back.fairytale.domain.thoughts.dto.ThoughtsRequest;
 import com.back.fairytale.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -61,6 +62,17 @@ public class Thoughts {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // Thoughts 생성
+    public static Thoughts of(Fairytale fairytale, User user, ThoughtsRequest request) {
+        return Thoughts.builder()
+                .fairytale(fairytale)
+                .user(user)
+                .name(request.name())
+                .content(request.content())
+                .parentContent(request.parentContent())
+                .build();
     }
 
     // Thoughts 수정

@@ -21,8 +21,8 @@ public class ThoughtsController {
     private final ThoughtsService thoughtsService;
 
 // 아이생각 작성
-@PostMapping
-public ResponseEntity<ThoughtsResponse> createThoughts(
+    @PostMapping
+    public ResponseEntity<ThoughtsResponse> createThoughts(
         @Valid @RequestBody ThoughtsRequest request,
         @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
