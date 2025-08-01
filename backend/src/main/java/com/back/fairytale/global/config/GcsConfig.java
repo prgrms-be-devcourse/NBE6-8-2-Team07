@@ -11,7 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
 
 @Configuration
-public class GcpConfig {
+public class GcsConfig {
 
     @Value("${spring.cloud.gcp.storage.credentials.location}")
     private String keyFileLocation;
