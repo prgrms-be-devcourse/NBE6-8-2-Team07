@@ -159,6 +159,7 @@ public class FairytaleService {
                 .user(user)
                 .title(title)
                 .content(content)
+                .imageUrl(imageUrl)
                 .build();
 
         Fairytale savedFairytale = fairytaleRepository.save(fairytale);
