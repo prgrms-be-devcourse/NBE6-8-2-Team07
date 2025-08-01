@@ -3,6 +3,7 @@ package com.back.fairytale.domain.fairytale.service;
 import com.back.fairytale.domain.fairytale.dto.FairytaleCreateRequest;
 import com.back.fairytale.domain.fairytale.dto.FairytaleDetailResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleListResponse;
+import com.back.fairytale.domain.fairytale.dto.FairytalePublicListResponse;
 import com.back.fairytale.domain.fairytale.dto.FairytaleResponse;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
 import com.back.fairytale.domain.fairytale.exception.FairytaleNotFoundException;
@@ -15,15 +16,13 @@ import com.back.fairytale.domain.user.enums.IsDeleted;
 import com.back.fairytale.domain.user.enums.Role;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.external.ai.client.GeminiClient;
-import com.back.fairytale.external.ai.client.HuggingFaceClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,6 @@ public class FairytaleService {
     private final KeywordRepository keywordRepository;
     private final UserRepository userRepository;
     private final GeminiClient geminiClient;
-    private final HuggingFaceClient huggingFaceClient;
 
     // 동화 전체 조회
     @Transactional(readOnly = true)
@@ -108,26 +106,6 @@ public class FairytaleService {
                     return userRepository.save(newUser);
                 });
 
-        // 이미지 생성
-        String imageUrl = null;
-        try {
-            String imagePrompt = buildImagePrompt(request);
-            byte[] imageData = huggingFaceClient.generateImage(imagePrompt);
-
-            // TODO : S3 업로드 서비스 호출해서 imageUrl 받기
-            // imageUrl = s3UploadService.uploadImage() 이런식으로 나중에
-
-            // 테스트용: 로컬에 이미지 파일 저장
-            String fileName = "test_image_" + System.currentTimeMillis() + ".png";
-            Path path = Paths.get("src/main/resources/static/images/" + fileName);
-            Files.createDirectories(path.getParent());
-            Files.write(path, imageData);
-
-        } catch (Exception e) {
-            log.error("이미지 생성 실패, 동화만 저장합니다.", e);
-            // 이미지 생성 실패해도 동화는 저장
-        }
-
         // 동화 저장
         Fairytale fairytale = Fairytale.builder()
                 .user(user)
@@ -150,34 +128,70 @@ public class FairytaleService {
         return FairytaleResponse.from(savedFairytale);
     }
 
-    // 이미지 프롬프트 생성
-    private String buildImagePrompt(FairytaleCreateRequest request) {
-        StringBuilder prompt = new StringBuilder();
-
-        prompt.append(request.place()).append("에서 ");
-        prompt.append("어리고 귀여운 ").append(request.childRole()).append("이(가) ");
-        prompt.append("어리고 귀여운 ").append(request.characters()).append("과(와) 함께 ");
-        prompt.append("웃는 장면, ");
-        prompt.append(request.mood()).append(" 분위기, ");
-        prompt.append("어린이 동화책 삽화 스타일, 따뜻한 색감, 어린이를 위한,");
-        prompt.append("1:1 비율, 정사각형 이미지");
-
-        // Gemini에게 번역 요청 (이미지 생성 모델이 한국어를 인식 못하는듯 하다.. 그래서 번역!)
-        try {
-            String translatePrompt = "다음 한국어 문장을 영어로 번역해주세요. 이미지 생성용 프롬프트이므로 자연스럽고 정확하게 번역해주세요. 번역 결과만 답변해주세요:\n\n" + prompt.toString();
-
-            String englishPrompt = geminiClient.generateFairytale(translatePrompt);
-
-            log.info("이미지 프롬프트 번역 완료:");
-            log.info("한글: {}", prompt.toString());
-            log.info("영어: {}", englishPrompt);
-
-            return englishPrompt;
-
-        } catch (Exception e) {
-            log.error("프롬프트 번역 실패, 한글 프롬프트 사용", e);
-            return prompt.toString(); // 실패시 한글 그대로 사용
+    // 갤러리에서 공개 동화 조회 (전체)
+    @Transactional(readOnly = true)
+    public List<FairytalePublicListResponse> getPublicFairytalesForGallery() {
+        List<Fairytale> publicFairytales = fairytaleRepository.findAllPublicFairytalesWithKeywordsAndUser();
+        
+        if (publicFairytales.isEmpty()) {
+            throw new FairytaleNotFoundException("공개된 동화가 없습니다.");
         }
+        
+        log.info("갤러리 공개 동화 조회 - 총 {}개의 동화를 조회했습니다.", publicFairytales.size());
+        
+        return publicFairytales.stream()
+                .map(FairytalePublicListResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    // 갤러리에서 공개 동화 조회 (페이징)
+    @Transactional(readOnly = true)
+    public Page<FairytalePublicListResponse> getPublicFairytalesForGalleryWithPaging(Pageable pageable) {
+        Page<Fairytale> publicFairytales = fairytaleRepository.findPublicFairytalesForGallery(pageable);
+        
+        return publicFairytales.map(FairytalePublicListResponse::from);
+    }
+
+    // 특정 사용자의 공개 동화 조회
+    @Transactional(readOnly = true)
+    public List<FairytalePublicListResponse> getPublicFairytalesByUserId(Long userId) {
+        List<Fairytale> publicFairytales = fairytaleRepository.findPublicFairytalesByUserId(userId);
+        
+        if (publicFairytales.isEmpty()) {
+            throw new FairytaleNotFoundException("해당 사용자의 공개 동화가 없습니다.");
+        }
+        
+        log.info("사용자 공개 동화 조회 - 사용자 ID: {}, 총 {}개의 동화를 조회했습니다.", userId, publicFairytales.size());
+        
+        return publicFairytales.stream()
+                .map(FairytalePublicListResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    // 동화 공개/비공개 설정
+    public void updateFairytaleVisibility(Long fairytaleId, Long userId, Boolean isPublic) {
+        Fairytale fairytale = fairytaleRepository.findByIdAndUserIdWithKeywordsFetch(fairytaleId, userId)
+                .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 수정 권한이 없습니다. ID: " + fairytaleId));
+        
+        fairytale.setPublic(isPublic);
+        fairytaleRepository.save(fairytale);
+        
+        log.info("동화 공개 설정 변경 - ID: {}, 공개여부: {}", fairytaleId, isPublic);
+    }
+
+    // 공개 동화 상세 조회 (갤러리용)
+    @Transactional(readOnly = true)
+    public FairytaleDetailResponse getPublicFairytaleById(Long fairytaleId) {
+        Fairytale fairytale = fairytaleRepository.findByIdWithKeywordsFetch(fairytaleId)
+                .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없습니다. ID: " + fairytaleId));
+        
+        if (!fairytale.getIsPublic()) {
+            throw new FairytaleNotFoundException("비공개 동화입니다. ID: " + fairytaleId);
+        }
+        
+        log.info("공개 동화 상세 조회 - ID: {}, 제목: {}", fairytale.getId(), fairytale.getTitle());
+        
+        return FairytaleDetailResponse.from(fairytale);
     }
 
     // 단일 키워드 저장
