@@ -7,6 +7,8 @@ import com.back.fairytale.domain.fairytale.service.FairytaleService;
 import com.back.fairytale.global.security.CustomOAuth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -60,16 +62,6 @@ public class FairytaleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-    // 공개 동화 전체 조회 (모든 사용자) - 새로 추가
-    @GetMapping("/public")
-    public ResponseEntity<?> getAllPublicFairytales() {
-        try {
-            List<FairytaleListResponse> response = fairytaleService.getAllPublicFairytales();
-            return ResponseEntity.ok(response);
-        } catch (FairytaleNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
 
     // 동화 상세 조회
     @GetMapping("/{id}")
@@ -88,18 +80,6 @@ public class FairytaleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
-    // 공개 동화 상세 조회 (모든 사용자) - 새로 추가
-    @GetMapping("/public/{id}")
-    public ResponseEntity<?> getPublicFairytaleById(@PathVariable Long id) {
-        try {
-            FairytaleDetailResponse response = fairytaleService.getPublicFairytaleById(id);
-            return ResponseEntity.ok(response);
-        } catch (FairytaleNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
 
     // 동화 삭제
     @DeleteMapping("/{id}")
