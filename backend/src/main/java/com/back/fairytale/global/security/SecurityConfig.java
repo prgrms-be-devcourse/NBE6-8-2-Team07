@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/reissue", "/logout").permitAll()
                         .requestMatchers("/oauth2/**", "/h2-console/**", "/login/**").permitAll()
                         .requestMatchers("/favicon.ico", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/**", "/fairytales/**", "/bookmark/**", "/bookmarks/**", "/likes/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers("/api/**", "/fairytales/**", "/bookmark/**", "/bookmarks/**", "/likes/**", "/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
