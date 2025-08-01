@@ -28,8 +28,9 @@ export const customFetch = async (url: string, options: RequestInit = {}): Promi
   // 1. 첫 번째 요청 시도
   let response = await fetch(url, fetchOptions);
 
-  // 2. 액세스 토큰 만료(401) 시 재발급 로직 처리
-  if (response.status === 401) {
+  // 2. 액세스 토큰 만료(401) 시 재발급 로직 처리 (noRefresh 옵션이 없을 때만)
+  // @ts-ignore
+  if (response.status === 401 && !options.noRefresh) {
     if (isRefreshing) {
       // 이미 재발급이 진행 중이라면, 현재 요청을 큐에 추가하고 대기
       return new Promise((resolve, reject) => {
