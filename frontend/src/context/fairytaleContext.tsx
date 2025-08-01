@@ -5,6 +5,8 @@ export interface Fairytale {
   userId: number;
   title: string;
   content: string;
+  imageUrl?: string;
+  isPublic: boolean;
   createdAt: string;
 
   childName: string;
