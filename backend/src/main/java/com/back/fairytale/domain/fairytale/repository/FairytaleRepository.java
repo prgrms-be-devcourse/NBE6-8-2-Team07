@@ -16,9 +16,6 @@ public interface FairytaleRepository extends JpaRepository<Fairytale, Long> {
 
     List<Fairytale> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
-    // 모든 사용자의 동화 조회
-    List<Fairytale> findAllByOrderByCreatedAtDesc();
-
     // Fetch Join으로 N+1 해결 - 상세 조회
     @Query("SELECT f FROM Fairytale f " +
             "LEFT JOIN FETCH f.fairytaleKeywords fk " +
