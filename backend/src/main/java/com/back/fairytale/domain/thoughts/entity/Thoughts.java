@@ -28,10 +28,16 @@ public class Thoughts {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // 아이 이름
+    @Column(nullable = false, length = 50)
+    private String name;
+
+    // 아이 생각
     @Lob
     @Column(nullable = false)
     private String content;
 
+    // 부모 생각
     @Lob
     @Column(nullable = false)
     private String parentContent;
