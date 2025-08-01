@@ -1,7 +1,7 @@
-package com.back.fairytale.domain.childThoughts.entity;
-
+package com.back.fairytale.domain.thoughts.entity;
 
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
+import com.back.fairytale.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ChildThoughts {
+public class Thoughts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +23,10 @@ public class ChildThoughts {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fairytale_id", nullable = false)
     private Fairytale fairytale;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Lob
     @Column(nullable = false)
