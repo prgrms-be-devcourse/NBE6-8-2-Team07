@@ -33,8 +33,7 @@ public class Comments {
     private User user;
 
     // 댓글 내용
-    @Lob
-    @Column(nullable = false)
+    @Column(length = 500, nullable = false)
     private String content;
 
     @CreationTimestamp

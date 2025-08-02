@@ -1,5 +1,8 @@
 package com.back.fairytale.domain.comments.service;
 
+import com.back.fairytale.domain.comments.dto.CommentsRequest;
+import com.back.fairytale.domain.comments.dto.CommentsResponse;
+import com.back.fairytale.domain.comments.dto.CommentsUpdateRequest;
 import com.back.fairytale.domain.comments.entity.Comments;
 import com.back.fairytale.domain.comments.repository.CommentsRepository;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;

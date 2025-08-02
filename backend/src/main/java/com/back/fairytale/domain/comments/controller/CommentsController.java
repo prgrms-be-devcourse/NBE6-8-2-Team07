@@ -1,9 +1,13 @@
 package com.back.fairytale.domain.comments.controller;
 
+import com.back.fairytale.domain.comments.dto.CommentsRequest;
+import com.back.fairytale.domain.comments.dto.CommentsResponse;
+import com.back.fairytale.domain.comments.dto.CommentsUpdateRequest;
 import com.back.fairytale.domain.comments.service.CommentsService;
 import com.back.fairytale.global.security.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,13 +32,13 @@ public class CommentsController {
     @PostMapping("/fairytales/{fairytaleId}/comments")
     public ResponseEntity<CommentsResponse> createComments(
             @PathVariable Long fairytaleId,
-            @RequestBody CommentsRequest request,
+            @Valid@RequestBody CommentsRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         CommentsResponse response = commentsService.createComments(request, customOAuth2User.getId());
 
         // 새로 생성된 리소스의 URI를 생성
-        URI location = URI.create("/api/fairytales/" + request.fairytaleId() + "/comments/" + response.id());
+        URI location = URI.create("/api/fairytales/" + fairytaleId + "/comments/" + response.id());
 
         // 201 Created 상태 코드와 Location 헤더, 응답 본문을 함께 반환
         return ResponseEntity.created(location).body(response);
@@ -57,7 +61,7 @@ public class CommentsController {
     @PatchMapping("/comments/{id}")
     public ResponseEntity<CommentsResponse> updateComments(
             @PathVariable Long id,
-            @RequestBody CommentsUpdateRequest request,
+            @Valid @RequestBody CommentsUpdateRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         CommentsResponse response = commentsService.updateComments(id, request, customOAuth2User.getId());
