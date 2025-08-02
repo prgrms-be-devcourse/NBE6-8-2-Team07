@@ -253,42 +253,16 @@ public class FairytaleService {
 
     // 갤러리에서 공개 동화 조회 (전체)
     @Transactional(readOnly = true)
-    public List<FairytalePublicListResponse> getPublicFairytalesForGallery() {
-        List<Fairytale> publicFairytales = fairytaleRepository.findAllPublicFairytalesWithKeywordsAndUser();
+    public Page<FairytalePublicListResponse> getPublicFairytalesForGallery(Pageable pageable) {
+        Page<Fairytale> publicFairytales = fairytaleRepository.findAllPublicFairytalesWithKeywordsAndUser(pageable);
 
         if (publicFairytales.isEmpty()) {
             throw new FairytaleNotFoundException("공개된 동화가 없습니다.");
         }
 
-        log.info("갤러리 공개 동화 조회 - 총 {}개의 동화를 조회했습니다.", publicFairytales.size());
-
-        return publicFairytales.stream()
-                .map(FairytalePublicListResponse::from)
-                .collect(Collectors.toList());
-    }
-
-    // 갤러리에서 공개 동화 조회 (페이징)
-    @Transactional(readOnly = true)
-    public Page<FairytalePublicListResponse> getPublicFairytalesForGalleryWithPaging(Pageable pageable) {
-        Page<Fairytale> publicFairytales = fairytaleRepository.findPublicFairytalesForGallery(pageable);
+        log.info("갤러리 공개 동화 조회 - 총 {}개의 동화를 조회했습니다.", publicFairytales.getTotalElements());
 
         return publicFairytales.map(FairytalePublicListResponse::from);
-    }
-
-    // 특정 사용자의 공개 동화 조회
-    @Transactional(readOnly = true)
-    public List<FairytalePublicListResponse> getPublicFairytalesByUserId(Long userId) {
-        List<Fairytale> publicFairytales = fairytaleRepository.findPublicFairytalesByUserId(userId);
-
-        if (publicFairytales.isEmpty()) {
-            throw new FairytaleNotFoundException("해당 사용자의 공개 동화가 없습니다.");
-        }
-
-        log.info("사용자 공개 동화 조회 - 사용자 ID: {}, 총 {}개의 동화를 조회했습니다.", userId, publicFairytales.size());
-
-        return publicFairytales.stream()
-                .map(FairytalePublicListResponse::from)
-                .collect(Collectors.toList());
     }
 
     // 동화 공개/비공개 설정
@@ -302,18 +276,4 @@ public class FairytaleService {
         log.info("동화 공개 설정 변경 - ID: {}, 공개여부: {}", fairytaleId, isPublic);
     }
 
-    // 공개 동화 상세 조회 (갤러리용)
-    @Transactional(readOnly = true)
-    public FairytaleDetailResponse getPublicFairytaleById(Long fairytaleId) {
-        Fairytale fairytale = fairytaleRepository.findByIdWithKeywordsFetch(fairytaleId)
-                .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없습니다. ID: " + fairytaleId));
-
-        if (!fairytale.getIsPublic()) {
-            throw new FairytaleNotFoundException("비공개 동화입니다. ID: " + fairytaleId);
-        }
-
-        log.info("공개 동화 상세 조회 - ID: {}, 제목: {}", fairytale.getId(), fairytale.getTitle());
-
-        return FairytaleDetailResponse.from(fairytale);
-    }
 }
