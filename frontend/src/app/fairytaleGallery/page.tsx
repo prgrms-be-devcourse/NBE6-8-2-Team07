@@ -33,7 +33,7 @@ export default function FairytaleGallery() {
 
   const fetchFairytales = async () => {
     try {
-      const response = await fetch('http://localhost:8080/fairytales/public', {
+      const response = await fetch('http://localhost:8080/fairytales/gallery', {
         credentials: 'include'
       });
 
