@@ -108,7 +108,7 @@ public class FairytaleService {
                 });
 
         // 이미지 생성
-        String imageUrl = null;
+        String imageUrl = "https://i.postimg.cc/pX6F5L7G/image6.png";
         try {
             String imagePrompt = buildImagePrompt(request);
             byte[] imageData = huggingFaceClient.generateImage(imagePrompt);
