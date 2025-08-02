@@ -1,6 +1,7 @@
 package com.back.fairytale.domain.thoughts.entity;
 
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
+import com.back.fairytale.domain.thoughts.dto.ThoughtsRequest;
 import com.back.fairytale.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "child_thoughts")
+@Table(name = "thoughts")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -29,6 +30,7 @@ public class Thoughts {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     // 아이 이름
@@ -61,6 +63,17 @@ public class Thoughts {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // Thoughts 생성
+    public static Thoughts of(Fairytale fairytale, User user, ThoughtsRequest request) {
+        return Thoughts.builder()
+                .fairytale(fairytale)
+                .user(user)
+                .name(request.name())
+                .content(request.content())
+                .parentContent(request.parentContent())
+                .build();
     }
 
     // Thoughts 수정

@@ -48,13 +48,7 @@ public class ThoughtsService {
                 .orElseThrow(() -> new RuntimeException("Id가 " + request.fairytaleId() + "인 동화를 찾을 수 없습니다."));
 
         // 아이생각 생성
-        Thoughts thoughts = Thoughts.builder()
-                .fairytale(fairytale)
-                .user(user)
-                .name(request.name())
-                .content(request.content())
-                .parentContent(request.parentContent())
-                .build();
+        Thoughts thoughts = Thoughts.of(fairytale, user, request);
 
         // 아이생각 저장
         Thoughts savedThoughts = thoughtsRepository.save(thoughts);
@@ -93,6 +87,6 @@ public class ThoughtsService {
         // 아이생각 삭제
         thoughtsRepository.delete(thoughts);
 
-        log.info("Id가 {}인 thoughts 삭제에 성공했습니다.", id);
+        log.info("thoughts가 성공적으로 삭제되었습니다. ID: {}", id);
     }
 }
