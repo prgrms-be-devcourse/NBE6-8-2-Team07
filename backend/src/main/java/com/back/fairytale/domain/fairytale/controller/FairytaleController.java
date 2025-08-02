@@ -105,9 +105,7 @@ public class FairytaleController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size) {
         try {
-            // 이 부분 추가하세요: Pageable 객체 생성
             Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-            // 이 부분 수정하세요: 페이징된 응답으로 변경
             Page<FairytalePublicListResponse> response = fairytaleService.getPublicFairytalesForGallery(pageable);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
