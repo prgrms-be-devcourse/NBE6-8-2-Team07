@@ -251,26 +251,16 @@ public class FairytaleService {
         return new String[]{title, content};
     }
 
-    // 갤러리에서 공개 동화 조회 (전체)
+    // 갤러리에서 공개 동화 조회 (페이징 포함)
     @Transactional(readOnly = true)
-    public List<FairytalePublicListResponse> getPublicFairytalesForGallery() {
-        List<Fairytale> publicFairytales = fairytaleRepository.findAllPublicFairytalesWithKeywordsAndUser();
+    public Page<FairytalePublicListResponse> getPublicFairytalesForGallery(Pageable pageable) {
+        Page<Fairytale> publicFairytales = fairytaleRepository.findPublicFairytalesForGallery(pageable);
 
-        if (publicFairytales.isEmpty()) {
+        if (publicFairytales.getTotalElements() == 0) {
             throw new FairytaleNotFoundException("공개된 동화가 없습니다.");
         }
 
-        log.info("갤러리 공개 동화 조회 - 총 {}개의 동화를 조회했습니다.", publicFairytales.size());
-
-        return publicFairytales.stream()
-                .map(FairytalePublicListResponse::from)
-                .collect(Collectors.toList());
-    }
-
-    // 갤러리에서 공개 동화 조회 (페이징)
-    @Transactional(readOnly = true)
-    public Page<FairytalePublicListResponse> getPublicFairytalesForGalleryWithPaging(Pageable pageable) {
-        Page<Fairytale> publicFairytales = fairytaleRepository.findPublicFairytalesForGallery(pageable);
+        log.info("갤러리 공개 동화 조회 - 총 {}개의 동화를 조회했습니다.", publicFairytales.getTotalElements());
 
         return publicFairytales.map(FairytalePublicListResponse::from);
     }

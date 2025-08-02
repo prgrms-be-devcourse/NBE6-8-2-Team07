@@ -33,7 +33,7 @@ export default function FairytaleGallery() {
 
   const fetchFairytales = async () => {
     try {
-      const response = await fetch('http://localhost:8080/fairytales/public', {
+      const response = await fetch('http://localhost:8080/fairytales/gallery', {
         credentials: 'include'
       });
 
@@ -43,7 +43,7 @@ export default function FairytaleGallery() {
 
       const data = await response.json();
 
-      const fairytalesWithLikes = data.map((fairytale: Fairytale) => ({
+      const fairytalesWithLikes = data.content.map((fairytale: Fairytale) => ({
         ...fairytale,
         isLiked: likedFairytales.has(fairytale.id)
       }));
