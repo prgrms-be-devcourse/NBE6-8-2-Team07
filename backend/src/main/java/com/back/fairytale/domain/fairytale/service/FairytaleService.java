@@ -254,10 +254,8 @@ public class FairytaleService {
     // 갤러리에서 공개 동화 조회 (페이징 포함)
     @Transactional(readOnly = true)
     public Page<FairytalePublicListResponse> getPublicFairytalesForGallery(Pageable pageable) {
-        // 이 부분 수정하세요: Repository 메서드 변경
         Page<Fairytale> publicFairytales = fairytaleRepository.findPublicFairytalesForGallery(pageable);
 
-        // 이 부분 수정하세요: isEmpty() → getTotalElements() == 0
         if (publicFairytales.getTotalElements() == 0) {
             throw new FairytaleNotFoundException("공개된 동화가 없습니다.");
         }
