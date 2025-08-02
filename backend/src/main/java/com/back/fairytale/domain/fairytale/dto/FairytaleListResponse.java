@@ -8,6 +8,7 @@ public record FairytaleListResponse(
         Long id,
         String title,
         String imageUrl,
+        boolean isPublic,
         LocalDate createdAt
 ) {
     public static FairytaleListResponse from(Fairytale fairytale) {
@@ -15,6 +16,7 @@ public record FairytaleListResponse(
                 fairytale.getId(),
                 fairytale.getTitle(),
                 fairytale.getImageUrl(),
+                fairytale.getIsPublic(),
                 fairytale.getCreatedAt().toLocalDate()
         );
     }
