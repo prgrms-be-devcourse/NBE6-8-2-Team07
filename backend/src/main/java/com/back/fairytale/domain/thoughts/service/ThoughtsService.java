@@ -87,6 +87,6 @@ public class ThoughtsService {
         // 아이생각 삭제
         thoughtsRepository.delete(thoughts);
 
-        log.info("Id가 {}인 thoughts 삭제에 성공했습니다.", id);
+        log.info("thoughts가 성공적으로 삭제되었습니다. ID: {}", id);
     }
 }

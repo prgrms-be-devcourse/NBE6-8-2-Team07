@@ -1,11 +1,12 @@
 package com.back.fairytale.domain.comments.controller;
 
+import com.back.fairytale.domain.comments.service.CommentsService;
 import com.back.fairytale.global.security.CustomOAuth2User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class CommentsController {
     // 댓글 조회
     @Operation(summary = "댓글 조회", description = "동화에 대한 댓글을 조회합니다.")
     @GetMapping("/fairytales/{fairytaleId}/comments")
-    public ResponseEntity<CommentsResponse> getComments(
+    public ResponseEntity<Page<CommentsResponse>> getComments(
             @PathVariable Long fairytaleId,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
