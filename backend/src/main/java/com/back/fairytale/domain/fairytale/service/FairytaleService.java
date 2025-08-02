@@ -108,12 +108,12 @@ public class FairytaleService {
                 });
 
         // 이미지 생성
-        String imageUrl = "https://i.postimg.cc/pX6F5L7G/image6.png";
+        String imageUrl = null;
         try {
             String imagePrompt = buildImagePrompt(request);
             byte[] imageData = huggingFaceClient.generateImage(imagePrompt);
 
-            // TODO : S3 업로드 서비스 호출해서 imageUrl 받기
+            // TODO : 구글스토리지 업로드 서비스 호출해서 imageUrl 받기
             // imageUrl = s3UploadService.uploadImage() 이런식으로 나중에
 
             // 테스트용: 로컬에 이미지 파일 저장
