@@ -1,42 +1,44 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { customFetch } from '@/utils/customFetch';
+import { customFetch } from "@/utils/customFetch";
 
 export default function ClientLayout({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false); // 로그인 필요 팝업 상태
   const router = useRouter();
+  // const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkInitialLogin = async () => {
       try {
         // 로그인 상태 확인 요청
-        const response = await customFetch('http://localhost:8080/users/me');
+        const response = await customFetch("http://localhost:8080/users/me");
 
         if (response.ok) {
           setIsLoggedIn(true);
-
+          // setLoginError(null);
           // 로그인 직후의 알림 처리
-          const isLoggingIn = sessionStorage.getItem('isLoggingIn');
-          if (isLoggingIn === 'true') {
-            alert('로그인 되었습니다!');
-            sessionStorage.removeItem('isLoggingIn');
+          const isLoggingIn = sessionStorage.getItem("isLoggingIn");
+          if (isLoggingIn === "true") {
+            sessionStorage.removeItem("isLoggingIn");
           }
         } else {
           // customFetch 내부에서 재발급 실패 시 여기로 올 수 있음
           setIsLoggedIn(false);
+          // setLoginError("로그인에 실패했습니다. 다시 시도해 주세요.");
         }
       } catch (error) {
         // 네트워크 에러 등
         setIsLoggedIn(false);
+        // setLoginError("로그인 중 문제가 발생했습니다.");
       }
     };
 
@@ -44,13 +46,13 @@ export default function ClientLayout({
   }, []);
 
   const handleLoginClick = () => {
-    sessionStorage.setItem('isLoggingIn', 'true');
+    sessionStorage.setItem("isLoggingIn", "true");
   };
   // 로그아웃 로직
   const handleLogout = async () => {
     try {
-      await customFetch('http://localhost:8080/logout', {
-        method: 'POST',
+      await customFetch("http://localhost:8080/logout", {
+        method: "POST",
         // @ts-ignore
         noRefresh: true, // 로그아웃 시에는 토큰 재발급 시도 안 함
       });
@@ -59,8 +61,7 @@ export default function ClientLayout({
     } finally {
       // 서버에서 쿠키를 삭제하므로 클라이언트에서는 상태만 업데이트
       setIsLoggedIn(false);
-      alert('로그아웃 되었습니다.');
-      router.push('/');
+      router.push("/");
     }
   };
 
@@ -81,17 +82,39 @@ export default function ClientLayout({
           </Link>
           <nav className="flex items-center space-x-8">
             <div className="relative group">
-              <button className="cursor-pointer py-2" onClick={(e) => { if (!isLoggedIn) { e.preventDefault(); setShowLoginRequiredPopup(true); }}}>나의 동화책</button>
+              <button
+                className="cursor-pointer py-2"
+                onClick={(e) => {
+                  if (!isLoggedIn) {
+                    e.preventDefault();
+                    setShowLoginRequiredPopup(true);
+                  }
+                }}
+              >
+                나의 동화책
+              </button>
               <div className="absolute z-10 hidden group-hover:block bg-[#FAF9F6] shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
-                <Link href="/fairytale/post" onClick={handleProtectedLinkClick} className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
+                <Link
+                  href="/fairytale/post"
+                  onClick={handleProtectedLinkClick}
+                  className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100"
+                >
                   동화책만들기
                 </Link>
-                <Link href="/fairytale/get" onClick={handleProtectedLinkClick} className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100">
+                <Link
+                  href="/fairytale/get"
+                  onClick={handleProtectedLinkClick}
+                  className="block px-4 py-2 text-sm text-center text-gray-700 hover:bg-gray-100"
+                >
                   동화책펼치기
                 </Link>
               </div>
             </div>
-            <Link href="/fairytaleGallery" onClick={handleProtectedLinkClick} className="py-2">
+            <Link
+              href="/fairytaleGallery"
+              onClick={handleProtectedLinkClick}
+              className="py-2"
+            >
               동화갤러리
             </Link>
             <Link href="/introduction" className="py-2">
@@ -102,7 +125,10 @@ export default function ClientLayout({
                 로그아웃
               </button>
             ) : (
-              <button onClick={() => setShowLoginPopup(true)} className="py-2 cursor-pointer">
+              <button
+                onClick={() => setShowLoginPopup(true)}
+                className="py-2 cursor-pointer"
+              >
                 로그인
               </button>
             )}
@@ -111,60 +137,118 @@ export default function ClientLayout({
       </header>
 
       {/* 로그인 팝업 */}
-      {showLoginPopup && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-          onClick={() => setShowLoginPopup(false)}
+      {(showLoginPopup || showLoginRequiredPopup) && (
+        <div
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50 p-4"
+          onClick={() => {
+            showLoginPopup && setShowLoginPopup(false);
+            showLoginRequiredPopup && setShowLoginRequiredPopup(false);
+          }}
         >
-          <div 
-            className="bg-white p-8 rounded-lg shadow-xl"
-            onClick={(e) => e.stopPropagation()} // Prevent popup from closing when clicking inside
-          >
-            <Link 
-              href="http://localhost:8080/oauth2/authorization/naver"
-              onClick={handleLoginClick}
-              className="bg-[#03C75A] text-white font-bold py-2 px-4 rounded"
-            >
-              네이버 로그인
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* 로그인 필요 팝업 */}
-      {showLoginRequiredPopup && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-          onClick={() => setShowLoginRequiredPopup(false)}
-        >
-          <div 
-            className="bg-white p-8 rounded-lg shadow-xl text-center"
+          <div
+            className="bg-white rounded-2xl shadow-lg w-full max-w-sm mx-4 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="mb-7">로그인이 필요합니다.</p>
-            <Link 
-              href="http://localhost:8080/oauth2/authorization/naver"
-              onClick={handleLoginClick}
-              className="bg-[#03C75A] text-white font-bold py-2 px-4 rounded"
+            <div className="px-8 py-10 text-center">
+              {/* 로고 및 제목 */}
+              <div className="mb-4">
+                <img
+                  src="/images/logo.png"
+                  alt="로고"
+                  className="max-w-32 h-auto mx-auto mb-3"
+                />
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  동화공방
+                </h3>
+                <div className="w-16 h-0.5 bg-orange-400 mx-auto" />
+              </div>
+
+              {/* 안내 문구 */}
+              <p className="text-gray-600 mb-4 leading-relaxed">
+                {showLoginPopup ? (
+                  <>
+                    아이와 함께 만드는 특별한 동화
+                    <br />
+                    <span className="text-orange-500 font-semibold">
+                      로그인
+                    </span>
+                    하고 시작해보세요
+                  </>
+                ) : (
+                  <>
+                    이 기능은{" "}
+                    <span className="text-orange-500 font-semibold">
+                      로그인이 필요해요.
+                    </span>
+                    <br />
+                    로그인 후에 계속 이용해 주세요
+                  </>
+                )}
+              </p>
+
+              {/* 로그인 실패 문구*/}
+              {/* {loginError && (
+                <p className="text-red-500 text-sm mt-2 mb-2">{loginError}</p>
+              )} */}
+
+              {/* 네이버 로그인 버튼 */}
+              <Link
+                href="http://localhost:8080/oauth2/authorization/naver"
+                onClick={handleLoginClick}
+              >
+                <div className="hover:opacity-90 transition-opacity duration-200">
+                  <img
+                    src="/images/naver-login.png"
+                    alt="네이버 로그인 버튼"
+                    className="w-full max-w-[200px] h-auto mx-auto"
+                  />
+                </div>
+              </Link>
+
+              {/* 부가 설명 (로그인 팝업일 때만 표시) */}
+              {showLoginPopup && (
+                <p className="text-xs text-gray-400 mt-4 leading-relaxed">
+                  키워드 몇 개로 아이의 상상이 동화가 됩니다.
+                  <br />
+                  소중한 추억을 함께 만들어보세요
+                </p>
+              )}
+            </div>
+
+            {/* 닫기 버튼 */}
+            <button
+              onClick={() => {
+                showLoginPopup && setShowLoginPopup(false);
+                showLoginRequiredPopup && setShowLoginRequiredPopup(false);
+                // setLoginError(null);
+              }}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors duration-200"
             >
-              네이버 로그인
-            </Link>
+              &times;
+            </button>
           </div>
         </div>
       )}
 
-      <>
-        {children}
-      </>
+      <>{children}</>
       <footer className="bg-[#FFD6A5] text-[#9B4500] py-8 px-4 text-center text-sm">
         <p>동화공방</p>
         <p>Team07 | 키워드 기반 AI 동화 생성 서비스</p>
         <p>프로그래머스 데브코스 백엔드 6기 2차 프로젝트</p>
         <div>
-          <Link href="/introduction" className="hover:underline">서비스 소개</Link>
+          <Link href="/introduction" className="hover:underline">
+            서비스 소개
+          </Link>
         </div>
         <div>
-          <Link href="https://github.com/prgrms-be-devcourse/NBE6-8-2-Team07" className="hover:underline" target="_blank" rel="noopener noreferrer">GitHub 저장소</Link>
+          <Link
+            href="https://github.com/prgrms-be-devcourse/NBE6-8-2-Team07"
+            className="hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub 저장소
+          </Link>
         </div>
       </footer>
     </>
