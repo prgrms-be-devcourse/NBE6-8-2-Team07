@@ -42,6 +42,14 @@ public interface FairytaleRepository extends JpaRepository<Fairytale, Long> {
     @Query("SELECT f FROM Fairytale f WHERE f.isPublic = true ORDER BY f.createdAt DESC")
     List<Fairytale> findAllPublicFairytales();
 
+    // 특정 사용자의 공개 동화만 조회
+    @Query("SELECT f FROM Fairytale f WHERE f.user.id = :userId AND f.isPublic = true ORDER BY f.createdAt DESC")
+    List<Fairytale> findPublicFairytalesByUserId(@Param("userId") Long userId);
+
+    // 갤러리용 공개 동화 조회 (페이징 지원)
+    @Query("SELECT f FROM Fairytale f WHERE f.isPublic = true ORDER BY f.createdAt DESC")
+    Page<Fairytale> findPublicFairytalesForGallery(Pageable pageable);
+
     // 갤러리용 공개 동화 조회 (Fetch Join으로 N+1 해결)
     @Query("SELECT f FROM Fairytale f " +
             "LEFT JOIN FETCH f.fairytaleKeywords fk " +
@@ -49,6 +57,6 @@ public interface FairytaleRepository extends JpaRepository<Fairytale, Long> {
             "LEFT JOIN FETCH f.user " +
             "WHERE f.isPublic = true " +
             "ORDER BY f.createdAt DESC")
-    Page<Fairytale> findAllPublicFairytalesWithKeywordsAndUser(Pageable pageable);
+    List<Fairytale> findAllPublicFairytalesWithKeywordsAndUser();
 
 }
