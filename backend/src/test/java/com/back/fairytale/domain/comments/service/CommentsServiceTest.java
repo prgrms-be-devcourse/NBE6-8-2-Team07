@@ -164,10 +164,7 @@ class CommentsServiceTest {
     void updateComments_success() {
         // Given
         when(commentsRepository.findById(testComment.getId())).thenReturn(Optional.of(testComment));
-        // findCommentAndCheckUser 내부에서 user.getId()와 userId를 비교하므로, user 객체가 필요합니다.
-        // testComment.getUser().getId()는 testUser.getId()와 같아야 합니다.
-        // Mockito는 실제 객체의 메소드를 호출하지 않으므로, testComment.getUser().getId()는 null이 될 수 있습니다.
-        // 따라서 testComment의 user 필드가 실제 User 객체를 참조하도록 setUp에서 설정했습니다.
+        // testComment의 user 필드가 실제 User 객체를 참조하도록 setUp에서 설정했습니다.
 
         // When
         CommentsResponse response = commentsService.updateComments(testComment.getId(), testCommentsUpdateRequest, testUser.getId());
