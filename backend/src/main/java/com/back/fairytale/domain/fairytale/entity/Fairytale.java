@@ -1,5 +1,6 @@
 package com.back.fairytale.domain.fairytale.entity;
 
+import com.back.fairytale.domain.bookmark.entity.BookMark;
 import com.back.fairytale.domain.keyword.entity.Keyword;
 import com.back.fairytale.domain.keyword.enums.KeywordType;
 import com.back.fairytale.domain.user.entity.User;
@@ -53,6 +54,9 @@ public class Fairytale {
     @OneToMany(mappedBy = "fairytale", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<FairytaleKeyword> fairytaleKeywords = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fairytale", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookMark> bookmarks = new ArrayList<>();
 
     public void addKeyword(Keyword keyword) {
         FairytaleKeyword fairytaleKeyword = FairytaleKeyword.builder()
