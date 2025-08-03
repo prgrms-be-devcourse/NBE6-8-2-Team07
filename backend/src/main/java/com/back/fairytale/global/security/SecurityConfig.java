@@ -1,10 +1,7 @@
 package com.back.fairytale.global.security;
 
 import com.back.fairytale.global.security.jwt.JwtAuthenticationFilter;
-import com.back.fairytale.global.security.oauth2.CustomAuthenticationEntryPoint;
-import com.back.fairytale.global.security.oauth2.CustomLogoutHandler;
-import com.back.fairytale.global.security.oauth2.CustomOAuth2UserService;
-import com.back.fairytale.global.security.oauth2.OAuth2LoginSuccessHandler;
+import com.back.fairytale.global.security.oauth2.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +26,7 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomLogoutHandler logoutHandler;
+    private final CustomLogoutSuccessHandler logoutSuccessHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CorsProperties corsProperties;
 
@@ -59,7 +57,9 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout -> logout.addLogoutHandler(logoutHandler));
+                .logout(logout -> logout
+                        .addLogoutHandler(logoutHandler)
+                        .logoutSuccessHandler(logoutSuccessHandler));
 
         return http.build();
     }
