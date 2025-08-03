@@ -27,4 +27,11 @@ public class Like {
     @JoinColumn(name = "fairytale_id", nullable = false)
     private Fairytale fairytale;
 
+    public static Like toEntity(User user, Fairytale fairytale) {
+        return Like.builder()
+                .user(user)
+                .fairytale(fairytale)
+                .build();
+    }
+
 }

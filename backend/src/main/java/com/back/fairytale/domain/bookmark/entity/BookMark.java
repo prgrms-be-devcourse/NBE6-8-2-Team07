@@ -26,4 +26,12 @@ public class BookMark {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fairytale_id", nullable = false)
     private Fairytale fairytale;
+
+   public static BookMark toEntity(User user, Fairytale fairytale) {
+        return BookMark.builder()
+                .user(user)
+                .fairytale(fairytale)
+                .build();
+    }
+
 }

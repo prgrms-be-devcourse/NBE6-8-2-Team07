@@ -55,10 +55,7 @@ public class LikeService {
             throw new LikeAlreadyExistsException("이미 좋아요를 누른 동화입니다.");
         }
 
-        Like like = Like.builder()
-                .user(user)
-                .fairytale(fairytale)
-                .build();
+        Like like = Like.toEntity(user, fairytale);
 
         // 좋아요 수 증가
         fairytale.increaseLikeCount();
