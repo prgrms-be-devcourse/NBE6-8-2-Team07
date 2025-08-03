@@ -42,9 +42,9 @@ public class GoogleCloudStorage implements CloudStorage {
     }
 
     @Override
-    public void updateImages(List<String> imageUrl, List<MultipartFile> images) {
+    public void updateImages(List<String> imageUrl, List<MultipartFile> imgFiles) {
         deleteImages(imageUrl);
-        uploadImages(images);
+        uploadImages(imgFiles);
     }
 
     private String uploadImageToCloud(MultipartFile imgFile) {
