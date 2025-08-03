@@ -51,6 +51,17 @@ public class ThoughtsController {
         return ResponseEntity.ok(response);
     }
 
+    // 동화별 아이생각 조회
+    @Operation(summary = "동화별 아이생각 조회", description = "특정 동화에 대한 아이생각을 조회합니다.")
+    @GetMapping("/fairytale/{fairytaleId}")
+    public ResponseEntity<ThoughtsResponse> getThoughtsByFairytaleId(
+            @PathVariable Long fairytaleId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+
+        ThoughtsResponse response = thoughtsService.getThoughtsByFairytaleId(fairytaleId, customOAuth2User.getId());
+        return ResponseEntity.ok(response);
+    }
+
     // 아이생각 수정
     @Operation(summary = "아이생각 수정", description = "아이생각을 수정합니다.")
     @PutMapping("/{id}")
