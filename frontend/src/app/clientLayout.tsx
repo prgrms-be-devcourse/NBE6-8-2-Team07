@@ -14,7 +14,7 @@ export default function ClientLayout({
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false); // 로그인 필요 팝업 상태
   const router = useRouter();
-  // const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkInitialLogin = async () => {
@@ -33,12 +33,22 @@ export default function ClientLayout({
         } else {
           // customFetch 내부에서 재발급 실패 시 여기로 올 수 있음
           setIsLoggedIn(false);
-          // setLoginError("로그인에 실패했습니다. 다시 시도해 주세요.");
+          const isLoggingIn = sessionStorage.getItem("isLoggingIn");
+          if (isLoggingIn === "true") {
+            setLoginError("로그인에 실패했습니다. 다시 시도해 주세요.");
+            sessionStorage.removeItem("isLoggingIn");
+            setShowLoginPopup(true); // 실패 시 팝업 다시 표시
+          }
         }
       } catch (error) {
         // 네트워크 에러 등
         setIsLoggedIn(false);
-        // setLoginError("로그인 중 문제가 발생했습니다.");
+        const isLoggingIn = sessionStorage.getItem("isLoggingIn");
+        if (isLoggingIn === "true") {
+          setLoginError("로그인 중 문제가 발생했습니다.");
+          sessionStorage.removeItem("isLoggingIn");
+          setShowLoginPopup(true); // 실패 시 팝업 다시 표시
+        }
       }
     };
 
@@ -47,6 +57,7 @@ export default function ClientLayout({
 
   const handleLoginClick = () => {
     sessionStorage.setItem("isLoggingIn", "true");
+    setLoginError(null);
   };
   // 로그아웃 로직
   const handleLogout = async () => {
@@ -61,6 +72,7 @@ export default function ClientLayout({
     } finally {
       // 서버에서 쿠키를 삭제하므로 클라이언트에서는 상태만 업데이트
       setIsLoggedIn(false);
+      setLoginError(null);
       router.push("/");
     }
   };
@@ -71,6 +83,13 @@ export default function ClientLayout({
       e.preventDefault();
       setShowLoginRequiredPopup(true);
     }
+  };
+
+  // 팝업 닫기 핸들러
+  const handleClosePopup = () => {
+    setShowLoginPopup(false);
+    setShowLoginRequiredPopup(false);
+    setLoginError(null);
   };
 
   return (
@@ -126,7 +145,10 @@ export default function ClientLayout({
               </button>
             ) : (
               <button
-                onClick={() => setShowLoginPopup(true)}
+                onClick={() => {
+                  setShowLoginPopup(true);
+                  setLoginError(null);
+                }}
                 className="py-2 cursor-pointer"
               >
                 로그인
@@ -140,10 +162,7 @@ export default function ClientLayout({
       {(showLoginPopup || showLoginRequiredPopup) && (
         <div
           className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50 p-4"
-          onClick={() => {
-            showLoginPopup && setShowLoginPopup(false);
-            showLoginRequiredPopup && setShowLoginRequiredPopup(false);
-          }}
+          onClick={handleClosePopup}
         >
           <div
             className="bg-white rounded-2xl shadow-lg w-full max-w-sm mx-4 relative"
@@ -187,9 +206,13 @@ export default function ClientLayout({
               </p>
 
               {/* 로그인 실패 문구*/}
-              {/* {loginError && (
-                <p className="text-red-500 text-sm mt-2 mb-2">{loginError}</p>
-              )} */}
+              {loginError && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                  <p className="text-red-600 text-sm font-medium">
+                    {loginError}
+                  </p>
+                </div>
+              )}
 
               {/* 네이버 로그인 버튼 */}
               <Link
@@ -217,11 +240,7 @@ export default function ClientLayout({
 
             {/* 닫기 버튼 */}
             <button
-              onClick={() => {
-                showLoginPopup && setShowLoginPopup(false);
-                showLoginRequiredPopup && setShowLoginRequiredPopup(false);
-                // setLoginError(null);
-              }}
+              onClick={handleClosePopup}
               className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors duration-200"
             >
               &times;
