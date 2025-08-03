@@ -13,16 +13,15 @@ import com.back.fairytale.domain.user.enums.Role;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.external.ai.client.GeminiClient;
 import com.back.fairytale.external.ai.client.HuggingFaceClient;
+import com.back.fairytale.global.util.impl.GoogleCloudStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +36,9 @@ public class FairytaleService {
     private final UserRepository userRepository;
     private final GeminiClient geminiClient;
     private final HuggingFaceClient huggingFaceClient;
+
+    @Autowired
+    private final GoogleCloudStorage googleCloudStorage;
 
     // 동화 전체 조회
     @Transactional(readOnly = true)
@@ -69,6 +71,18 @@ public class FairytaleService {
     public void deleteFairytaleByIdAndUserId(Long fairytaleId, Long userId) {
         Fairytale fairytale = fairytaleRepository.findByIdAndUserIdWithKeywordsFetch(fairytaleId, userId)
                 .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 삭제 권한이 없습니다. ID: " + fairytaleId));
+
+        // 이미지가 있으면 Google Cloud Storage에서 삭제
+        if (fairytale.getImageUrl() != null && !fairytale.getImageUrl().isEmpty()) {
+            try {
+                String fileName = extractFileNameFromUrl(fairytale.getImageUrl());
+                googleCloudStorage.deleteImageByFileName(fileName);
+                log.info("이미지 삭제 완료 - 파일명: {}", fileName);
+            } catch (Exception e) {
+                log.error("이미지 삭제 실패 - URL: {}, 에러: {}", fairytale.getImageUrl(), e.getMessage());
+                // 이미지 삭제 실패해도 동화는 삭제되도록
+            }
+        }
 
         fairytaleRepository.delete(fairytale);
 
@@ -113,14 +127,8 @@ public class FairytaleService {
             String imagePrompt = buildImagePrompt(request);
             byte[] imageData = huggingFaceClient.generateImage(imagePrompt);
 
-            // TODO : 구글스토리지 업로드 서비스 호출해서 imageUrl 받기
-            // imageUrl = s3UploadService.uploadImage() 이런식으로 나중에
-
-            // 테스트용: 로컬에 이미지 파일 저장
-            String fileName = "test_image_" + System.currentTimeMillis() + ".png";
-            Path path = Paths.get("src/main/resources/static/images/" + fileName);
-            Files.createDirectories(path.getParent());
-            Files.write(path, imageData);
+            String fileName = "fairytale_" + System.currentTimeMillis() + ".png";
+            imageUrl = googleCloudStorage.uploadImageBytesToCloud(imageData, fileName);
 
         } catch (Exception e) {
             log.error("이미지 생성 실패, 동화만 저장합니다.", e);
@@ -249,6 +257,12 @@ public class FairytaleService {
         }
 
         return new String[]{title, content};
+    }
+
+    // 이미지 URL에서 파일명 추출
+    private String extractFileNameFromUrl(String imageUrl) {
+        String[] parts = imageUrl.split("/");
+        return parts[parts.length - 1]; // 마지막 부분이 파일명
     }
 
     // 갤러리에서 공개 동화 조회 (페이징 포함)

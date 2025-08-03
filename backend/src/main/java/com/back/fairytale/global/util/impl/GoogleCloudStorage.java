@@ -1,6 +1,6 @@
 package com.back.fairytale.global.util.impl;
 
-import com.back.fairytale.global.util.CloudStorge;
+import com.back.fairytale.global.util.CloudStorage;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class GoogleCloudStorge implements CloudStorge {
+public class GoogleCloudStorage implements CloudStorage {
 
     private Storage storage;
 
@@ -23,7 +23,7 @@ public class GoogleCloudStorge implements CloudStorge {
     private String bucketName;
 
     @Autowired
-    public GoogleCloudStorge(Storage storage, @Value("${spring.cloud.gcp.storage.bucket}") String bucketName) {
+    public GoogleCloudStorage(Storage storage, @Value("${spring.cloud.gcp.storage.bucket}") String bucketName) {
         this.storage = storage;
         this.bucketName = bucketName;
     }
@@ -43,12 +43,46 @@ public class GoogleCloudStorge implements CloudStorge {
         return imageUrls;
     }
 
+    // AI 생성 이미지 업로드 (byte 배열)
+    public String uploadImageBytesToCloud(byte[] imageData, String fileName) {
+        try {
+            String uuid = UUID.randomUUID().toString();
+            String fullFileName = uuid + "_" + fileName;
+
+            BlobId blobId = BlobId.of(bucketName, fullFileName);
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                    .setContentType("image/png")
+                    .build();
+
+            storage.create(blobInfo, imageData);
+
+            // MediaLink 대신 public URL 반환
+            return String.format("https://storage.googleapis.com/%s/%s", bucketName, fullFileName);
+
+        } catch (Exception e) {
+            throw new RuntimeException("AI 생성 이미지 업로드 실패", e);
+        }
+    }
+
     // 이미지 삭제 -> 뭉터기로 삭제하는게 아니기 떄문에 단일로?
     public void deleteImage(Long id) {
         BlobId blobId = BlobId.of(bucketName, String.valueOf(id));
         boolean result = storage.delete(blobId);
         if (!result) {
             throw new RuntimeException("클라우드에서 이미지 삭제 실패");
+        }
+    }
+
+    // 파일명으로 이미지 삭제
+    public void deleteImageByFileName(String fileName) {
+        try {
+            BlobId blobId = BlobId.of(bucketName, fileName);
+            boolean result = storage.delete(blobId);
+            if (!result) {
+                throw new RuntimeException("클라우드에서 이미지 삭제 실패");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("클라우드에서 이미지 삭제 실패: " + e.getMessage(), e);
         }
     }
 
