@@ -43,6 +43,27 @@ public class GoogleCloudStorage implements CloudStorage {
         return imageUrls;
     }
 
+    // AI 생성 이미지 업로드 (byte 배열)
+    public String uploadImageBytesToCloud(byte[] imageData, String fileName) {
+        try {
+            String uuid = UUID.randomUUID().toString();
+            String fullFileName = uuid + "_" + fileName;
+
+            BlobId blobId = BlobId.of(bucketName, fullFileName);
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                    .setContentType("image/png")
+                    .build();
+
+            storage.create(blobInfo, imageData);
+
+            // MediaLink 대신 public URL 반환
+            return String.format("https://storage.googleapis.com/%s/%s", bucketName, fullFileName);
+
+        } catch (Exception e) {
+            throw new RuntimeException("AI 생성 이미지 업로드 실패", e);
+        }
+    }
+
     // 이미지 삭제 -> 뭉터기로 삭제하는게 아니기 떄문에 단일로?
     public void deleteImage(Long id) {
         BlobId blobId = BlobId.of(bucketName, String.valueOf(id));
