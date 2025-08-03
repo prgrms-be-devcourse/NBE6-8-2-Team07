@@ -1,5 +1,6 @@
 package com.back.fairytale.global.security.oauth2;
 
+import com.back.fairytale.global.security.CorsProperties;
 import com.back.fairytale.global.security.CustomOAuth2User;
 import com.back.fairytale.global.security.port.UserTokenService;
 import com.back.fairytale.global.security.jwt.JWTProvider;
@@ -21,6 +22,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JWTProvider jwtProvider;
     private final UserTokenService userTokenService;
+    private final CorsProperties corsProperties;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -32,7 +34,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Cookie refreshCookie = jwtProvider.createRefreshTokenCookie(refreshToken);
 
+        String redirectUrl = corsProperties.getAllowedOrigins().getFirst();
+
         response.addCookie(refreshCookie);
-        response.sendRedirect("http://localhost:3000/");
+        response.sendRedirect(redirectUrl);
     }
 }
