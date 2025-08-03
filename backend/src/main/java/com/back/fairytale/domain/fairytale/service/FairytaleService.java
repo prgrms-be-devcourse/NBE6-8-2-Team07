@@ -72,6 +72,18 @@ public class FairytaleService {
         Fairytale fairytale = fairytaleRepository.findByIdAndUserIdWithKeywordsFetch(fairytaleId, userId)
                 .orElseThrow(() -> new FairytaleNotFoundException("동화를 찾을 수 없거나 삭제 권한이 없습니다. ID: " + fairytaleId));
 
+        // 이미지가 있으면 Google Cloud Storage에서 삭제
+        if (fairytale.getImageUrl() != null && !fairytale.getImageUrl().isEmpty()) {
+            try {
+                String fileName = extractFileNameFromUrl(fairytale.getImageUrl());
+                googleCloudStorage.deleteImageByFileName(fileName);
+                log.info("이미지 삭제 완료 - 파일명: {}", fileName);
+            } catch (Exception e) {
+                log.error("이미지 삭제 실패 - URL: {}, 에러: {}", fairytale.getImageUrl(), e.getMessage());
+                // 이미지 삭제 실패해도 동화는 삭제되도록
+            }
+        }
+
         fairytaleRepository.delete(fairytale);
 
         log.info("동화 삭제 완료 - ID: {}", fairytaleId);
@@ -245,6 +257,12 @@ public class FairytaleService {
         }
 
         return new String[]{title, content};
+    }
+
+    // 이미지 URL에서 파일명 추출
+    private String extractFileNameFromUrl(String imageUrl) {
+        String[] parts = imageUrl.split("/");
+        return parts[parts.length - 1]; // 마지막 부분이 파일명
     }
 
     // 갤러리에서 공개 동화 조회 (페이징 포함)

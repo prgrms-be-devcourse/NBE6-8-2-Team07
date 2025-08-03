@@ -73,6 +73,19 @@ public class GoogleCloudStorage implements CloudStorage {
         }
     }
 
+    // 파일명으로 이미지 삭제
+    public void deleteImageByFileName(String fileName) {
+        try {
+            BlobId blobId = BlobId.of(bucketName, fileName);
+            boolean result = storage.delete(blobId);
+            if (!result) {
+                throw new RuntimeException("클라우드에서 이미지 삭제 실패");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("클라우드에서 이미지 삭제 실패: " + e.getMessage(), e);
+        }
+    }
+
     // 이미지 업데이트 -> 수정 해야됨 List로
     public void updateImages(Long id, MultipartFile image) {
         deleteImage(id);
