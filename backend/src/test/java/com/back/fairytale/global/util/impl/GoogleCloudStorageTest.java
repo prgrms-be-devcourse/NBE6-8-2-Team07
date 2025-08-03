@@ -2,7 +2,6 @@ package com.back.fairytale.global.util.impl;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
@@ -18,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("dev")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-public class GoogleCloudStorgeTest {
+public class GoogleCloudStorageTest {
 
     @Autowired
-    private GoogleCloudStorge googleCloudStorge;
+    private GoogleCloudStorage googleCloudStorage;
 
     @Test
     @DisplayName("이미지 업로드 테스트")
@@ -32,7 +31,7 @@ public class GoogleCloudStorgeTest {
         List<MultipartFile> multipartFiles = Arrays.asList(file1, file2);
 
         // when
-        List<String> imageUrls = googleCloudStorge.uploadImages(multipartFiles);
+        List<String> imageUrls = googleCloudStorage.uploadImages(multipartFiles);
 
         // then
         assertNotNull(imageUrls);

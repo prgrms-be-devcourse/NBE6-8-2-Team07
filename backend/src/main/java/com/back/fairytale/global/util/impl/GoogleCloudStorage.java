@@ -1,6 +1,6 @@
 package com.back.fairytale.global.util.impl;
 
-import com.back.fairytale.global.util.CloudStorge;
+import com.back.fairytale.global.util.CloudStorage;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class GoogleCloudStorge implements CloudStorge {
+public class GoogleCloudStorage implements CloudStorage {
 
     private Storage storage;
 
@@ -23,7 +23,7 @@ public class GoogleCloudStorge implements CloudStorge {
     private String bucketName;
 
     @Autowired
-    public GoogleCloudStorge(Storage storage, @Value("${spring.cloud.gcp.storage.bucket}") String bucketName) {
+    public GoogleCloudStorage(Storage storage, @Value("${spring.cloud.gcp.storage.bucket}") String bucketName) {
         this.storage = storage;
         this.bucketName = bucketName;
     }
