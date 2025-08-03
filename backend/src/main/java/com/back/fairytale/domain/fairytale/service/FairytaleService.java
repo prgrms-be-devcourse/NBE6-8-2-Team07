@@ -76,7 +76,8 @@ public class FairytaleService {
         if (fairytale.getImageUrl() != null && !fairytale.getImageUrl().isEmpty()) {
             try {
                 String fileName = extractFileNameFromUrl(fairytale.getImageUrl());
-                googleCloudStorage.deleteImageByFileName(fileName);
+                //googleCloudStorage.deleteImageByFileName(fileName);
+                googleCloudStorage.deleteImages(List.of(fairytale.getImageUrl()));
                 log.info("이미지 삭제 완료 - 파일명: {}", fileName);
             } catch (Exception e) {
                 log.error("이미지 삭제 실패 - URL: {}, 에러: {}", fairytale.getImageUrl(), e.getMessage());

@@ -55,10 +55,8 @@ public class BookMarkService {
             throw new BookMarkAlreadyExistsException("이미 즐겨찾기에 추가된 동화입니다.");
         }
 
-        BookMark bookMark = BookMark.builder()
-                .user(user)
-                .fairytale(fairytale)
-                .build();
+        BookMark bookMark = BookMark.toEntity(user, fairytale);
+
         return bookMarkRepository.save(bookMark);
     }
 
