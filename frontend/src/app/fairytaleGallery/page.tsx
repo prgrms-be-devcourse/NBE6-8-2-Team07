@@ -19,21 +19,32 @@ interface Fairytale {
   isLiked?: boolean;
 }
 
+interface PageInfo {
+  content: Fairytale[];
+  totalElements: number;
+  totalPages: number;
+  currentPage: number;
+  size: number;
+}
+
 export default function FairytaleGallery() {
   const [fairytales, setFairytales] = useState<Fairytale[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [likedFairytales, setLikedFairytales] = useState<Set<number>>(new Set());
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    fetchFairytales();
-    loadLikedFairytales();
-  }, []);
+    fetchFairytales(currentPage);
+    fetchLikedFairytales();
+  }, [currentPage]);
 
-  const fetchFairytales = async () => {
+  const fetchFairytales = async (page: number = 0) => {
     try {
-      const response = await fetch('http://localhost:8080/fairytales/gallery', {
+      setIsLoading(true);
+      const response = await fetch(`http://localhost:8080/fairytales/gallery?page=${page}&size=6`, {
         credentials: 'include'
       });
 
@@ -49,46 +60,90 @@ export default function FairytaleGallery() {
       }));
 
       setFairytales(fairytalesWithLikes);
+      setPageInfo({
+        content: data.content,
+        totalElements: data.totalElements,
+        totalPages: data.totalPages,
+        currentPage: data.number,
+        size: data.size
+      });
       setError(null);
     } catch (err) {
       console.error('Error fetching fairytales:', err);
-      setError('동화를 불러오는 중 오류가 발생했습니다.');
+      // 서버에서 404 에러가 오면 "공개된 동화가 없습니다" 메시지 표시
+      if (err instanceof Error && err.message.includes('404')) {
+        setError('아직 공개된 동화가 없습니다.');
+      } else {
+        setError('동화를 불러오는 중 오류가 발생했습니다.');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const loadLikedFairytales = () => {
-    const liked = localStorage.getItem('likedFairytales');
-    if (liked) {
-      const likedIds = JSON.parse(liked);
-      setLikedFairytales(new Set(likedIds));
+  const fetchLikedFairytales = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/likes', {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const likes = await response.json();
+        const likedIds = new Set<number>(likes.map((like: any) => Number(like.fairytaleId)));
+        setLikedFairytales(likedIds);
+      }
+    } catch (error) {
+      console.error('좋아요 목록 조회 실패:', error);
     }
   };
 
-  const toggleLike = (fairytaleId: number) => {
-    const newLikedFairytales = new Set(likedFairytales);
+  const toggleLike = async (fairytaleId: number) => {
+    try {
+      const isCurrentlyLiked = likedFairytales.has(fairytaleId);
+      
+      const response = await fetch(`http://localhost:8080/like/${fairytaleId}`, {
+        method: isCurrentlyLiked ? 'DELETE' : 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
 
-    if (newLikedFairytales.has(fairytaleId)) {
-      newLikedFairytales.delete(fairytaleId);
-    } else {
-      newLikedFairytales.add(fairytaleId);
+      console.log('좋아요 요청 결과:', response.status, response.statusText);
+      
+      if (response.ok) {
+        const newLikedFairytales = new Set(likedFairytales);
+        if (isCurrentlyLiked) {
+          newLikedFairytales.delete(fairytaleId);
+        } else {
+          newLikedFairytales.add(fairytaleId);
+        }
+        setLikedFairytales(newLikedFairytales);
+
+        // 현재 페이지의 동화 목록 업데이트
+        setFairytales(prev => 
+          prev.map(fairytale => 
+            fairytale.id === fairytaleId 
+              ? { ...fairytale, isLiked: !fairytale.isLiked }
+              : fairytale
+          )
+        );
+      } else {
+        const errorText = await response.text();
+        console.error('좋아요 처리 실패:', response.status, response.statusText, errorText);
+      }
+    } catch (error) {
+      console.error('좋아요 처리 중 오류:', error);
     }
-
-    setLikedFairytales(newLikedFairytales);
-    localStorage.setItem('likedFairytales', JSON.stringify(Array.from(newLikedFairytales)));
-
-    setFairytales(prev => 
-      prev.map(fairytale => 
-        fairytale.id === fairytaleId 
-          ? { ...fairytale, isLiked: !fairytale.isLiked }
-          : fairytale
-      )
-    );
   };
 
   const handleFairytaleClick = (fairytaleId: number) => {
-    router.push(`/fairytale/get/${fairytaleId}`);
+    router.push(`/fairytale/gallery/${fairytaleId}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const formatDate = (dateString: string) => {
@@ -98,6 +153,70 @@ export default function FairytaleGallery() {
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  const renderPagination = () => {
+    if (!pageInfo || pageInfo.totalPages <= 1) return null;
+
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(0, pageInfo.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(pageInfo.totalPages - 1, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(0, endPage - maxVisiblePages + 1);
+    }
+
+    // 이전 페이지 버튼
+    if (pageInfo.currentPage > 0) {
+      pages.push(
+        <button
+          key="prev"
+          onClick={() => handlePageChange(pageInfo.currentPage - 1)}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50"
+        >
+          이전
+        </button>
+      );
+    }
+
+    // 페이지 번호들
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-2 text-sm font-medium ${
+            i === pageInfo.currentPage
+              ? 'text-orange-600 bg-orange-50 border-orange-300'
+              : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'
+          } border`}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    // 다음 페이지 버튼
+    if (pageInfo.currentPage < pageInfo.totalPages - 1) {
+      pages.push(
+        <button
+          key="next"
+          onClick={() => handlePageChange(pageInfo.currentPage + 1)}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50"
+        >
+          다음
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex justify-center mt-8">
+        <div className="flex space-x-0">
+          {pages}
+        </div>
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -180,6 +299,11 @@ export default function FairytaleGallery() {
           <p className="text-lg text-gray-600">
             아이와 함께 만든 소중한 동화들을 모아봤어요
           </p>
+          {pageInfo && (
+            <p className="text-sm text-gray-500 mt-2">
+              총 {pageInfo.totalElements}개의 동화 중 {pageInfo.currentPage + 1}페이지
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -279,6 +403,9 @@ export default function FairytaleGallery() {
             </div>
           ))}
         </div>
+
+        {/* 페이징 컴포넌트 */}
+        {renderPagination()}
       </section>
     </main>
   );
