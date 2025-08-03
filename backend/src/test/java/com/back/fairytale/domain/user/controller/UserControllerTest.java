@@ -5,6 +5,8 @@ import com.back.fairytale.domain.user.enums.IsDeleted;
 import com.back.fairytale.domain.user.enums.Role;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.global.security.jwt.JWTProvider;
+import com.back.fairytale.global.util.impl.GoogleCloudStorage;
+import com.google.cloud.storage.Storage;
 import com.nimbusds.common.contenttype.ContentType;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +42,12 @@ class UserControllerTest {
 
     private String validRefreshToken;
     private String validAccessToken;
+
+    @MockitoBean
+    private GoogleCloudStorage googleCloudStorage;
+
+    @MockitoBean
+    private Storage storage;
 
     @BeforeEach
     void setUp() {
