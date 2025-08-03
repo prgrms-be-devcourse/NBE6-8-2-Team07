@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { customFetch } from "@/utils/customFetch";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { FiLink } from "react-icons/fi";
 
 export default function ClientLayout({
   children,
@@ -112,7 +114,7 @@ export default function ClientLayout({
               >
                 나의 동화책
               </button>
-              <div className="absolute z-10 hidden group-hover:block bg-[#FAF9F6] shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
+              <div className="absolute z-50 hidden group-hover:block bg-[#FAF9F6] shadow-lg rounded-md mt-0 py-1 w-full min-w-max left-1/2 -translate-x-1/2">
                 <Link
                   href="/fairytale/post"
                   onClick={handleProtectedLinkClick}
@@ -251,21 +253,21 @@ export default function ClientLayout({
 
       <>{children}</>
       <footer className="bg-[#FFD6A5] text-[#9B4500] py-8 px-4 text-center text-sm">
-        <p>동화공방</p>
+        <p className="text-base font-semibold mb-2">동화공방</p>
         <p>Team07 | 키워드 기반 AI 동화 생성 서비스</p>
         <p>프로그래머스 데브코스 백엔드 6기 2차 프로젝트</p>
-        <div>
-          <Link href="/introduction" className="hover:underline">
+        <div className="flex justify-center gap-8 mt-3">
+          <Link href="/introduction" className="flex items-center gap-1 hover:underline hover:text-[#7a3000] transition">
+            <FiLink className="text-sm" />
             서비스 소개
           </Link>
-        </div>
-        <div>
           <Link
             href="https://github.com/prgrms-be-devcourse/NBE6-8-2-Team07"
-            className="hover:underline"
             target="_blank"
             rel="noopener noreferrer"
+            className="flex items-center gap-1 hover:underline hover:text-[#7a3000] transition"
           >
+            <FaExternalLinkAlt className="text-sm" />
             GitHub 저장소
           </Link>
         </div>
