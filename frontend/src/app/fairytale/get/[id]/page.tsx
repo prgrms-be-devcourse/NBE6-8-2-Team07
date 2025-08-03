@@ -12,17 +12,17 @@ interface GroupedKeywords {
 
 interface ThoughtsData {
   id?: number;
-  name: string;          // childName -> name
-  content: string;       // childThoughts -> content
-  parentContent: string; // parentThoughts -> parentContent
+  name: string;          
+  content: string; 
+  parentContent: string;
   fairytaleId: number;
 }
 
 interface ThoughtsResponse {
   id: number;
-  name: string;          // childName -> name
-  content: string;       // childThoughts -> content
-  parentContent: string; // parentThoughts -> parentContent
+  name: string;
+  content: string;
+  parentContent: string;
   fairytaleId: number;
   createdAt: string;
   updatedAt: string;
