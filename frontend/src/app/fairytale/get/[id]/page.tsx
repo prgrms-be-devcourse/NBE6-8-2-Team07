@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { Fairytale } from '@/context/fairytaleContext';
 import { customFetch } from '@/utils/customFetch';
@@ -105,7 +105,7 @@ const FairytaleReader = () => {
   };
 
   // 아이 생각 조회
-  const fetchThoughts = async () => {
+  const fetchThoughts = useCallback(async () => {
     try {
       const response = await customFetch(`http://localhost:8080/api/thoughts/fairytale/${fairytaleId}`, {
         credentials: 'include',
@@ -115,17 +115,16 @@ const FairytaleReader = () => {
         const thoughtsData: ThoughtsResponse = await response.json();
         setThoughts(thoughtsData);
         setThoughtsForm({
-          id: thoughtsData.id,
           name: thoughtsData.name,
           content: thoughtsData.content,
           parentContent: thoughtsData.parentContent,
           fairytaleId: thoughtsData.fairytaleId,
         });
       }
-    } catch (error) {
+    } catch {
       console.log('아이 생각이 아직 없습니다.');
     }
-  };
+  }, [fairytaleId]);
 
   // 아이 생각 저장/수정
   const handleSaveThoughts = async () => {
@@ -277,7 +276,7 @@ const FairytaleReader = () => {
     };
 
     fetchFairytaleData();
-  }, [fairytaleId]);
+  }, [fairytaleId, fetchThoughts]);
 
   if (loading) return <div className="container mx-auto p-4">로딩 중...</div>;
   if (error) return <div className="container mx-auto p-4 text-red-500">에러: {error}</div>;

@@ -2,9 +2,9 @@
 // 재발급 로직이 현재 진행 중인지 추적하는 플래그
 let isRefreshing = false;
 // 재발급이 진행되는 동안 들어온 요청들을 저장하는 배열
-let failedQueue: any[] = [];
+let failedQueue: { resolve: (token: string | null) => void; reject: (error: unknown) => void }[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error);
@@ -29,7 +29,7 @@ export const customFetch = async (url: string, options: RequestInit = {}): Promi
   let response = await fetch(url, fetchOptions);
 
   // 2. 액세스 토큰 만료(401) 시 재발급 로직 처리 (noRefresh 옵션이 없을 때만)
-  // @ts-ignore
+  // @ts-expect-error - noRefresh option is not in RequestInit type but needed for token refresh logic
   if (response.status === 401 && !options.noRefresh) {
     if (isRefreshing) {
       // 이미 재발급이 진행 중이라면, 현재 요청을 큐에 추가하고 대기

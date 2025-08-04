@@ -42,7 +42,7 @@ export default function ClientLayout({
             setShowLoginPopup(true); // 실패 시 팝업 다시 표시
           }
         }
-      } catch (error) {
+      } catch {
         // 네트워크 에러 등
         setIsLoggedIn(false);
         const isLoggingIn = sessionStorage.getItem("isLoggingIn");
@@ -66,7 +66,7 @@ export default function ClientLayout({
     try {
       await customFetch("http://localhost:8080/logout", {
         method: "POST",
-        // @ts-ignore
+        // @ts-expect-error - noRefresh option is not in RequestInit type but needed for logout
         noRefresh: true, // 로그아웃 시에는 토큰 재발급 시도 안 함
       });
     } catch (error) {

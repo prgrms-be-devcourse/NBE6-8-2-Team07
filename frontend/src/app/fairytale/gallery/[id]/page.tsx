@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Comments from '@/app/fairytale/gallery/comments';
 
@@ -27,13 +27,7 @@ export default function FairytaleGalleryDetail() {
   const router = useRouter();
   const fairytaleId = params.id;
 
-  useEffect(() => {
-    if (fairytaleId) {
-      fetchFairytaleDetail();
-    }
-  }, [fairytaleId]);
-
-  const fetchFairytaleDetail = async () => {
+  const fetchFairytaleDetail = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await fetch(`http://localhost:8080/fairytales/gallery/${fairytaleId}`, {
@@ -53,7 +47,13 @@ export default function FairytaleGalleryDetail() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [fairytaleId]);
+
+  useEffect(() => {
+    if (fairytaleId) {
+      fetchFairytaleDetail();
+    }
+  }, [fairytaleId, fetchFairytaleDetail]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
