@@ -22,6 +22,7 @@ const FairytaleList = () => {
   const [filterMode, setFilterMode] = useState<'all' | 'bookmarked'>('all');
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [bookmarkingIds, setBookmarkingIds] = useState<Set<string>>(new Set());
+  const [togglingVisibilityIds, setTogglingVisibilityIds] = useState<Set<string>>(new Set());
 
   // 필터링된 동화 목록
   const filteredFairyTales = filterMode === 'all' 
@@ -64,6 +65,51 @@ const FairytaleList = () => {
       alert(`즐겨찾기 처리 중 오류가 발생했습니다: ${errorMessage}`);
     } finally {
       setBookmarkingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(fairytaleId.toString());
+        return newSet;
+      });
+    }
+  };
+
+  // 동화 공개/비공개 토글 함수
+  const handleToggleVisibility = async (fairytaleId: number, currentVisibilityStatus: boolean) => {
+    setTogglingVisibilityIds(prev => {
+      const newSet = new Set(prev);
+      newSet.add(fairytaleId.toString());
+      return newSet;
+    });
+
+    try {
+      const response = await customFetch(`http://localhost:8080/fairytales/${fairytaleId}/visibility?isPublic=${!currentVisibilityStatus}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`공개/비공개 설정 실패! status: ${response.status} - ${errorText}`);
+      }
+
+      setFairyTales(prev =>
+        prev.map(tale =>
+          tale.id === fairytaleId
+            ? { ...tale, isPublic: !currentVisibilityStatus }
+            : tale
+        )
+      );
+
+      alert(`동화가 ${!currentVisibilityStatus ? '공개' : '비공개'}로 설정되었습니다.`);
+
+    } catch (error: unknown) {
+      console.error('공개/비공개 설정 중 오류 발생:', error);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      alert(`공개/비공개 설정 중 오류가 발생했습니다: ${errorMessage}`);
+    } finally {
+      setTogglingVisibilityIds(prev => {
         const newSet = new Set(prev);
         newSet.delete(fairytaleId.toString());
         return newSet;
@@ -333,29 +379,31 @@ const FairytaleList = () => {
                     
                     {/* 공개설정 표시 셀 - 새로 추가 (읽기 전용) */}
                     <td className="py-4 px-6 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <span
-                          className={`flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                            tale.isPublic
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}
-                        >
-                          {tale.isPublic ? (
-                            <>
-                              <FaGlobe className="mr-1" />
-                              공개
-                            </>
-                          ) : (
-                            <>
-                              <FaLock className="mr-1" />
-                              비공개
-                            </>
-                          )}
-                        </span>
-                      </div>
+                      <button
+                        onClick={() => handleToggleVisibility(tale.id, tale.isPublic)}
+                        disabled={togglingVisibilityIds.has(tale.id.toString())}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                          togglingVisibilityIds.has(tale.id.toString())
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : tale.isPublic
+                              ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        }`}
+                        title={togglingVisibilityIds.has(tale.id.toString()) ? '처리 중...' : tale.isPublic ? '비공개로 전환' : '공개로 전환'}
+                      >
+                        {togglingVisibilityIds.has(tale.id.toString()) ? (
+                          '처리 중...'
+                        ) : tale.isPublic ? (
+                          <span className="flex items-center">
+                            <FaGlobe className="mr-1" /> 공개
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            <FaLock className="mr-1" /> 비공개
+                          </span>
+                        )}
+                      </button>
                     </td>
-
 
                     {/* 생성일자 셀 */}
                     <td className="py-4 px-6 whitespace-nowrap text-gray-500">
@@ -497,26 +545,31 @@ const FairytaleList = () => {
                     {new Date(tale.createdAt).toLocaleDateString('ko-KR')}
                   </div>
                   
-                  {/* 공개설정 표시 - 새로 추가 */}
-                  <span
-                    className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      tale.isPublic
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-800'
+                  {/* 공개설정 토글 버튼 - 새로 추가 */}
+                  <button
+                    onClick={() => handleToggleVisibility(tale.id, tale.isPublic)}
+                    disabled={togglingVisibilityIds.has(tale.id.toString())}
+                    className={`px-2 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                      togglingVisibilityIds.has(tale.id.toString())
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : tale.isPublic
+                          ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                          : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                     }`}
+                    title={togglingVisibilityIds.has(tale.id.toString()) ? '처리 중...' : tale.isPublic ? '비공개로 전환' : '공개로 전환'}
                   >
-                    {tale.isPublic ? (
-                      <>
-                        <FaGlobe className="mr-1" />
-                        공개
-                      </>
+                    {togglingVisibilityIds.has(tale.id.toString()) ? (
+                      '처리 중...'
+                    ) : tale.isPublic ? (
+                      <span className="flex items-center">
+                        <FaGlobe className="mr-1" /> 공개
+                      </span>
                     ) : (
-                      <>
-                        <FaLock className="mr-1" />
-                        비공개
-                      </>
+                      <span className="flex items-center">
+                        <FaLock className="mr-1" /> 비공개
+                      </span>
                     )}
-                  </span>
+                  </button>
                 </div>
 
                 {/* 버튼 그룹 - 나란히 배치 */}

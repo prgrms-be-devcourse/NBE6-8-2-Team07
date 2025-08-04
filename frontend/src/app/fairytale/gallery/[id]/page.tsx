@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Comments from '@/app/fairytaleGallery/comments';
 
 interface FairytaleDetail {
   id: number;
@@ -231,6 +232,9 @@ export default function FairytaleGalleryDetail() {
                 </div>
               </div>
             )}
+
+            {/* 댓글 섹션 */}
+            {fairytale && <Comments fairytaleId={fairytale.id} />}
 
             {/* 하단 버튼 */}
             <div className="flex justify-center pt-6 border-t border-orange-200">
