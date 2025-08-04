@@ -118,11 +118,11 @@ public class Fairytale {
     }
 
     public void increaseLikeCount() {
-        this.likeCount += 1;
+        this.likeCount = (this.likeCount == null) ? 1L : this.likeCount + 1;
     }
 
     public void decreaseLikeCount() {
-        this.likeCount -= 1;
+        this.likeCount = (this.likeCount == null) ? 0L : Math.max(0, this.likeCount - 1);
     }
 
     public void setPublic(Boolean isPublic) {
