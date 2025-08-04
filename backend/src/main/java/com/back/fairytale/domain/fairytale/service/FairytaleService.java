@@ -3,13 +3,12 @@ package com.back.fairytale.domain.fairytale.service;
 import com.back.fairytale.domain.fairytale.dto.*;
 import com.back.fairytale.domain.fairytale.entity.Fairytale;
 import com.back.fairytale.domain.fairytale.exception.FairytaleNotFoundException;
+import com.back.fairytale.domain.fairytale.exception.UserNotFoundException;
 import com.back.fairytale.domain.fairytale.repository.FairytaleRepository;
 import com.back.fairytale.domain.keyword.entity.Keyword;
 import com.back.fairytale.domain.keyword.enums.KeywordType;
 import com.back.fairytale.domain.keyword.repository.KeywordRepository;
 import com.back.fairytale.domain.user.entity.User;
-import com.back.fairytale.domain.user.enums.IsDeleted;
-import com.back.fairytale.domain.user.enums.Role;
 import com.back.fairytale.domain.user.repository.UserRepository;
 import com.back.fairytale.external.ai.client.GeminiClient;
 import com.back.fairytale.external.ai.client.HuggingFaceClient;
@@ -76,7 +75,6 @@ public class FairytaleService {
         if (fairytale.getImageUrl() != null && !fairytale.getImageUrl().isEmpty()) {
             try {
                 String fileName = extractFileNameFromUrl(fairytale.getImageUrl());
-                //googleCloudStorage.deleteImageByFileName(fileName);
                 googleCloudStorage.deleteImages(List.of(fairytale.getImageUrl()));
                 log.info("이미지 삭제 완료 - 파일명: {}", fileName);
             } catch (Exception e) {
@@ -103,24 +101,8 @@ public class FairytaleService {
         String title = titleAndContent[0];
         String content = titleAndContent[1];
 
-        // 원래코드
-        //User user = userRepository.findById(userId)
-        //        .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다. ID: " + userId));
-
-        // test 용도 데이터
         User user = userRepository.findById(userId)
-                .orElseGet(() -> {
-                    // 없으면 테스트용 User 생성
-                    User newUser = User.builder()
-                            .socialId("test_" + userId)
-                            .name("테스트사용자")
-                            .nickname("테스트")
-                            .email("test@test.com")
-                            .role(Role.USER)
-                            .isDeleted(IsDeleted.NOT_DELETED)
-                            .build();
-                    return userRepository.save(newUser);
-                });
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다. ID: " + userId));
 
         // 이미지 생성
         String imageUrl = null;
