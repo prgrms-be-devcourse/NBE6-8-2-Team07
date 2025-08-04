@@ -3,12 +3,14 @@ package com.back.fairytale.global.util.impl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,21 +24,34 @@ public class GoogleCloudStorageTest {
     @Autowired
     private GoogleCloudStorage googleCloudStorage;
 
+    @BeforeAll
+    void setUp() {
+        ImageIO.scanForPlugins();
+    }
+
+    private List<MultipartFile> generateMockImages(int count) throws IOException {
+        List<MultipartFile> files = new ArrayList<>();
+        byte[] imageBytes = new ClassPathResource("pexels-christian-heitz-285904-842711.jpg").getInputStream().readAllBytes();
+
+        for (int i = 0; i < count; i++) {
+            MockMultipartFile file = new MockMultipartFile(
+                    "file" + i,
+                    "image_" + i + ".jpg",
+                    "image/jpeg",
+                    imageBytes
+            );
+            files.add(file);
+        }
+        return files;
+    }
+    
     @Test
-    @DisplayName("이미지 업로드 테스트")
-    void uploadImages() throws IOException {
-        // given
-        MockMultipartFile file1 = new MockMultipartFile("file1", "KakaoTalk_20250506_000056994.jpg", "image/jpeg", "test-data-1".getBytes());
-        MockMultipartFile file2 = new MockMultipartFile("file2", "KakaoTalk_20250506_000056994.jpg", "image/png", "test-data-2".getBytes());
-        List<MultipartFile> multipartFiles = Arrays.asList(file1, file2);
+    @DisplayName("4K 이미지 업로드 (3개)")
+    void performanceTest_10Images() throws IOException {
+        List<MultipartFile> files = generateMockImages(3);
 
-        // when
-        List<String> imageUrls = googleCloudStorage.uploadImages(multipartFiles);
+        List<String> urls = googleCloudStorage.uploadImages(files);
 
-        // then
-        assertNotNull(imageUrls);
-        assertEquals(2, imageUrls.size());
-        imageUrls.forEach(System.out::println);
-
+        assertEquals(3, urls.size());
     }
 }
