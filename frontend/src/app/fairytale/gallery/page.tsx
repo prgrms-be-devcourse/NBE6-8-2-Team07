@@ -50,7 +50,7 @@ export default function FairytaleGallery() {
   const fetchFairytales = async (page: number = 0) => {
     try {
       setIsLoading(true);
-      const response = await customFetch(`http://localhost:8080/fairytales/gallery?page=${page}&size=6`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/fairytales/gallery?page=${page}&size=6`, {
         credentials: 'include'
       });
 
@@ -85,7 +85,7 @@ export default function FairytaleGallery() {
   const fetchLikedFairytales = async () => {
     try {
       console.log('좋아요 목록 조회 시작');
-      const response = await customFetch('http://localhost:8080/likes', {
+      const response = await customFetch('https://nbe6-8-2-team07.onrender.com/likes', {
         credentials: 'include'
       });
 
@@ -107,7 +107,7 @@ export default function FairytaleGallery() {
     try {
       const isCurrentlyLiked = likedFairytales.has(fairytaleId);
       
-      const response = await customFetch(`http://localhost:8080/like/${fairytaleId}`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/like/${fairytaleId}`, {
         method: isCurrentlyLiked ? 'DELETE' : 'POST',
         credentials: 'include',
         headers: {

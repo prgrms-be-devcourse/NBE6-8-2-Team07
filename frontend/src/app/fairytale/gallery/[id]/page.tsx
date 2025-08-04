@@ -30,7 +30,7 @@ export default function FairytaleGalleryDetail() {
   const fetchFairytaleDetail = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:8080/fairytales/gallery/${fairytaleId}`, {
+      const response = await fetch(`https://nbe6-8-2-team07.onrender.com/fairytales/gallery/${fairytaleId}`, {
         credentials: 'include'
       });
 
