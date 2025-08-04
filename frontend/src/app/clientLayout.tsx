@@ -22,7 +22,7 @@ export default function ClientLayout({
     const checkInitialLogin = async () => {
       try {
         // 로그인 상태 확인 요청
-        const response = await customFetch("http://localhost:8080/users/me");
+        const response = await customFetch("https://nbe6-8-2-team07.onrender.com/users/me");
 
         if (response.ok) {
           setIsLoggedIn(true);
@@ -64,7 +64,7 @@ export default function ClientLayout({
   // 로그아웃 로직
   const handleLogout = async () => {
     try {
-      await customFetch("http://localhost:8080/logout", {
+      await customFetch("https://nbe6-8-2-team07.onrender.com/logout", {
         method: "POST",
         // @ts-expect-error - noRefresh option is not in RequestInit type but needed for logout
         noRefresh: true, // 로그아웃 시에는 토큰 재발급 시도 안 함
@@ -218,7 +218,7 @@ export default function ClientLayout({
 
               {/* 네이버 로그인 버튼 */}
               <Link
-                href="http://localhost:8080/oauth2/authorization/naver"
+                href="https://nbe6-8-2-team07.onrender.com/oauth2/authorization/naver"
                 onClick={handleLoginClick}
               >
                 <div className="hover:opacity-90 transition-opacity duration-200">

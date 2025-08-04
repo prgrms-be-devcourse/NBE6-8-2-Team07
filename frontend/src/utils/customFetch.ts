@@ -49,7 +49,7 @@ export const customFetch = async (url: string, options: RequestInit = {}): Promi
 
     try {
       // 3. 토큰 재발급 요청
-      const refreshResponse = await fetch('http://localhost:8080/reissue', {
+      const refreshResponse = await fetch('https://nbe6-8-2-team07.onrender.com/reissue', {
         method: 'POST',
         credentials: 'include',
       });

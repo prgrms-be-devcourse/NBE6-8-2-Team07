@@ -331,7 +331,7 @@ export default function FairytaleCreatePage() {
     };
 
     try {
-      const response = await customFetch('http://localhost:8080/fairytales', {
+      const response = await customFetch('https://nbe6-8-2-team07.onrender.com/fairytales', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

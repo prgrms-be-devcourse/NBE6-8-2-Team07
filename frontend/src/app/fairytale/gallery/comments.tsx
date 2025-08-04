@@ -31,7 +31,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await customFetch(`http://localhost:8080/api/fairytales/${fairytaleId}/comments?page=${page}&size=5`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/api/fairytales/${fairytaleId}/comments?page=${page}&size=5`, {
         credentials: 'include',
       });
       if (!response.ok) {
@@ -57,7 +57,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
     if (!newComment.trim()) return;
 
     try {
-      const response = await customFetch(`http://localhost:8080/api/fairytales/${fairytaleId}/comments`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/api/fairytales/${fairytaleId}/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
     if (!editingContent.trim()) return;
 
     try {
-      const response = await customFetch(`http://localhost:8080/api/comments/${commentId}`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/api/comments/${commentId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
     if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) return;
 
     try {
-      const response = await customFetch(`http://localhost:8080/api/comments/${commentId}`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/api/comments/${commentId}`, {
         method: 'DELETE',
         credentials: 'include',
       });

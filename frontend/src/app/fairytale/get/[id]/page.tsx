@@ -75,7 +75,7 @@ const FairytaleReader = () => {
     
     try {
       const response = await customFetch(
-        `http://localhost:8080/fairytales/${fairytaleId}/visibility?isPublic=${!fairytale.isPublic}`,
+        `https://nbe6-8-2-team07.onrender.com/fairytales/${fairytaleId}/visibility?isPublic=${!fairytale.isPublic}`,
         {
           method: 'PATCH',
           credentials: 'include',
@@ -107,7 +107,7 @@ const FairytaleReader = () => {
   // 아이 생각 조회
   const fetchThoughts = useCallback(async () => {
     try {
-      const response = await customFetch(`http://localhost:8080/api/thoughts/fairytale/${fairytaleId}`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/api/thoughts/fairytale/${fairytaleId}`, {
         credentials: 'include',
       });
       
@@ -137,8 +137,8 @@ const FairytaleReader = () => {
 
     try {
       const url = thoughts 
-        ? `http://localhost:8080/api/thoughts/${thoughts.id}`
-        : 'http://localhost:8080/api/thoughts';
+        ? `https://nbe6-8-2-team07.onrender.com/api/thoughts/${thoughts.id}`
+        : 'https://nbe6-8-2-team07.onrender.com/api/thoughts';
       
       const method = thoughts ? 'PUT' : 'POST';
       
@@ -182,7 +182,7 @@ const FairytaleReader = () => {
     if (!confirm('정말로 아이 생각을 삭제하시겠습니까?')) return;
 
     try {
-      const response = await customFetch(`http://localhost:8080/api/thoughts/${thoughts.id}`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/api/thoughts/${thoughts.id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -241,7 +241,7 @@ const FairytaleReader = () => {
 
       try {
         // Fetch fairytale details
-        const fairytaleResponse = await customFetch(`http://localhost:8080/fairytales/${fairytaleId}`,{
+        const fairytaleResponse = await customFetch(`https://nbe6-8-2-team07.onrender.com/fairytales/${fairytaleId}`,{
           credentials: 'include',
         });
         if (!fairytaleResponse.ok) {

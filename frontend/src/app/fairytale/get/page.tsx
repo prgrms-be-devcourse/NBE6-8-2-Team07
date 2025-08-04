@@ -36,7 +36,7 @@ const FairytaleList = () => {
 
     try {
       const method = currentBookmarkStatus ? 'DELETE' : 'POST';
-      const response = await customFetch(`http://localhost:8080/bookmark/${fairytaleId}`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/bookmark/${fairytaleId}`, {
         method: method,
         credentials: 'include', // 인증 정보 포함
         headers: {
@@ -81,7 +81,7 @@ const FairytaleList = () => {
     });
 
     try {
-      const response = await customFetch(`http://localhost:8080/fairytales/${fairytaleId}/visibility?isPublic=${!currentVisibilityStatus}`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/fairytales/${fairytaleId}/visibility?isPublic=${!currentVisibilityStatus}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -130,7 +130,7 @@ const FairytaleList = () => {
     setDeletingIds(prev => new Set([...prev, id.toString()]));
 
     try {
-      const response = await customFetch(`http://localhost:8080/fairytales/${id}`, {
+      const response = await customFetch(`https://nbe6-8-2-team07.onrender.com/fairytales/${id}`, {
         method: 'DELETE',
         credentials: 'include', // 인증 정보 포함
       });
@@ -164,7 +164,7 @@ const FairytaleList = () => {
 
       try {
         // 동화 목록 가져오기
-        const fairytalesResponse = await customFetch('http://localhost:8080/fairytales', {
+        const fairytalesResponse = await customFetch('https://nbe6-8-2-team07.onrender.com/fairytales', {
           credentials: 'include', // 인증 정보 포함
         });
         
@@ -182,7 +182,7 @@ const FairytaleList = () => {
         // 즐겨찾기 목록 가져오기
         let bookmarkedIds: number[] = [];
         try {
-          const bookmarksResponse = await customFetch('http://localhost:8080/bookmarks', {
+          const bookmarksResponse = await customFetch('https://nbe6-8-2-team07.onrender.com/bookmarks', {
             credentials: 'include', 
           });
           
