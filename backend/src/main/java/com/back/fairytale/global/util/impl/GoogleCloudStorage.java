@@ -5,7 +5,6 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,44 +42,10 @@ public class GoogleCloudStorage implements CloudStorage {
     }
 
     @Override
-    public void updateImages(List<String> imageUrl, List<MultipartFile> images) {
+    public void updateImages(List<String> imageUrl, List<MultipartFile> imgFiles) {
         deleteImages(imageUrl);
-        uploadImages(images);
+        uploadImages(imgFiles);
     }
-
-    // AI 생성 이미지 업로드 (byte 배열)
-    public String uploadImageBytesToCloud(byte[] imageData, String fileName) {
-        try {
-            String uuid = UUID.randomUUID().toString();
-            String fullFileName = uuid + "_" + fileName;
-
-            BlobId blobId = BlobId.of(bucketName, fullFileName);
-            BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
-                    .setContentType("image/png")
-                    .build();
-
-            storage.create(blobInfo, imageData);
-
-            return formatUrl(fullFileName);
-
-        } catch (Exception e) {
-            throw new RuntimeException("AI 생성 이미지 업로드 실패", e);
-        }
-    }
-
-    // 파일명으로 이미지 삭제
-    /*public void deleteImageByFileName(String fileName) {
-        try {
-            BlobId blobId = BlobId.of(bucketName, fileName);
-            boolean result = storage.delete(blobId);
-            if (!result) {
-                throw new RuntimeException("클라우드에서 이미지 삭제 실패");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("클라우드에서 이미지 삭제 실패: " + e.getMessage(), e);
-        }
-    }*/
-
 
     private String uploadImageToCloud(MultipartFile imgFile) {
 
