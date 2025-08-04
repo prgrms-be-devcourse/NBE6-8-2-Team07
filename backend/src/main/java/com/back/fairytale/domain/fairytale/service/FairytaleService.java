@@ -19,10 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -130,16 +128,8 @@ public class FairytaleService {
             String imagePrompt = buildImagePrompt(request);
             byte[] imageData = huggingFaceClient.generateImage(imagePrompt);
 
-            MultipartFile imageFile = new MockMultipartFile(
-                    "image",
-                    "fairytale_image_" + System.currentTimeMillis() + ".png",
-                    "image/png",
-                    imageData
-            );
-
             //String fileName = "fairytale_" + System.currentTimeMillis() + ".png";
-            //imageUrl = googleCloudStorage.uploadImageBytesToCloud(imageData, fileName);
-            imageUrl = googleCloudStorage.uploadImages(List.of(imageFile)).get(0);
+            imageUrl = googleCloudStorage.uploadImageBytesToCloud(imageData);
 
         } catch (Exception e) {
             log.error("이미지 생성 실패, 동화만 저장합니다.", e);
