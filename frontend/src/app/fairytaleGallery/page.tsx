@@ -38,8 +38,12 @@ export default function FairytaleGallery() {
 
   useEffect(() => {
     fetchFairytales(currentPage);
-    fetchLikedFairytales();
   }, [currentPage]);
+
+  useEffect(() => {
+    console.log('fetchLikedFairytales 호출됨');
+    fetchLikedFairytales();
+  }, []);
 
   const fetchFairytales = async (page: number = 0) => {
     try {
@@ -54,12 +58,7 @@ export default function FairytaleGallery() {
 
       const data = await response.json();
 
-      const fairytalesWithLikes = data.content.map((fairytale: Fairytale) => ({
-        ...fairytale,
-        isLiked: likedFairytales.has(fairytale.id)
-      }));
-
-      setFairytales(fairytalesWithLikes);
+      setFairytales(data.content);
       setPageInfo({
         content: data.content,
         totalElements: data.totalElements,
@@ -83,14 +82,19 @@ export default function FairytaleGallery() {
 
   const fetchLikedFairytales = async () => {
     try {
+      console.log('좋아요 목록 조회 시작');
       const response = await fetch('http://localhost:8080/likes', {
         credentials: 'include'
       });
 
+      console.log('좋아요 목록 응답:', response.status, response.statusText);
+
       if (response.ok) {
         const likes = await response.json();
+        console.log('좋아요 목록 데이터:', likes);
         const likedIds = new Set<number>(likes.map((like: any) => Number(like.fairytaleId)));
         setLikedFairytales(likedIds);
+        console.log('좋아요 ID 목록:', Array.from(likedIds));
       }
     } catch (error) {
       console.error('좋아요 목록 조회 실패:', error);
@@ -121,14 +125,7 @@ export default function FairytaleGallery() {
         }
         setLikedFairytales(newLikedFairytales);
 
-        // 현재 페이지의 동화 목록 업데이트
-        setFairytales(prev => 
-          prev.map(fairytale => 
-            fairytale.id === fairytaleId 
-              ? { ...fairytale, isLiked: !fairytale.isLiked }
-              : fairytale
-          )
-        );
+
       } else {
         const errorText = await response.text();
         console.error('좋아요 처리 실패:', response.status, response.statusText, errorText);
@@ -372,31 +369,38 @@ export default function FairytaleGallery() {
                       <span className="mr-2">📅</span>
                       <span>{formatDate(fairytale.createdAt)}</span>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleLike(fairytale.id);
-                      }}
-                      className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 cursor-pointer ${
-                        fairytale.isLiked
-                          ? 'text-red-500 hover:text-red-600 bg-red-50'
-                          : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
-                      }`}
-                    >
-                      <svg
-                        className="w-6 h-6"
-                        fill={fairytale.isLiked ? 'currentColor' : 'none'}
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleLike(fairytale.id);
+                        }}
+                        className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 cursor-pointer ${
+                          likedFairytales.has(fairytale.id)
+                            ? 'text-red-500 hover:text-red-600 bg-red-50'
+                            : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                        }`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          className="w-6 h-6"
+                          fill={likedFairytales.has(fairytale.id) ? 'currentColor' : 'none'}
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                          />
+                        </svg>
+                      </button>
+                      {fairytale.likeCount !== undefined && (
+                        <span className="text-sm text-gray-600 font-medium">
+                          {fairytale.likeCount}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
