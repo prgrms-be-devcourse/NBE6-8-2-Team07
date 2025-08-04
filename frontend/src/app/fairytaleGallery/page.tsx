@@ -38,8 +38,11 @@ export default function FairytaleGallery() {
 
   useEffect(() => {
     fetchFairytales(currentPage);
-    fetchLikedFairytales();
   }, [currentPage]);
+
+  useEffect(() => {
+    fetchLikedFairytales();
+  }, []);
 
   const fetchFairytales = async (page: number = 0) => {
     try {
