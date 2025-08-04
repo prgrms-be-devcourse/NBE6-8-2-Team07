@@ -23,17 +23,19 @@ export default function Comments({ fairytaleId }: CommentsProps) {
   const [editingContent, setEditingContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    fetchComments();
-  }, [fairytaleId]);
+    fetchComments(currentPage);
+  }, [fairytaleId, currentPage]);
 
   // 댓글 조회
-  const fetchComments = async () => {
+  const fetchComments = async (page: number) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await customFetch(`http://localhost:8080/api/fairytales/${fairytaleId}/comments`, {
+      const response = await customFetch(`http://localhost:8080/api/fairytales/${fairytaleId}/comments?page=${page}&size=5`, {
         credentials: 'include',
       });
       if (!response.ok) {
@@ -41,6 +43,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
       }
       const data = await response.json();
       setComments(data.content);
+      setTotalPages(data.totalPages);
     } catch (err) {
       console.error('Error fetching comments:', err);
       setError('댓글을 불러오는 데 실패했습니다.');
@@ -68,7 +71,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
       }
 
       setNewComment('');
-      fetchComments(); // 댓글 추가 후 목록 새로고침
+      fetchComments(0); // 댓글 추가 후 목록 새로고침
     } catch (err) {
       console.error('Error adding comment:', err);
       setError('댓글 추가에 실패했습니다.');
@@ -95,7 +98,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
 
       setEditingCommentId(null);
       setEditingContent('');
-      fetchComments(); // 댓글 수정 후 목록 새로고침
+      fetchComments(currentPage); // 댓글 수정 후 목록 새로고침
     } catch (err) {
       console.error('Error editing comment:', err);
       setError('댓글 수정에 실패했습니다.');
@@ -116,7 +119,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      fetchComments(); // 댓글 삭제 후 목록 새로고침
+      fetchComments(currentPage); // 댓글 삭제 후 목록 새로고침
     } catch (err) {
       console.error('Error deleting comment:', err);
       setError('댓글 삭제에 실패했습니다.');
@@ -144,12 +147,80 @@ export default function Comments({ fairytaleId }: CommentsProps) {
     });
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(0, endPage - maxVisiblePages + 1);
+    }
+
+    // 이전 페이지 버튼
+    if (currentPage > 0) {
+      pages.push(
+        <button
+          key="prev"
+          onClick={() => handlePageChange(currentPage - 1)}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 cursor-pointer"
+        >
+          이전
+        </button>
+      );
+    }
+
+    // 페이지 번호들
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-2 text-sm font-medium cursor-pointer ${
+            i === currentPage
+              ? 'text-orange-600 bg-orange-50 border-orange-300'
+              : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'
+          } border`}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    // 다음 페이지 버튼
+    if (currentPage < totalPages - 1) {
+      pages.push(
+        <button
+          key="next"
+          onClick={() => handlePageChange(currentPage + 1)}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 cursor-pointer"
+        >
+          다음
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex justify-center mt-8">
+        <div className="flex space-x-0">
+          {pages}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="mt-8 p-6 bg-gray-50 rounded-lg shadow-inner">
       <h4 className="text-xl font-bold text-gray-700 mb-4">댓글</h4>
 
       {/* 댓글 작성 폼 */}
-      <div className="mb-6">
+      <div className="mb-6 text-right">
         <textarea
           className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
           rows={3}
@@ -226,6 +297,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
           </div>
         ))}
       </div>
+      {renderPagination()}
     </div>
   );
 }
