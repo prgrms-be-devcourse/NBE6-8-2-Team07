@@ -417,14 +417,14 @@ const FairytaleReader = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setIsEditMode(true)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                    className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 cursor-pointer"
                   >
                     <FaEdit size={14} />
                     수정
                   </button>
                   <button
                     onClick={handleDeleteThoughts}
-                    className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
+                    className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2 cursor-pointer"
                   >
                     <FaTrash size={14} />
                     삭제
@@ -496,14 +496,14 @@ const FairytaleReader = () => {
                 <button
                   onClick={handleSaveThoughts}
                   disabled={isSubmittingThoughts}
-                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isSubmittingThoughts ? '저장 중...' : thoughts ? '수정' : '저장'}
                 </button>
               )}
               <button
                 onClick={handleCloseThoughtsPopup}
-                className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer"
               >
                 닫기
               </button>
