@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Comments from '@/app/fairytaleGallery/comments';
+import Comments from '@/app/fairytale/gallery/comments';
 
 interface FairytaleDetail {
   id: number;
@@ -16,6 +16,7 @@ interface FairytaleDetail {
   mood?: string;
   lesson?: string;
   imageUrl?: string;
+  isPublic?: boolean;
 }
 
 export default function FairytaleGalleryDetail() {
@@ -239,7 +240,7 @@ export default function FairytaleGalleryDetail() {
             {/* 하단 버튼 */}
             <div className="flex justify-center pt-6 border-t border-orange-200">
               <button
-                onClick={() => router.push('/fairytaleGallery')}
+                onClick={() => router.push('/fairytale/gallery')}
                 className="px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors duration-300"
               >
                 갤러리로 돌아가기

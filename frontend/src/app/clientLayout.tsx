@@ -132,7 +132,7 @@ export default function ClientLayout({
               </div>
             </div>
             <Link
-              href="/fairytaleGallery"
+              href="/fairytale/gallery"
               onClick={handleProtectedLinkClick}
               className="py-2"
             >

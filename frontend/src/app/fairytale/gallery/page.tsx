@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { customFetch } from '@/utils/customFetch';
 
 interface Fairytale {
   id: number;
@@ -17,6 +18,7 @@ interface Fairytale {
   // 프론트엔드에서 관리할 좋아요 상태
   likeCount?: number;
   isLiked?: boolean;
+  isPublic?: boolean;
 }
 
 interface PageInfo {
@@ -48,7 +50,7 @@ export default function FairytaleGallery() {
   const fetchFairytales = async (page: number = 0) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:8080/fairytales/gallery?page=${page}&size=6`, {
+      const response = await customFetch(`http://localhost:8080/fairytales/gallery?page=${page}&size=6`, {
         credentials: 'include'
       });
 
@@ -83,7 +85,7 @@ export default function FairytaleGallery() {
   const fetchLikedFairytales = async () => {
     try {
       console.log('좋아요 목록 조회 시작');
-      const response = await fetch('http://localhost:8080/likes', {
+      const response = await customFetch('http://localhost:8080/likes', {
         credentials: 'include'
       });
 
@@ -105,7 +107,7 @@ export default function FairytaleGallery() {
     try {
       const isCurrentlyLiked = likedFairytales.has(fairytaleId);
       
-      const response = await fetch(`http://localhost:8080/like/${fairytaleId}`, {
+      const response = await customFetch(`http://localhost:8080/like/${fairytaleId}`, {
         method: isCurrentlyLiked ? 'DELETE' : 'POST',
         credentials: 'include',
         headers: {
@@ -114,8 +116,6 @@ export default function FairytaleGallery() {
         }
       });
 
-      console.log('좋아요 요청 결과:', response.status, response.statusText);
-      
       if (response.ok) {
         const newLikedFairytales = new Set(likedFairytales);
         if (isCurrentlyLiked) {
@@ -375,7 +375,7 @@ export default function FairytaleGallery() {
                           e.stopPropagation();
                           toggleLike(fairytale.id);
                         }}
-                        className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 ${
+                        className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 cursor-pointer ${
                           likedFairytales.has(fairytale.id)
                             ? 'text-red-500 hover:text-red-600 bg-red-50'
                             : 'text-gray-400 hover:text-red-500 hover:bg-red-50'

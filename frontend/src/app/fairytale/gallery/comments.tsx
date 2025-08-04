@@ -149,7 +149,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
       <h4 className="text-xl font-bold text-gray-700 mb-4">댓글</h4>
 
       {/* 댓글 작성 폼 */}
-      <div className="mb-6">
+      <div className="mb-6 text-right">
         <textarea
           className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
           rows={3}
