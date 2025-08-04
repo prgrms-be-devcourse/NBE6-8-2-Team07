@@ -71,12 +71,8 @@ export default function FairytaleGallery() {
       setError(null);
     } catch (err) {
       console.error('Error fetching fairytales:', err);
-      // 서버에서 404 에러가 오면 "공개된 동화가 없습니다" 메시지 표시
-      if (err instanceof Error && err.message.includes('404')) {
-        setError('아직 공개된 동화가 없습니다.');
-      } else {
-        setError('동화를 불러오는 중 오류가 발생했습니다.');
-      }
+      // 모든 에러에 대해 "아직 공개된 동화가 없습니다" 메시지 표시
+      setError('아직 공개된 동화가 없습니다.');
     } finally {
       setIsLoading(false);
     }
