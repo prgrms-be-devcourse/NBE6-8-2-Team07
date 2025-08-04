@@ -47,6 +47,25 @@ public class GoogleCloudStorage implements CloudStorage {
         uploadImages(imgFiles);
     }
 
+    public String uploadImageBytesToCloud(byte[] imgByte) {
+
+        String uuid = UUID.randomUUID().toString();
+
+        // Google Cloud Storage에 업로드할 Blob 정보 생성
+        BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, uuid)
+                .setContentType("image/jpeg")
+                .build();
+
+        // Google Cloud Storage에 이미지 업로드
+        try {
+            storage.create(blobInfo, imgByte);
+        } catch (Exception e) {
+            throw new RuntimeException("이미지 업로드 실패: " + e.getMessage(), e);
+        }
+
+        return formatUrl(uuid);
+    }
+
     private String uploadImageToCloud(MultipartFile imgFile) {
 
         String uuid = UUID.randomUUID().toString();
