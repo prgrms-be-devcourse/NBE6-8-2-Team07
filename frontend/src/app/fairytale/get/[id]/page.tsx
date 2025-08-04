@@ -4,10 +4,28 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Fairytale } from '@/context/fairytaleContext';
 import { customFetch } from '@/utils/customFetch';
-import { FaLock, FaGlobe } from 'react-icons/fa';
+import { FaLock, FaGlobe, FaPen, FaEdit, FaTrash } from 'react-icons/fa';
 
 interface GroupedKeywords {
-  [key: string]: string[]; // 각 키워드는 문자열 배열로 예상
+  [key: string]: string[];
+}
+
+interface ThoughtsData {
+  id?: number;
+  name: string;          
+  content: string; 
+  parentContent: string;
+  fairytaleId: number;
+}
+
+interface ThoughtsResponse {
+  id: number;
+  name: string;
+  content: string;
+  parentContent: string;
+  fairytaleId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const FairytaleReader = () => {
@@ -15,6 +33,7 @@ const FairytaleReader = () => {
   const fairytaleId = params.id as string;
 
   const [isKeywordPopupOpen, setIsKeywordPopupOpen] = useState(false);
+  const [isThoughtsPopupOpen, setIsThoughtsPopupOpen] = useState(false);
   const [fairytale, setFairytale] = useState<Fairytale | null>(null);
   const [groupedKeywords, setGroupedKeywords] = useState<GroupedKeywords>({
     CHILD_NAME: [],
@@ -27,6 +46,18 @@ const FairytaleReader = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
+  
+  // 아이 생각 관련 상태
+  const [thoughts, setThoughts] = useState<ThoughtsResponse | null>(null);
+  const [thoughtsForm, setThoughtsForm] = useState<ThoughtsData>({
+    name: '',
+    content: '',
+    parentContent: '',
+    fairytaleId: Number(fairytaleId),
+  });
+  const [isSubmittingThoughts, setIsSubmittingThoughts] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const keywordCategoryNames: { [key: string]: string } = {
     CHILD_NAME: '주인공 이름',
     CHILD_ROLE: '주인공 역할',
@@ -36,7 +67,7 @@ const FairytaleReader = () => {
     LESSON: '교훈',
   };
   
-  // 공개설정 토글 메서드 추가가
+  // 공개설정 토글 메서드
   const handleToggleVisibility = async () => {
     if (!fairytale) return;
     
@@ -62,7 +93,6 @@ const FairytaleReader = () => {
         prev ? { ...prev, isPublic: !prev.isPublic } : null
       );
 
-      // 성공 알림
       alert(`동화가 ${!fairytale.isPublic ? '공개' : '비공개'}로 설정되었습니다.`);
       
     } catch (error: unknown) {
@@ -71,6 +101,134 @@ const FairytaleReader = () => {
       alert(`공개 설정 변경 중 오류가 발생했습니다: ${errorMessage}`);
     } finally {
       setIsUpdatingVisibility(false);
+    }
+  };
+
+  // 아이 생각 조회
+  const fetchThoughts = async () => {
+    try {
+      const response = await customFetch(`http://localhost:8080/api/thoughts/fairytale/${fairytaleId}`, {
+        credentials: 'include',
+      });
+      
+      if (response.ok) {
+        const thoughtsData: ThoughtsResponse = await response.json();
+        setThoughts(thoughtsData);
+        setThoughtsForm({
+          id: thoughtsData.id,
+          name: thoughtsData.name,
+          content: thoughtsData.content,
+          parentContent: thoughtsData.parentContent,
+          fairytaleId: thoughtsData.fairytaleId,
+        });
+      }
+    } catch (error) {
+      console.log('아이 생각이 아직 없습니다.');
+    }
+  };
+
+  // 아이 생각 저장/수정
+  const handleSaveThoughts = async () => {
+    if (!thoughtsForm.name.trim() || !thoughtsForm.content.trim() || !thoughtsForm.parentContent.trim()) {
+      alert('아이 이름, 아이 생각, 부모 생각을 모두 입력해주세요.');
+      return;
+    }
+
+    setIsSubmittingThoughts(true);
+
+    try {
+      const url = thoughts 
+        ? `http://localhost:8080/api/thoughts/${thoughts.id}`
+        : 'http://localhost:8080/api/thoughts';
+      
+      const method = thoughts ? 'PUT' : 'POST';
+      
+      console.log('전송할 데이터:', thoughtsForm); // 디버깅용
+      
+      const response = await customFetch(url, {
+        method,
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(thoughtsForm),
+      });
+
+      console.log('응답 상태:', response.status); // 디버깅용
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('에러 응답:', errorText);
+        throw new Error(`아이 생각 저장 실패! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const savedThoughts: ThoughtsResponse = await response.json();
+      setThoughts(savedThoughts);
+      setIsEditMode(false);
+      alert(thoughts ? '아이 생각이 수정되었습니다.' : '아이 생각이 저장되었습니다.');
+      
+    } catch (error: unknown) {
+      console.error('아이 생각 저장 중 오류 발생:', error);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      alert(`아이 생각 저장 중 오류가 발생했습니다: ${errorMessage}`);
+    } finally {
+      setIsSubmittingThoughts(false);
+    }
+  };
+
+  // 아이 생각 삭제
+  const handleDeleteThoughts = async () => {
+    if (!thoughts) return;
+    
+    if (!confirm('정말로 아이 생각을 삭제하시겠습니까?')) return;
+
+    try {
+      const response = await customFetch(`http://localhost:8080/api/thoughts/${thoughts.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`아이 생각 삭제 실패! status: ${response.status}`);
+      }
+
+      setThoughts(null);
+      setThoughtsForm({
+        name: '',
+        content: '',
+        parentContent: '',
+        fairytaleId: Number(fairytaleId),
+      });
+      setIsEditMode(false);
+      alert('아이 생각이 삭제되었습니다.');
+      
+    } catch (error: unknown) {
+      console.error('아이 생각 삭제 중 오류 발생:', error);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      alert(`아이 생각 삭제 중 오류가 발생했습니다: ${errorMessage}`);
+    }
+  };
+
+  // 아이 생각 팝업 열기
+  const handleOpenThoughtsPopup = () => {
+    setIsThoughtsPopupOpen(true);
+    if (!thoughts) {
+      setIsEditMode(true);
+    }
+  };
+
+  // 아이 생각 팝업 닫기
+  const handleCloseThoughtsPopup = () => {
+    setIsThoughtsPopupOpen(false);
+    setIsEditMode(false);
+    if (thoughts) {
+      setThoughtsForm({
+        id: thoughts.id,
+        name: thoughts.name,
+        content: thoughts.content,
+        parentContent: thoughts.parentContent,
+        fairytaleId: thoughts.fairytaleId,
+      });
     }
   };
 
@@ -85,7 +243,7 @@ const FairytaleReader = () => {
       try {
         // Fetch fairytale details
         const fairytaleResponse = await customFetch(`http://localhost:8080/fairytales/${fairytaleId}`,{
-          credentials: 'include', // 인증 정보 포함
+          credentials: 'include',
         });
         if (!fairytaleResponse.ok) {
           throw new Error(`Failed to fetch fairytale: ${fairytaleResponse.statusText}`);
@@ -93,8 +251,6 @@ const FairytaleReader = () => {
         const fairytaleData: Fairytale = await fairytaleResponse.json();
         setFairytale(fairytaleData);
 
-        // API에서 키워드가 문자열로 내려온다면 쉼표로 분리해서 배열로 만듭니다.
-        // 만약 이미 배열이라면 이 부분은 필요 없어요.
         const parseKeywords = (str?: string) =>
           str ? str.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
 
@@ -108,6 +264,9 @@ const FairytaleReader = () => {
         };
 
         setGroupedKeywords(newGroupedKeywords);
+
+        // 아이 생각 조회
+        await fetchThoughts();
 
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.';
@@ -128,14 +287,11 @@ const FairytaleReader = () => {
     <div className="container mx-auto p-4 mb-6 bg-[#FAF9F6] min-h-screen flex flex-col items-center relative">
       <div className="relative w-full max-w-3xl">
         <div className="bg-white shadow-lg rounded-lg mt-8">
-          {/* 동화 이미지 섹션 - 카드 내부에 패딩과 함께 배치 */}
           <div className="p-8">
-            {/* 제목과 공개설정 토글을 같은 라인에 배치 */}
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-3xl font-bold text-gray-800 flex-1 mr-4">{fairytale.title}</h1>
             
-            {/* 공개설정 토글 버튼 추가 */}
-            <div className="flex items-center">
+              <div className="flex items-center">
                 <button
                   onClick={handleToggleVisibility}
                   disabled={isUpdatingVisibility}
@@ -154,7 +310,6 @@ const FairytaleReader = () => {
                 >
                   {isUpdatingVisibility ? (
                     <>
-                      {/* 로딩 스피너 */}
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2"></div>
                       <span className="text-sm font-medium">변경 중...</span>
                     </>
@@ -195,17 +350,28 @@ const FairytaleReader = () => {
           </div>
         </div>
         
-        <button
-          onClick={() => setIsKeywordPopupOpen(true)}
-          className="fixed bottom-8 right-8 bg-orange-400 text-white text-lg px-4 py-2 rounded-full shadow-lg hover:bg-orange-500 transition-colors cursor-pointer"
-        >
-          키워드 보기
-        </button>
+        {/* 플로팅 버튼들 */}
+        <div className="fixed bottom-8 right-8 flex flex-col gap-3">
+          <button
+            onClick={() => setIsKeywordPopupOpen(true)}
+            className="bg-orange-400 text-white text-lg px-4 py-2 rounded-full shadow-lg hover:bg-orange-500 transition-colors cursor-pointer"
+          >
+            키워드 보기
+          </button>
+          
+          <button
+            onClick={handleOpenThoughtsPopup}
+            className="bg-blue-500 text-white text-lg px-4 py-2 rounded-full shadow-lg hover:bg-blue-600 transition-colors cursor-pointer flex items-center gap-2"
+          >
+            <FaPen size={16} />
+            {thoughts ? '아이 생각 보기' : '아이 생각 기록'}
+          </button>
+        </div>
       </div>
 
-      {/* 키워드 팝업은 기존과 동일 */}
+      {/* 키워드 팝업 */}
       {isKeywordPopupOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-2xl max-w-lg w-full overflow-auto max-h-[80vh]">
             <h2 className="text-2xl font-bold mb-4">동화 키워드</h2>
             <div className="space-y-4">
@@ -240,9 +406,113 @@ const FairytaleReader = () => {
           </div>
         </div>
       )}
+
+      {/* 아이 생각 팝업 */}
+      {isThoughtsPopupOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-2xl max-w-2xl w-full overflow-auto max-h-[80vh]">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">아이 생각 기록</h2>
+              {thoughts && !isEditMode && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setIsEditMode(true)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                  >
+                    <FaEdit size={14} />
+                    수정
+                  </button>
+                  <button
+                    onClick={handleDeleteThoughts}
+                    className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
+                  >
+                    <FaTrash size={14} />
+                    삭제
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-6">
+              {/* 아이 이름 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  아이 이름 *
+                </label>
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    value={thoughtsForm.name}
+                    onChange={(e) => setThoughtsForm(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="아이 이름을 입력하세요"
+                  />
+                ) : (
+                  <p className="px-3 py-2 bg-gray-50 rounded-lg">{thoughts?.name || '입력된 이름이 없습니다.'}</p>
+                )}
+              </div>
+
+              {/* 아이 생각 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  아이 생각 *
+                </label>
+                {isEditMode ? (
+                  <textarea
+                    value={thoughtsForm.content}
+                    onChange={(e) => setThoughtsForm(prev => ({ ...prev, content: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
+                    placeholder="아이가 이 동화에 대해 어떻게 생각하는지 적어주세요"
+                  />
+                ) : (
+                  <p className="px-3 py-2 bg-gray-50 rounded-lg min-h-[100px] whitespace-pre-line">
+                    {thoughts?.content || '입력된 생각이 없습니다.'}
+                  </p>
+                )}
+              </div>
+
+              {/* 부모 생각 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  부모 생각 *
+                </label>
+                {isEditMode ? (
+                  <textarea
+                    value={thoughtsForm.parentContent}
+                    onChange={(e) => setThoughtsForm(prev => ({ ...prev, parentContent: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
+                    placeholder="부모님의 생각이나 느낀 점을 적어주세요"
+                  />
+                ) : (
+                  <p className="px-3 py-2 bg-gray-50 rounded-lg min-h-[100px] whitespace-pre-line">
+                    {thoughts?.parentContent || '입력된 생각이 없습니다.'}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              {isEditMode && (
+                <button
+                  onClick={handleSaveThoughts}
+                  disabled={isSubmittingThoughts}
+                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  {isSubmittingThoughts ? '저장 중...' : thoughts ? '수정' : '저장'}
+                </button>
+              )}
+              <button
+                onClick={handleCloseThoughtsPopup}
+                className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default FairytaleReader;
-

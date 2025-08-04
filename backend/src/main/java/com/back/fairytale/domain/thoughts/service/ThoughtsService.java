@@ -9,6 +9,7 @@ import com.back.fairytale.domain.thoughts.entity.Thoughts;
 import com.back.fairytale.domain.thoughts.repository.ThoughtsRepository;
 import com.back.fairytale.domain.user.entity.User;
 import com.back.fairytale.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -88,5 +89,12 @@ public class ThoughtsService {
         thoughtsRepository.delete(thoughts);
 
         log.info("thoughts가 성공적으로 삭제되었습니다. ID: {}", id);
+    }
+
+    public ThoughtsResponse getThoughtsByFairytaleId(Long fairytaleId, Long userId) {
+        Thoughts thoughts = thoughtsRepository.findByFairytaleIdAndUserId(fairytaleId, userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 동화에 대한 아이생각을 찾을 수 없습니다."));
+
+        return ThoughtsResponse.from(thoughts);
     }
 }
