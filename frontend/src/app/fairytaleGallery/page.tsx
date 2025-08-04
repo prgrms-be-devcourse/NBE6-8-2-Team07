@@ -375,7 +375,7 @@ export default function FairytaleGallery() {
                           e.stopPropagation();
                           toggleLike(fairytale.id);
                         }}
-                        className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 cursor-pointer ${
+                        className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 ${
                           likedFairytales.has(fairytale.id)
                             ? 'text-red-500 hover:text-red-600 bg-red-50'
                             : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
