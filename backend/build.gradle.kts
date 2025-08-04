@@ -21,6 +21,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven("https://sksamuel.github.io/maven/")
 }
 
 dependencies {
@@ -54,8 +55,11 @@ dependencies {
     // Google Cloud Storage
     implementation(group = "org.springframework.cloud", name = "spring-cloud-gcp-starter", version = "1.2.5.RELEASE")
     implementation(group = "org.springframework.cloud", name = "spring-cloud-gcp-storage", version = "1.2.5.RELEASE")
-}
 
+    // Thumbnailator for image resizing
+    implementation("net.coobird:thumbnailator:0.4.20")
+    implementation("com.sksamuel.scrimage:scrimage-webp:4.0.39")
+}
 tasks.withType<Test> {
     useJUnitPlatform()
 }

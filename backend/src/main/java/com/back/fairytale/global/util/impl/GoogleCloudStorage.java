@@ -4,6 +4,8 @@ import com.back.fairytale.global.util.CloudStorage;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
+import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.webp.WebpWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -48,41 +50,45 @@ public class GoogleCloudStorage implements CloudStorage {
     }
 
     public String uploadImageBytesToCloud(byte[] imgByte) {
-
-        String uuid = UUID.randomUUID().toString();
-
-        // Google Cloud Storage에 업로드할 Blob 정보 생성
-        BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, uuid)
-                .setContentType("image/jpeg")
-                .build();
-
-        // Google Cloud Storage에 이미지 업로드
         try {
-            storage.create(blobInfo, imgByte);
-        } catch (Exception e) {
-            throw new RuntimeException("이미지 업로드 실패: " + e.getMessage(), e);
-        }
+            // byte 배열을 ImmutableImage로 변환하고 WebP 형식으로 압축
+            byte[] compressedImage = ImmutableImage.loader().fromBytes(imgByte).forWriter(WebpWriter.DEFAULT.withQ(1).withM(0).withZ(0)).bytes();
 
-        return formatUrl(uuid);
+            String uuid = UUID.randomUUID().toString();
+
+            // Google Cloud Storage에 업로드할 Blob 정보 생성
+            BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, uuid)
+                    .setContentType("image/webp")
+                    .build();
+
+            // Google Cloud Storage에 이미지 업로드
+            storage.create(blobInfo, compressedImage);
+
+            return formatUrl(uuid);
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 압축 또는 업로드 실패: " + e.getMessage(), e);
+        }
     }
 
     private String uploadImageToCloud(MultipartFile imgFile) {
-
-        String uuid = UUID.randomUUID().toString();
-
-        // Google Cloud Storage에 업로드할 Blob 정보 생성
-        BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, uuid)
-                .setContentType(imgFile.getContentType())
-                .build();
-
-        // Google Cloud Storage에 이미지 업로드
         try {
-            storage.create(blobInfo, imgFile.getInputStream());
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 업로드 실패: " + e.getMessage(), e);
-        }
+            // MultipartFile을 ImmutableImage로 변환하고 WebP 형식으로 압축
+            byte[] compressedImage = ImmutableImage.loader().fromBytes(imgFile.getBytes()).forWriter(WebpWriter.DEFAULT.withQ(1).withM(0).withZ(0)).bytes();
 
-        return formatUrl(uuid);
+            String uuid = UUID.randomUUID().toString();
+
+            // Google Cloud Storage에 업로드할 Blob 정보 생성
+            BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, uuid)
+                    .setContentType("image/webp")
+                    .build();
+
+            // Google Cloud Storage에 이미지 업로드
+            storage.create(blobInfo, compressedImage);
+
+            return formatUrl(uuid);
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 압축 또는 업로드 실패: " + e.getMessage(), e);
+        }
     }
 
     private void deleteImageFromCloud(String imageUrl) {
