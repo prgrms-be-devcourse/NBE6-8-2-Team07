@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { customFetch } from '@/utils/customFetch';
 
 interface Comment {
@@ -26,12 +26,8 @@ export default function Comments({ fairytaleId }: CommentsProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  useEffect(() => {
-    fetchComments(currentPage);
-  }, [fairytaleId, currentPage]);
-
   // 댓글 조회
-  const fetchComments = async (page: number) => {
+  const fetchComments = useCallback(async (page: number) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -50,7 +46,11 @@ export default function Comments({ fairytaleId }: CommentsProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [fairytaleId]);
+
+  useEffect(() => {
+    fetchComments(currentPage);
+  }, [fetchComments, currentPage]);
 
   // 댓글 추가
   const handleAddComment = async () => {
@@ -157,7 +157,7 @@ export default function Comments({ fairytaleId }: CommentsProps) {
     const pages = [];
     const maxVisiblePages = 5;
     let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
+    const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
 
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(0, endPage - maxVisiblePages + 1);

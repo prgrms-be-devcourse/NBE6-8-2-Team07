@@ -94,7 +94,7 @@ export default function FairytaleGallery() {
       if (response.ok) {
         const likes = await response.json();
         console.log('좋아요 목록 데이터:', likes);
-        const likedIds = new Set<number>(likes.map((like: any) => Number(like.fairytaleId)));
+        const likedIds = new Set<number>(likes.map((like: { fairytaleId: number }) => Number(like.fairytaleId)));
         setLikedFairytales(likedIds);
         console.log('좋아요 ID 목록:', Array.from(likedIds));
       }
@@ -158,7 +158,7 @@ export default function FairytaleGallery() {
     const pages = [];
     const maxVisiblePages = 5;
     let startPage = Math.max(0, pageInfo.currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(pageInfo.totalPages - 1, startPage + maxVisiblePages - 1);
+    const endPage = Math.min(pageInfo.totalPages - 1, startPage + maxVisiblePages - 1);
 
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(0, endPage - maxVisiblePages + 1);

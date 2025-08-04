@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-
 export default function IntroductionPage() {
   return (
     <main className="py-12 space-y-14 text-gray-800">
