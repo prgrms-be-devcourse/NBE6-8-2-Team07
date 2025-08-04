@@ -33,11 +33,7 @@ public class FairytaleController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
         try {
-            // 원래 코드 -> CustomOAuth2User에서 기본키 id 추출
-            //Long userId = customOAuth2User.getId();
-
-            // test 용도 데이터
-            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+            Long userId = customOAuth2User.getId();
 
             FairytaleResponse response = fairytaleService.createFairytale(request, userId);
             return ResponseEntity.ok(response);
@@ -51,10 +47,7 @@ public class FairytaleController {
     public ResponseEntity<?> getAllFairytales(
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         try {
-            //Long userId = customOAuth2User.getId();
-
-            // test 용도 데이터
-            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+            Long userId = customOAuth2User.getId();
 
             List<FairytaleListResponse> response = fairytaleService.getAllFairytalesByUserId(userId);
             return ResponseEntity.ok(response);
@@ -69,10 +62,7 @@ public class FairytaleController {
             @PathVariable Long id,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         try {
-            //Long userId = customOAuth2User.getId();
-
-            // test 용도 데이터
-            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+            Long userId = customOAuth2User.getId();
 
             FairytaleDetailResponse response = fairytaleService.getFairytaleByIdAndUserId(id, userId);
             return ResponseEntity.ok(response);
@@ -87,10 +77,7 @@ public class FairytaleController {
             @PathVariable Long id,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         try {
-            //Long userId = customOAuth2User.getId();
-
-            // test 용도 데이터
-            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+            Long userId = customOAuth2User.getId();
 
             fairytaleService.deleteFairytaleByIdAndUserId(id, userId);
             return ResponseEntity.noContent().build();
@@ -143,8 +130,7 @@ public class FairytaleController {
             @RequestParam Boolean isPublic,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         try {
-            // test 용도 데이터
-            Long userId = (customOAuth2User != null) ? customOAuth2User.getId() : 1L;
+            Long userId = customOAuth2User.getId();
 
             fairytaleService.updateFairytaleVisibility(id, userId, isPublic);
             return ResponseEntity.ok().build();
