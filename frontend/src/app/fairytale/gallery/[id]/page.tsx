@@ -241,7 +241,7 @@ export default function FairytaleGalleryDetail() {
             <div className="flex justify-center pt-6 border-t border-orange-200">
               <button
                 onClick={() => router.push('/fairytale/gallery')}
-                className="px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors duration-300"
+                className="px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors duration-300 cursor-pointer"
               >
                 갤러리로 돌아가기
               </button>
