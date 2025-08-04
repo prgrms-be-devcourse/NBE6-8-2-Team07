@@ -14,7 +14,9 @@ public record FairytalePublicListResponse(
         String place,
         String mood,
         String lesson,
-        LocalDate createdAt
+        LocalDate createdAt,
+        Long likeCount
+
 ) {
     public static FairytalePublicListResponse from(Fairytale fairytale) {
         return new FairytalePublicListResponse(
@@ -26,7 +28,8 @@ public record FairytalePublicListResponse(
                 removeDuplicates(fairytale.getPlace()),
                 removeDuplicates(fairytale.getMood()),
                 removeDuplicates(fairytale.getLesson()),
-                fairytale.getCreatedAt().toLocalDate()
+                fairytale.getCreatedAt().toLocalDate(),
+                fairytale.getLikeCount()
         );
     }
 
